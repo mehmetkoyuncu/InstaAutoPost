@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.Data", "InstaAutoPost.Data\InstaAutoPost.Data.csproj", "{EA1EF4B9-B887-419B-8287-942D5F1B30F4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RSSService", "RSSService", "{1383531D-516F-4863-A62C-8165C51C9896}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.RSSService.WebAPI", "InstaAutoPost.RSSService.WebAPI\InstaAutoPost.RSSService.WebAPI.csproj", "{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.RSSService.Data", "InstaAutoPost.RSSService.Data\InstaAutoPost.RSSService.Data.csproj", "{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.RSSService.Core", "InstaAutoPost.RSSService.Core\InstaAutoPost.RSSService.Core.csproj", "{9EC878DA-4D7D-4586-ACE9-A13561AD1667}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,13 +17,26 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EA1EF4B9-B887-419B-8287-942D5F1B30F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EA1EF4B9-B887-419B-8287-942D5F1B30F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EA1EF4B9-B887-419B-8287-942D5F1B30F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EA1EF4B9-B887-419B-8287-942D5F1B30F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EC878DA-4D7D-4586-ACE9-A13561AD1667}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EC878DA-4D7D-4586-ACE9-A13561AD1667}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EC878DA-4D7D-4586-ACE9-A13561AD1667}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EC878DA-4D7D-4586-ACE9-A13561AD1667}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6} = {1383531D-516F-4863-A62C-8165C51C9896}
+		{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA} = {1383531D-516F-4863-A62C-8165C51C9896}
+		{9EC878DA-4D7D-4586-ACE9-A13561AD1667} = {1383531D-516F-4863-A62C-8165C51C9896}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5D56EF47-A36E-4D22-87AE-A7FE2221B5CC}

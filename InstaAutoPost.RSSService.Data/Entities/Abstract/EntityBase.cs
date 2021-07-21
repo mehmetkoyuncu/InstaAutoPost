@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace InstaAutoPost.Data.Entities.Abstract
+namespace InstaAutoPost.RSSService.Data.Entities.Abstract
 {
-   public abstract class EntityBase
+    public abstract class EntityBase
     {
         public int Id { get; set; }
         public DateTime InsertedAt { get; set; }

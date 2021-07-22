@@ -6,7 +6,7 @@ using System.Text;
 
 namespace InstaAutoPost.RSSService.Data.Context.MSSQL
 {
-    public class RssService_EF:DbContext
+    public class RssServiceEFContext:DbContext
     {
         public DbSet<Image> Images { get; set; }
         public DbSet<Source> Sources { get; set; }

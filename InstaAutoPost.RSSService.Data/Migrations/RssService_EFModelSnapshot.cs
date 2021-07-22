@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InstaAutoPost.RSSService.Data.Migrations
 {
-    [DbContext(typeof(RssService_EF))]
+    [DbContext(typeof(RssServiceEFContext))]
     partial class RssService_EFModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

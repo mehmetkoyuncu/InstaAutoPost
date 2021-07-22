@@ -15,8 +15,9 @@ namespace InstaAutoPost.RSSService.Data.Entities.Concrete
         public string Description { get; set; }
         public DateTime ContentInsertAt  { get; set; }
         public bool SendOutForPost { get; set; }
-        public int SourceId { get; set; }
-        public ICollection<Image> Images { get; set; }
+        public int CategoryId { get; set; }
+        public virtual Category Category { get; set; }
+        public virtual ICollection<Image> Images { get; set; }
 
     }
 }

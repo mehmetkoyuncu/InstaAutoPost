@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InstaAutoPost.RSSService.Data.Migrations
 {
-    [DbContext(typeof(RssService_EF))]
+    [DbContext(typeof(RssServiceEFContext))]
     [Migration("20210721181905_initialCreate")]
     partial class initialCreate
     {

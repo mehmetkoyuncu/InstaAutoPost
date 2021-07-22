@@ -4,5 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\InstaAutoPost.RSSService.Core\InstaAutoPost.RSSService.Core.csproj" />
+    <ProjectReference Include="..\InstaAutoPost.RSSService.Data\InstaAutoPost.RSSService.Data.csproj" />
+  </ItemGroup>
+
 
 </Project>

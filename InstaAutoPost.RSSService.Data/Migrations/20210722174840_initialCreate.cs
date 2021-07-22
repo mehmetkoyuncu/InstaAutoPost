@@ -26,6 +26,29 @@ namespace InstaAutoPost.RSSService.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SourceId = table.Column<int>(type: "int", nullable: false),
+                    InsertedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categories_Sources_SourceId",
+                        column: x => x.SourceId,
+                        principalTable: "Sources",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SourceContents",
                 columns: table => new
                 {
@@ -36,7 +59,7 @@ namespace InstaAutoPost.RSSService.Data.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ContentInsertAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SendOutForPost = table.Column<bool>(type: "bit", nullable: false),
-                    SourceId = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
                     InsertedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -45,9 +68,9 @@ namespace InstaAutoPost.RSSService.Data.Migrations
                 {
                     table.PrimaryKey("PK_SourceContents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SourceContents_Sources_SourceId",
-                        column: x => x.SourceId,
-                        principalTable: "Sources",
+                        name: "FK_SourceContents_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -76,14 +99,19 @@ namespace InstaAutoPost.RSSService.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Categories_SourceId",
+                table: "Categories",
+                column: "SourceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Images_SourceContentId",
                 table: "Images",
                 column: "SourceContentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SourceContents_SourceId",
+                name: "IX_SourceContents_CategoryId",
                 table: "SourceContents",
-                column: "SourceId");
+                column: "CategoryId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -93,6 +121,9 @@ namespace InstaAutoPost.RSSService.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "SourceContents");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Sources");

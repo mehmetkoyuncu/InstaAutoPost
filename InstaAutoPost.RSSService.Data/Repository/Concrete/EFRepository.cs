@@ -25,78 +25,39 @@ namespace InstaAutoPost.RSSService.Data.Repository.Concrete
             _dbset = context.Set<TEntity>();
         }
 
-        public bool Add(TEntity entity)
+        public void Add(TEntity entity)
         {
-            bool _control = false;
-            try
-            {
-                _dbset.Add(entity);
-                _control = true;
-            }
-            catch (Exception)
-            {
-                _control = false;
-            }
-            return _control;
+            _dbset.Add(entity);
         }
 
-        public IQueryable Get(Expression<Func<TEntity, bool>> filter)
+        public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> filter)
         {
             return _dbset.Where(filter);
         }
 
-        public bool Remove(TEntity entity)
+        public void Remove(TEntity entity)
         {
-            bool _control = false;
             if (entity.GetType().GetProperty("IsDeleted") != null)
             {
-                try
-                {
-                    entity.GetType().GetProperty("IsDeleted").SetValue(entity, true);
-                    this.Update(entity);
-                    _control = true;
-
-                }
-                catch
-                {
-                    _control = false;
-                }
+                entity.GetType().GetProperty("IsDeleted").SetValue(entity, true);
+                this.Update(entity);
             }
             else
             {
-                try
+                if (_context.Entry(entity).State != EntityState.Deleted)
+                    _context.Entry(entity).State = EntityState.Deleted;
+                else
                 {
-                    if(_context.Entry(entity).State!=EntityState.Deleted)
-                        _context.Entry(entity).State = EntityState.Deleted;
-                    else
-                    {
-                        _dbset.Attach(entity);
-                        _dbset.Remove(entity);
-                    }
-                    _control = true;
-                }
-                catch 
-                {
-                    _control = false;
+                    _dbset.Attach(entity);
+                    _dbset.Remove(entity);
                 }
             }
-            return _control;
         }
 
-        public bool Update(TEntity entity)
+        public void Update(TEntity entity)
         {
-            bool _control = false;
-            try
-            {
-                _dbset.Attach(entity);
-                _context.Entry(entity).State = EntityState.Modified;
-                _control = true;
-            }
-            catch
-            {
-                _control = false;
-            }
-            return _control;
+            _dbset.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
         }
     }
 }

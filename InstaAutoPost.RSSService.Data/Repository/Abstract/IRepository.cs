@@ -10,9 +10,9 @@ namespace InstaAutoPost.RSSService.Data.Repository.Abstract
     public interface IRepository<TEntity>
        where TEntity : EntityBase, IEntity, new()
     {
-        bool Add(TEntity entity);
-        bool Remove(TEntity entity);
-        bool Update(TEntity entity);
-        IQueryable Get(Expression<Func<TEntity, bool>> filter);
+        void Add(TEntity entity);
+        void Remove(TEntity entity);
+        void Update(TEntity entity);
+        IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> filter);
     }
 }

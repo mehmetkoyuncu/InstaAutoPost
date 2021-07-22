@@ -5,10 +5,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace InstaAutoPost.RSSService.Data.Repository
+namespace InstaAutoPost.RSSService.Data.Repository.Abstract
 {
     public interface IRepository<TEntity>
-        where TEntity : EntityBase, IEntity, new()
+       where TEntity : EntityBase, IEntity, new()
     {
         bool Add(TEntity entity);
         bool Remove(TEntity entity);

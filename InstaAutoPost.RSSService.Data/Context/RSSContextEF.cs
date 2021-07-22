@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace InstaAutoPost.RSSService.Data.Context.MSSQL
+
+namespace InstaAutoPost.RSSService.Data.Context
 {
-    public class RssServiceEFContext:DbContext
+    public class RSSContextEF:DbContext
     {
         public DbSet<Image> Images { get; set; }
         public DbSet<Source> Sources { get; set; }

@@ -29,6 +29,7 @@ namespace InstaAutoPost.RSSService.WebAPI
         {
             services.AddControllers();
             services.AddScoped<ISourceService, SourceService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",

@@ -33,10 +33,11 @@ namespace InstaAutoPost.RSSService.WebAPI.Controllers
         {
             return Ok(_service.GetAll());
         }
+      
         [HttpGet]
-        public IActionResult GetSource(int id)
+        public IActionResult GetSource(Source source)
         {
-            return Ok(_service.GetById(id));
+            return Ok(_service.GetById(source.Id));
         }
         [HttpGet]
         public IActionResult GetSource(string name)
@@ -48,10 +49,11 @@ namespace InstaAutoPost.RSSService.WebAPI.Controllers
         {
             return Ok(_service.GetDeletedSource());
         }
-        public IActionResult UpdateSource(Source source,int id)
+        public IActionResult UpdateSource(Source source)
         {
-            return Ok(_service.Update(source, id));
+            return Ok(_service.Update(source, source.Id));
         }
 
     }
 }
+

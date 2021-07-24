@@ -11,6 +11,7 @@ namespace InstaAutoPost.RSSService.Data.Entities.Concrete
         {
             SourceContents = new List<SourceContent>();
         }
+        public string Link { get; set; }
         public string Name { get; set; }
         public int SourceId { get; set; }
         public virtual Source Source { get; set; }

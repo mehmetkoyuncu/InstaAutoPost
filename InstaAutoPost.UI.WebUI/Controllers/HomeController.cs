@@ -1,12 +1,13 @@
 ﻿
 using InstaAutoPost.UI.WebUI.Models;
+using InstaAutoPost.UI.WebUI.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text.Json;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace InstaAutoPost.UI.WebUI.Controllers
@@ -22,20 +23,16 @@ namespace InstaAutoPost.UI.WebUI.Controllers
 
         public IActionResult Index()
         {
-            var client = new RestClient("https://localhost:44338/source/getallsources");
-            client.Timeout = -1;
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("Name", "\"Deneme\"");
-            IRestResponse response = client.Execute(request);
-            var weatherForecast = JsonSerializer.Deserialize<SourceModel>(response.Content);
+            ViewBag.breadCrump = "Anasayfa";
             return View();
         }
-
-        public IActionResult Privacy()
+        public PartialViewResult _SourcePartial()
         {
-            return View();
+            Request requestGetAllSources = new Request();
+            string requestResult = requestGetAllSources.RequestGet("https://localhost:44338/source/getallsources");
+            List<SourceModel> model = Newtonsoft.Json.JsonConvert.DeserializeObject<List<SourceModel>>(requestResult);
+            model = model.OrderByDescending(x => x.UpdatedAt).ToList();
+            return PartialView("~/Views/Shared/Partials/_SourcePartial.cshtml",model);
         }
-
-       
     }
 }

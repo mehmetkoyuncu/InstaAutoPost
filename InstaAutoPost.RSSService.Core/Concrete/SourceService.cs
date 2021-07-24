@@ -21,6 +21,8 @@ namespace InstaAutoPost.RSSService.Core.Concrete
         
         public string Add(Source source)
         {
+            source.InsertedAt = DateTime.Now;
+            source.UpdatedAt = DateTime.Now;
             uow.GetRepository<Source>().Add(source);
             int result=uow.SaveChanges();
             string sResult = result == 0 ? "Hata! kaynak eklenemedi" : "Kaynak başarıyla eklendi";
@@ -59,9 +61,12 @@ namespace InstaAutoPost.RSSService.Core.Concrete
         public string Update(Source source, int id)
         {
             Source updateSource = GetById(id);
+            updateSource.Image = source.Image;
+            updateSource.Name = source.Name;
+            updateSource.UpdatedAt = DateTime.Now;
             uow.GetRepository<Source>().Update(updateSource);
             int result=uow.SaveChanges();
-            string sResult = result == 0 ? "Hata! kaynak silinemedi" : "Kaynak başarıyla silindi";
+            string sResult = result == 0 ? "Hata! kaynak güncellenemedi" : "Kaynak başarıyla güncellendi";
             return sResult;
         }
     }

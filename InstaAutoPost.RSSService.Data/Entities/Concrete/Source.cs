@@ -12,10 +12,7 @@ namespace InstaAutoPost.RSSService.Data.Entities.Concrete
         {
             Categories = new List<Category>();
         }
-        [Required]
         public string Name { get; set; }
-        [Required]
-        public string URL { get; set; }
         public string Image { get; set; }
         public virtual ICollection<Category> Categories { get; set; }
 

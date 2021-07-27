@@ -24,13 +24,14 @@ namespace InstaAutoPost.RSSService.WebAPI.Controllers
             return Ok(_service.Add(source));
         }
         [HttpDelete]
-        public IActionResult DeleteSource(int id)
+        public IActionResult DeleteSource(Source source)
         {
-            return Ok(_service.DeleteById(id));
+            return Ok(_service.DeleteById(source.Id));
         }
         [HttpGet]
         public IActionResult GetAllSources()
         {
+            var a = Ok(_service.GetAll());
             return Ok(_service.GetAll());
         }
       

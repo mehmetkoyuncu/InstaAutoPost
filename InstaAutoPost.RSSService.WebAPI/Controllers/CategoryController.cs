@@ -18,6 +18,11 @@ namespace InstaAutoPost.RSSService.WebAPI.Controllers
         {
             _service = service;
         }
-    
+        [HttpPost]
+        public IActionResult CategoriesBySource(Source source)
+        {
+            return Ok(_service.GetCategoriesById(source.Id));
+        }
+
     }
 }

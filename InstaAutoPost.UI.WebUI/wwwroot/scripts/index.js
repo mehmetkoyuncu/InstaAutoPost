@@ -3,10 +3,7 @@
     GetAllSourcePartial();
 });
 
-function GetAllSourcePartial() {
-    $("#source_list").load("/Home/_SourcePartial");
-    StopLoader();
-}
+
 function AddSource() {
    
     let name = $('#sourceHeader').val();
@@ -78,29 +75,7 @@ function UpdateSourceWithImage(id, name, image) {
     $('#accordionFlushExample').append('<a onclick="InsertSource()" id="InsSource"> Ekle </a>');
     $("#submitSource").attr("onclick", "EditSource("+id+")");
 }
-function EditSource(id) {
 
-    name=$('#sourceHeader').val();
-    image = $('#sourceLink').val();
-    if (!name & !image) {
-        alert("Boş olamaz");
-        return;
-    }
-    StartLoader();
-    $.ajax({
-        type: "POST",
-        url: "https://localhost:44338/source/UpdateSource",
-        datatype: "json",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ 'Image': image, 'Name': name, "Id": parseInt(id) }),
-        success: function (data) {
-            $("#source_list").load("/Home/_SourcePartial");
-            StopLoader();
-        }
-
-    });
-
-}
 
 $('#submitSource').click(function () {
     $('#sourceHeader').val("");
@@ -109,5 +84,8 @@ $('#submitSource').click(function () {
     $('#sourceHeader').val("");
 
 })
+
+
+
 
 

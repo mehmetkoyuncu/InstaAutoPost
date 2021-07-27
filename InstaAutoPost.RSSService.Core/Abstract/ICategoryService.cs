@@ -7,7 +7,7 @@ namespace InstaAutoPost.RSSService.Core.Abstract
 {
     public interface ICategoryService
     {
-      
+        List<Category> GetCategoriesById(int id);
 
     }
 }

@@ -40,7 +40,8 @@ namespace InstaAutoPost.RSSService.Core.Concrete
 
         public List<Source> GetAll()
         {
-           return uow.GetRepository<Source>().Get(x => x.IsDeleted == false).ToList();
+            List<Source> a= uow.GetRepository<Source>().Get(x => x.IsDeleted == false).ToList();
+            return uow.GetRepository<Source>().Get(x => x.IsDeleted == false).ToList();
         }
 
         public Source GetById(int id)

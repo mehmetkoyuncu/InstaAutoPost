@@ -8,8 +8,6 @@ function AddSource() {
    
     let name = $('#sourceHeader').val();
     let image = $('#sourceLink').val();
-    name = $('#sourceHeader').val();
-    image = $('#sourceLink').val();
     if (!name & !image) {
         alert("Boş olamaz");
         return;
@@ -17,10 +15,8 @@ function AddSource() {
     StartLoader();
     $.ajax({
         type: "POST",
-        url: "https://localhost:44338/source/AddSource",
-        datatype: "json",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ 'Image': image, 'Name': name }),
+        url: "Home/AddSource",
+        data: { 'Image': image, 'Name': name },
         success: function (data) {
             $("#source_list").load("/Home/_SourcePartial");
             StopLoader();

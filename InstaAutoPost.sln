@@ -3,17 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RSSService", "RSSService", "{1383531D-516F-4863-A62C-8165C51C9896}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.RSSService.WebAPI", "InstaAutoPost.RSSService.WebAPI\InstaAutoPost.RSSService.WebAPI.csproj", "{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.RSSService.Data", "InstaAutoPost.RSSService.Data\InstaAutoPost.RSSService.Data.csproj", "{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.RSSService.Core", "InstaAutoPost.RSSService.Core\InstaAutoPost.RSSService.Core.csproj", "{9EC878DA-4D7D-4586-ACE9-A13561AD1667}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{AFAFCB71-E792-4400-BB2A-7A8AADEDC283}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.UI.WebUI", "InstaAutoPost.UI.WebUI\InstaAutoPost.UI.WebUI.csproj", "{A1D93622-9B47-4842-B458-162FDF7128C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstaAutoPost.UI.WebUI", "InstaAutoPost.UI.WebUI\InstaAutoPost.UI.WebUI.csproj", "{A1D93622-9B47-4842-B458-162FDF7128C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.UI.Core", "InstaAutoPost.UI.Core\InstaAutoPost.UI.Core.csproj", "{5047C1A6-A427-4CFA-B354-6BCE71ED64B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.UI.Data", "InstaAutoPost.UI.Data\InstaAutoPost.UI.Data.csproj", "{24D1594E-A17E-42E8-9B68-303F52719BE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,31 +17,26 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9EC878DA-4D7D-4586-ACE9-A13561AD1667}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9EC878DA-4D7D-4586-ACE9-A13561AD1667}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9EC878DA-4D7D-4586-ACE9-A13561AD1667}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9EC878DA-4D7D-4586-ACE9-A13561AD1667}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A1D93622-9B47-4842-B458-162FDF7128C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A1D93622-9B47-4842-B458-162FDF7128C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1D93622-9B47-4842-B458-162FDF7128C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1D93622-9B47-4842-B458-162FDF7128C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5047C1A6-A427-4CFA-B354-6BCE71ED64B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5047C1A6-A427-4CFA-B354-6BCE71ED64B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5047C1A6-A427-4CFA-B354-6BCE71ED64B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5047C1A6-A427-4CFA-B354-6BCE71ED64B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24D1594E-A17E-42E8-9B68-303F52719BE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24D1594E-A17E-42E8-9B68-303F52719BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24D1594E-A17E-42E8-9B68-303F52719BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24D1594E-A17E-42E8-9B68-303F52719BE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E47983B5-354C-4CB5-8FE3-E1ED0150F1B6} = {1383531D-516F-4863-A62C-8165C51C9896}
-		{B8F1BA2B-4C64-474B-A0F7-71DF9EE8EDEA} = {1383531D-516F-4863-A62C-8165C51C9896}
-		{9EC878DA-4D7D-4586-ACE9-A13561AD1667} = {1383531D-516F-4863-A62C-8165C51C9896}
 		{A1D93622-9B47-4842-B458-162FDF7128C1} = {AFAFCB71-E792-4400-BB2A-7A8AADEDC283}
+		{5047C1A6-A427-4CFA-B354-6BCE71ED64B2} = {AFAFCB71-E792-4400-BB2A-7A8AADEDC283}
+		{24D1594E-A17E-42E8-9B68-303F52719BE4} = {AFAFCB71-E792-4400-BB2A-7A8AADEDC283}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5D56EF47-A36E-4D22-87AE-A7FE2221B5CC}

@@ -1,3 +1,6 @@
+using InstaAutoPost.UI.Core.Abstract;
+using InstaAutoPost.UI.Core.Common.DTOS;
+using InstaAutoPost.UI.Core.Concrete;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -23,10 +26,8 @@ namespace InstaAutoPost.UI.WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews()
-     .AddNewtonsoftJson(options =>
-     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
- );
+            services.AddControllersWithViews();
+            services.AddScoped<ISourceService, SourceService>();
 
         }
 

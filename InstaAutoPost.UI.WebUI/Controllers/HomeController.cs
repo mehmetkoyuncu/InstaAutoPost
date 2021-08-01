@@ -1,6 +1,5 @@
-﻿
-using InstaAutoPost.UI.WebUI.Models;
-using InstaAutoPost.UI.WebUI.Utilities;
+﻿using InstaAutoPost.UI.Core.Abstract;
+using InstaAutoPost.UI.Core.Common.DTOS;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RestSharp;
@@ -14,13 +13,15 @@ namespace InstaAutoPost.UI.WebUI.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ISourceService _sourceService;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ISourceService sourceService)
         {
             _logger = logger;
+            _sourceService = sourceService;
         }
-
+        
         public IActionResult Index()
         {
             ViewBag.breadCrump = "Anasayfa";
@@ -28,11 +29,15 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         }
         public PartialViewResult _SourcePartial()
         {
-            Request requestGetAllSources = new Request();
-            string requestResult = requestGetAllSources.RequestGet("https://localhost:44338/source/getallsources");
-            List<SourceModel> model = Newtonsoft.Json.JsonConvert.DeserializeObject<List<SourceModel>>(requestResult);
+            var model = _sourceService.GetAll();
             model = model.OrderByDescending(x => x.UpdatedAt).ToList();
             return PartialView("~/Views/Shared/Partials/_SourcePartial.cshtml",model);
+        }
+        [HttpPost]
+        public IActionResult AddSource(SourceDTO source)
+        {
+            string result = _sourceService.Add(source);
+            return Ok(Json(result));
         }
     }
 }

@@ -14,4 +14,8 @@
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\InstaAutoPost.UI.Core\InstaAutoPost.UI.Core.csproj" />
+  </ItemGroup>
+
 </Project>

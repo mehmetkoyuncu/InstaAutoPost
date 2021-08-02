@@ -39,5 +39,18 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             string result = _sourceService.Add(source);
             return Ok(Json(result));
         }
+        [HttpPost]
+        public IActionResult EditSource(string image,string name,int id)
+        {
+            string result = _sourceService.Update(image,name,id);
+            return Ok(Json(result));
+        }
+        [HttpDelete]
+        public IActionResult RemoveSource(int id)
+        {
+            string result = _sourceService.DeleteById(id);
+            return Ok(Json(result));
+        }
+
     }
 }

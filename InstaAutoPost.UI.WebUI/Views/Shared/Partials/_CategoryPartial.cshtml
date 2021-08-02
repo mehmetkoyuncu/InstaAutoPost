@@ -1,16 +1,11 @@
-﻿@model List<SourceDTO>
+﻿@model List<CategoryDTO>
 <div class="row">
+    <h3>@Model[0].Name</h3>
     @foreach (var item in Model)
     {
         <div class="col-md-3 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <img class="img-fluid img-thumbnail" width="100px;" src="@item.Image" />
-                 
-                        <a onclick="UpdateCategory(@item.Id, '@item.Name')"> <i class="fas fa-edit float-end"></i></a>
-                 
-                
-
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">@item.Name</h5>

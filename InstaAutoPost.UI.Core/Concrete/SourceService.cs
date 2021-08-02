@@ -5,6 +5,7 @@ using InstaAutoPost.UI.Data.Context;
 using InstaAutoPost.UI.Data.Entities.Concrete;
 using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
 using InstaAutoPost.UI.Data.UnitOfWork.Concrete;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,16 +62,17 @@ namespace InstaAutoPost.UI.Core.Concrete
             return uow.GetRepository<Source>().Get(x => x.IsDeleted == true).ToList();
         }
 
-        public string Update(Source source, int id)
+        public string Update(string image,string name, int id)
         {
             Source updateSource = GetById(id);
-            updateSource.Image = source.Image;
-            updateSource.Name = source.Name;
+            updateSource.Image = image;
+            updateSource.Name = name;
             updateSource.UpdatedAt = DateTime.Now;
             uow.GetRepository<Source>().Update(updateSource);
             int result = uow.SaveChanges();
             string sResult = result == 0 ? "Hata! kaynak güncellenemedi" : "Kaynak başarıyla güncellendi";
             return sResult;
         }
+       
     }
 }

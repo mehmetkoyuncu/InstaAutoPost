@@ -2,10 +2,8 @@
     StartLoader();
     $.ajax({
         type: "DELETE",
-        url: "https://localhost:44338/source/DeleteSource",
-        datatype: "json",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ "Id": parseInt(id) }),
+        url: "/Home/RemoveSource",
+        data: { "Id": parseInt(id) },
         success: function (data) {
             $("#source_list").load("/Home/_SourcePartial");
             StopLoader();
@@ -24,15 +22,12 @@ function EditSource(id) {
     StartLoader();
     $.ajax({
         type: "POST",
-        url: "https://localhost:44338/source/UpdateSource",
-        datatype: "json",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ 'Image': image, 'Name': name, "Id": parseInt(id) }),
+        url: "Home/EditSource",
+        data: { 'image': image, 'name': name, "Id": parseInt(id) },
         success: function (data) {
             $("#source_list").load("/Home/_SourcePartial");
             StopLoader();
         }
-
     });
 
 }

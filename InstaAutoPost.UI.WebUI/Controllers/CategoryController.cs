@@ -1,4 +1,6 @@
 ﻿
+using InstaAutoPost.UI.Core.Abstract;
+using InstaAutoPost.UI.Core.Common.DTOS;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,9 +11,10 @@ namespace InstaAutoPost.UI.WebUI.Controllers
 {
     public class CategoryController : Controller
     {
-        public IActionResult Index()
+        ICategoryService _service;
+        public CategoryController(ICategoryService service)
         {
-            return View();
+            _service = service;
         }
 
         public IActionResult GetCategories(int id)
@@ -21,10 +24,8 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         }
         public PartialViewResult _CategoryPartial(int sourceId)
         {
-           
-            //List<CategoryModel> model = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CategoryModel>>(requestResult);
-            //model = model.OrderByDescending(x => x.UpdatedAt).ToList();
-            return PartialView("~/Views/Shared/Partials/_CategoryPartial.cshtml"/*, model*/);
+            List<CategoryDTO> categories = _service.GetSourceWithCategoriesById(sourceId);
+            return PartialView("~/Views/Shared/Partials/_CategoryPartial.cshtml",categories);
         }
 
     }

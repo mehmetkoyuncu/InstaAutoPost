@@ -12,7 +12,7 @@ namespace InstaAutoPost.UI.Core.Abstract
         string DeleteById(int id);
         Source GetById(int id);
         List<Source> GetByName(string name);
-        string Update(Source source, int id);
+        string Update(string image,string name, int id);
         List<SourceDTO> GetAll();
         List<Source> GetDeletedSource();
     }

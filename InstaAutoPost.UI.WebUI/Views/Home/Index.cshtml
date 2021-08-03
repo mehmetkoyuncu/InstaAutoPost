@@ -1,48 +1,10 @@
-﻿@section BreadCrump{
-    @ViewBag.breadCrump
+﻿@section BreadCrumpIcon {
+    <img src="aa" />
 }
-
-<div class="accordion accordion-flush border mb-5 mt-3" id="accordionFlushExample">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="flush-headingOne">
-            <button class="accordion-button collapsed" id="accord" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                <i class="fas fa-plus-square"></i> <span id="sourceTextSpan"> Kaynak Ekle</span>
-            </button>
-        </h2>
-        <div id="flush-collapseOne" class="row accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-            <div class="col-md-12 accordion-body">
-
-                <div class="mb-3">
-                    <label for="sourceHeader" class="form-label">Kaynak Başlığı</label>
-                    <input type="text" class="form-control" id="sourceHeader" aria-describedby="sourceText">
-                </div>
-                <div class="mb-3">
-                    <label for="sourceLink" class="form-label">Kaynak Görseli</label>
-                    <input type="text" class="form-control" id="sourceLink" aria-describedby="sourceLinkText">
-                    <div id="sourceLinkText" class="form-text">İsteğe bağlıdır. Görseli bilgisayaranızdan seçebilir veya URL'i ilgili bölüme yazabilirsiniz.</div>
-                    <a onclick="AddSource()" id="submitSource" class="btn btn-success">Kaydet</a>
-                </div>
-
-
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="source_list">
-
-</div>
-
-
-
-
-
-
-
-
-
-@section Scripts{
-    <script src="~/scripts/index.js"></script>
-    <script src="~/scripts/sourcePartial.js"></script>
+@section BreadCrumpHeader {
+    Deneme
 }
+@section BreadCrumpText {
+    DenemeText
+}
+<div id="codeSource"></div>

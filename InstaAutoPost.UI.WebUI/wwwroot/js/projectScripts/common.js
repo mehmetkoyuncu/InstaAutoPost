@@ -1,5 +1,9 @@
-﻿function AddViewAfter(idOfTheCreatedDiv, IdToBeAddedAfterDiv, urlSource) {
-    var contentDiv = $(document.createElement('div')).attr("id", idOfTheCreatedDiv);
-    $('#' + IdToBeAddedAfterDiv).after(contentDiv);
-    $('#' + idOfTheCreatedDiv).load(urlSource);
+﻿function StartLoader() {
+    $("#loader").delay(50).fadeIn();
+}
+function StopLoader() {
+    $("#loader").delay(50).fadeOut();
+}
+function RenderBodyClear() {
+    $("#codeSource").empty();
 }

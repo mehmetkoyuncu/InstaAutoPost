@@ -14,6 +14,15 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         {
             _sourceService = sourceService;
         }
+        public IActionResult Index()
+        {
+            ViewBag.BreadCrumpHeader="Kaynak";
+            ViewBag.BreadCrumpText="Örnek Metin";
+            ViewBag.BreadCrumpImage="https://i1.sndcdn.com/avatars-000288473023-nw5wu6-t500x500.jpg";
+
+            return View();
+        }
+
         [HttpGet]
         public PartialViewResult GetSources()
         {
@@ -24,6 +33,28 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         {
             return PartialView("~/Views/Shared/Partials/_SourceAddPartial.cshtml");
         }
-
+        [HttpPost]
+        public IActionResult AddSource(string name,string image)
+        {
+            return Ok(_sourceService.Add(name, image));
+        }
+        [HttpGet]
+        public IActionResult GetSourceById(int id)
+        {
+            return Ok(_sourceService.GetById(id));
+        }
+        [HttpPut]
+        public IActionResult EditSource(int id,string name, string image)
+        {
+            return Ok(_sourceService.Update(image,name,id));
+        }
+        public IActionResult RemoveSource(int id)
+        {
+            return Ok(_sourceService.DeleteById(id));
+        }
+        public IActionResult DetailSource(int id)
+        {
+            return PartialView("~/Views/Shared/Partials/_SourceDetailPartial.cshtml", _sourceService.GetSourceWithCategoryCount(id));
+        }
     }
 }

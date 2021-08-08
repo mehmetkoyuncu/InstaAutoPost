@@ -21,11 +21,15 @@ namespace InstaAutoPost.UI.Core.Concrete
             uow = new EFUnitOfWork(new RSSContextEF());
         }
 
-        public string Add(SourceDTO sourceDTO)
+        public string Add(string name, string image)
         {
-            sourceDTO.InsertedAt = DateTime.Now;
-            sourceDTO.UpdatedAt = DateTime.Now;
-            Source source= Mapping.Mapper.Map<Source>(sourceDTO);
+            Source source = new Source()
+            {
+                InsertedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                Name = name,
+                Image = image
+            };
             uow.GetRepository<Source>().Add(source);
             int result = uow.SaveChanges();
             string sResult = result == 0 ? "Hata! kaynak eklenemedi" : "Kaynak başarıyla eklendi";
@@ -35,6 +39,7 @@ namespace InstaAutoPost.UI.Core.Concrete
         public string DeleteById(int id)
         {
             Source source = GetById(id);
+            source.UpdatedAt = DateTime.Now;
             uow.GetRepository<Source>().Remove(source);
             int result = uow.SaveChanges();
             string sResult = result == 0 ? "Hata! kaynak silinemedi" : "Kaynak başarıyla silindi";
@@ -43,7 +48,7 @@ namespace InstaAutoPost.UI.Core.Concrete
 
         public List<SourceDTO> GetAll()
         {
-            List<Source> sourceList = uow.GetRepository<Source>().Get(x => x.IsDeleted == false).ToList(); 
+            List<Source> sourceList = uow.GetRepository<Source>().Get(x => x.IsDeleted == false).OrderByDescending(x=>x.UpdatedAt).ToList();
             return Mapping.Mapper.Map<List<SourceDTO>>(sourceList);
         }
 
@@ -62,7 +67,14 @@ namespace InstaAutoPost.UI.Core.Concrete
             return uow.GetRepository<Source>().Get(x => x.IsDeleted == true).ToList();
         }
 
-        public string Update(string image,string name, int id)
+        public SourceWithCategoryCountDTO GetSourceWithCategoryCount(int id)
+        {
+            Source source = uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Id == id).Include(x=>x.Categories).FirstOrDefault();
+            SourceWithCategoryCountDTO sourceDTO=Mapping.Mapper.Map<SourceWithCategoryCountDTO>(source);
+            return sourceDTO;
+        }
+
+        public string Update(string image, string name, int id)
         {
             Source updateSource = GetById(id);
             updateSource.Image = image;
@@ -73,6 +85,6 @@ namespace InstaAutoPost.UI.Core.Concrete
             string sResult = result == 0 ? "Hata! kaynak güncellenemedi" : "Kaynak başarıyla güncellendi";
             return sResult;
         }
-       
+
     }
 }

@@ -19,6 +19,9 @@ namespace InstaAutoPost.UI.Core.AutoMapper
             CreateMap<Source, SourceDTO>();
             CreateMap<Image, ImageDTO>();
             CreateMap<SourceContent, SourceContentDTO>();
+            CreateMap<SourceWithCategoryCountDTO, Source>();
+            CreateMap<Source, SourceWithCategoryCountDTO>()
+                .ForMember(sd => sd.CatrgoryCount, o => o.MapFrom(x=>x.Categories.Count));
 
 
         }

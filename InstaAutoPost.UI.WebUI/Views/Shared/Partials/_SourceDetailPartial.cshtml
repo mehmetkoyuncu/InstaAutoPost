@@ -1,0 +1,72 @@
+﻿@model SourceWithCategoryCountDTO
+<div class="modal fade bd-example-modal-lg" id="detail_source_modal" tabindex="-1">
+    <div class="modal-dialog odal-dialog-centered" role="document">
+        <div class="single-product-tab-area mg-t-0 mg-b-30">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row" style="margin-bottom:5px;">
+                            <div class="col-md-12" style="text-align:right;">
+                                <button type="button" onclick="CloseModal()" class="btn btn-danger"><i class="fa fa-times adminpro-danger-error" aria-hidden="true"></i> Kapat</button>
+                            </div>
+                        </div>
+                        <div id="single-product-pr" class="single-product-pr">
+                            <div class="row">
+                                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                                    <div id="myTabContent1" class="tab-content">
+                                        <div class="product-tab-list tab-pane fade active in" id="single-tab1">
+                                            <img src="@Model.Image" alt="">
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                    <div class="single-product-details res-pro-tb">
+                                        @if (!string.IsNullOrEmpty(Model.Name))
+                                        {
+                                            @if (Model.Name.Length >= 15)
+                                            {
+                                                <h1> @Model.Name.Substring(0, 15) ...</h1>
+                                            }
+                                            else
+                                            {
+                                                <h1> @Model.Name</h1>
+                                            }
+                                        }
+                                        <span class="single-pro-star">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </span>
+                                        <ul class="single-pro-price " style="color:white;">
+                                            <li><b>Kategori Sayısı :</b> @Model.CatrgoryCount</li>
+                                            <li><b>Eklenme Tarihi :</b> @Model.InsertedAt</li>
+                                            <li><b>Güncellenme Tarihi :</b> @Model.UpdatedAt</li>
+                                        </ul>
+
+                                        <div class="color-quality-pro">
+                                            <div class="clear"></div>
+                                            <div class="single-pro-button">
+                                                <div class="pro-button">
+
+
+                                                    <a data-toggle="tooltip" id="detail_view" data-placement="left" title="Detaylı İncele" class="pd-setting-ed" onclick="ViewDetail(@Model.Id)" data-original-title="Detaylı İncele"><i class="fas fa-eye" style="margin-right:7px;"></i>Detaylı İncele</a>
+                                                </div>
+                                                <div class="pro-viwer" style="margin-left:30px;float:right;">
+                                                    <a>@Model.CatrgoryCount</a>
+                                                </div>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

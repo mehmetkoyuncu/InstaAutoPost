@@ -1,3 +1,21 @@
 ﻿.mr-2{
     margin-right:0.5rem;
 }
+.modal {
+    text-align: center !important;
+}
+
+@media screen and (min-width: 768px) {
+    .modal:before {
+        display: inline-block !important;
+        vertical-align: middle !important;
+        content: " " !important;
+        height: 100% !important;
+    }
+}
+
+.modal-dialog {
+    display: inline-block !important;
+    text-align: left !important;
+    vertical-align: middle !important;
+}

@@ -60,6 +60,7 @@
     <!-- responsive CSS
         ============================================ -->
     <link rel="stylesheet" href="~/css/responsive.css">
+    <link href="~/css/loader/loader.css" rel="stylesheet" />
     <!-- modernizr JS
         ============================================ -->
     <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
@@ -102,7 +103,7 @@
                                 <li><a title="Dashboard v.1" href="index.html"><span class="mini-sub-pro">Dashboard v.1</span></a></li>
                                 <li><a title="Dashboard v.2" href="index-1.html"><span class="mini-sub-pro">Dashboard v.2</span></a></li>
                                 <li><a title="Dashboard v.3" href="index-2.html"> <span class="mini-sub-pro">Dashboard v.3</span></a></li>
-                                <li><a title="Kaynak Listesi" onclick="GetAllSource()"><span class="mini-sub-pro">Product List</span></a></li>
+                                <li><a title="Kaynak Listesi" asp-action="Index" asp-controller="Source"><span class="mini-sub-pro">Product List</span></a></li>
                                 <li><a title="Product Edit" href="product-edit.html"><span class="mini-sub-pro">Product Edit</span></a></li>
                                 <li><a title="Product Detail" href="product-detail.html"><span class="mini-sub-pro">Product Detail</span></a></li>
                                 <li><a title="Product Cart" href="product-cart.html"><span class="mini-sub-pro">Product Cart</span></a></li>
@@ -971,17 +972,17 @@
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <div class="breadcomb-wp">
                                             <div class="breadcomb-icon">
-                                                @RenderSection("BreadCrumpIcon", true)
+                                           @RenderSection("BreadCrumpIcon", false)
                                             </div>
                                             <div class="breadcomb-ctn">
-                                                <h2>@RenderSection("BreadCrumpHeader", true)</h2>
-                                                <p>@RenderSection("BreadCrumpText", true)</p>
+                                                <h2>@RenderSection("BreadCrumpHeader", false)</h2>
+                                                <p>@RenderSection("BreadCrumpText", false)</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <div class="breadcomb-report">
-                                            <button data-toggle="tooltip" data-placement="left" title="Download Report" class="btn"><i class="icon nalika-download"></i></button>
+                                            @RenderSection("DownloadReport", false)
                                         </div>
                                     </div>
                                 </div>
@@ -991,7 +992,9 @@
                 </div>
             </div>
         </div>
-        @RenderBody()
+        <div id="render-body">
+            @RenderBody()
+        </div>
         <div class="footer-copyright-area">
             <div class="container-fluid">
                 <div class="row">
@@ -1004,6 +1007,7 @@
             </div>
         </div>
     </div>
+    <div class="loading" id="loader">Loading&#8230;</div>
     <!-- jquery
         ============================================ -->
     <script src="~/js/vendor/jquery-1.12.4.min.js"></script>
@@ -1059,7 +1063,6 @@
     <script src="~/js/main.js"></script>
     <!-- project JS
     ============================================ -->
-    <script src="~/js/projectScripts/source.js"></script>
     <script src="~/js/projectScripts/common.js"></script>
 
     @RenderSection("Scripts", false)

@@ -1,5 +1,6 @@
-﻿@model List<SourceDTO>
-<div class="product-status mg-b-30">
+﻿
+@model List<SourceDTO>
+<div class="product-status mg-b-30" id="source_list_container">
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -15,18 +16,38 @@
                                 <th>Kaynak İsmi</th>
                                 <th>Eklenme Tarihi</th>
                                 <th>Son Güncellenme Tarihi</th>
-                                <th>Ayarlar</th>
+                                <th style="text-align:center;">Ayarlar</th>
                             </tr>
                             @foreach (var item in Model)
                             {
+
+                                string name = string.Empty;
+                                @if (!string.IsNullOrEmpty(item.Name))
+                                {
+                                    name = item.Name.Length >= 20 ? item.Name.Substring(0, 20) + "..." : item.Name;
+                                }
+
                                 <tr>
-                                    <td><img src="@item.Image" alt="@item.Name"></td>
-                                    <td>@item.Name</td>
+                                    <td><img src="@item.Image" alt="@name"></td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.Name))
+                                        {
+                                            @if (item.Name.Length >= 30)
+                                            {
+                                                <span> @item.Name.Substring(0, 30) ...</span>
+                                            }
+                                            else
+                                            {
+                                                <span> @item.Name</span>
+                                            }
+                                        }
+                                    </td>
                                     <td>@item.InsertedAt.ToShortDateString()</td>
                                     <td>@item.UpdatedAt.ToShortDateString()</td>
-                                    <td>
-                                        <button data-toggle="tooltip" title="" class="pd-setting-ed btn btn-success" data-original-title="Edit"><i class="fas fa-edit" aria-hidden="true"></i></button>
-                                        <button data-toggle="tooltip" title="" class="pd-setting-ed btn btn-danger" data-original-title="Trash"><i class="fas fa-trash-alt"></i></button>
+                                    <td style="text-align:center;">
+                                        <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsSource(@item.Id)" class="pd-setting-ed btn btn-warning" data-original-title="Trash"><i class="fas fa-eye"></i></button>
+                                        <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="GetEditSourceView(this,@item.Id)" class="pd-setting-ed btn btn-success"><i class="fas fa-edit"></i></button>
+                                        <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSource(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash"><i class="fas fa-trash-alt"></i></button>
                                     </td>
                                 </tr>
                             }

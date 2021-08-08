@@ -35,8 +35,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 a {transition: all 0.3s ease 0s;text-decoration:none;}
 a:hover{
-  color: #ec4445;
   text-decoration: none;
+  cursor:pointer;
 }
 a:visited, a:link, a:active {
   text-decoration: none;
@@ -1551,7 +1551,7 @@ ul#single-product-tab li{
   font-size:12px;
 }
 .color-quality-pro{
-	margin:20px 0px;
+	margin:20px 0px 0px 0px;;
 }
 .single-social-area a{
 	border:1px solid #979797;
@@ -1572,7 +1572,12 @@ ul#single-product-tab li{
   background: #152036;
   border-radius: 25px;
   transition: all .4s ease 0s;
+  color:white !important;
 }
+    .pro-button:hover {
+        background-color: #1A3661;
+        color: white !important;
+    }
 .pro-button a, .pro-button a:focus, .list-pro-button a, .list-pro-button a:focus{
   color: #fff;
   display: block;

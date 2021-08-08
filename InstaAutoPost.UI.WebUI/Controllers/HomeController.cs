@@ -34,11 +34,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             return PartialView("~/Views/Shared/Partials/_SourcePartial.cshtml",model);
         }
         [HttpPost]
-        public IActionResult AddSource(SourceDTO source)
-        {
-            string result = _sourceService.Add(source);
-            return Ok(Json(result));
-        }
+       
         [HttpPost]
         public IActionResult EditSource(string image,string name,int id)
         {

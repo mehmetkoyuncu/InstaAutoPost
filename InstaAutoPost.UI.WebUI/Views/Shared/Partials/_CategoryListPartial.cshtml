@@ -1,0 +1,67 @@
+﻿@model List<CategoryDTO>
+    <div class="analysis-progrebar-area mg-b-30">
+        <div class="container-fluid">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="analysis-progrebar reso-mg-b-30">
+                            <div class="analysis-progrebar-content">
+                                <h5>@item.Name </h5>
+                                <h2><span class="counter">90</span>%</h2>
+                                <div class="progress progress-mini">
+                                    <div style="width: 68%;" class="progress-bar"></div>
+                                </div>
+                                <div class="m-t-sm small">
+                                    <p>Server down since 1:32 pm.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="analysis-progrebar reso-mg-b-30">
+                        <div class="analysis-progrebar-content">
+                            <h5>Memory</h5>
+                            <h2><span class="counter">70</span>%</h2>
+                            <div class="progress progress-mini">
+                                <div style="width: 78%;" class="progress-bar"></div>
+                            </div>
+                            <div class="m-t-sm small">
+                                <p>Server down since 12:32 pm.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="analysis-progrebar reso-mg-b-30 res-mg-t-30">
+                        <div class="analysis-progrebar-content">
+                            <h5>Data</h5>
+                            <h2><span class="counter">50</span>%</h2>
+                            <div class="progress progress-mini">
+                                <div style="width: 38%;" class="progress-bar progress-bar-danger"></div>
+                            </div>
+                            <div class="m-t-sm small">
+                                <p>Server down since 8:32 pm.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="analysis-progrebar res-mg-t-30">
+                        <div class="analysis-progrebar-content">
+                            <h5>Space</h5>
+                            <h2><span class="counter">40</span>%</h2>
+                            <div class="progress progress-mini">
+                                <div style="width: 28%;" class="progress-bar progress-bar-danger"></div>
+                            </div>
+                            <div class="m-t-sm small">
+                                <p>Server down since 5:32 pm.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

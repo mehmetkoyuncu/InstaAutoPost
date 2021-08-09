@@ -69,7 +69,7 @@ namespace InstaAutoPost.UI.Core.Concrete
 
         public SourceWithCategoryCountDTO GetSourceWithCategoryCount(int id)
         {
-            Source source = uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Id == id).Include(x=>x.Categories).FirstOrDefault();
+            Source source = uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Id == id).Include(x=>x.Categories.Where(x=>x.IsDeleted==false)).FirstOrDefault();
             SourceWithCategoryCountDTO sourceDTO=Mapping.Mapper.Map<SourceWithCategoryCountDTO>(source);
             return sourceDTO;
         }

@@ -61,9 +61,7 @@ namespace InstaAutoPost.UI.Core.RSSService
                         //Buraya devamı yazılacak..
                     }
                     else
-                    {
                         throw new Exception("İçerikler yüklenemedi");
-                    }
                 }
                 else
                 {
@@ -77,9 +75,7 @@ namespace InstaAutoPost.UI.Core.RSSService
 
                         Category _category;
                         if (categoryResult > 0)
-                        {
                             _category = CategoryGet(categoryService);
-                        }
                         else
                             throw new Exception("Kategori eklenirken hata oluştu.");
 
@@ -89,14 +85,10 @@ namespace InstaAutoPost.UI.Core.RSSService
                             //Buraya devamı yazılacak..
                         }
                         else
-                        {
                             throw new Exception("İçerikler yüklenemedi");
-                        }
                     }
                     else
-                    {
                         throw new Exception("Kategori kaydı mevcuttur");
-                    }
                 }
 
 

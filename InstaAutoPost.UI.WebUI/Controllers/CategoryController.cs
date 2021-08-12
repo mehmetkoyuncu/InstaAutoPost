@@ -18,8 +18,35 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             
         public PartialViewResult GetCategoriesWithSource(int sourceId)
         {
-            List<CategoryDTO> categories = _categoryService.GetSourceWithCategoriesById(sourceId);
+            return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", _categoryService.GetSourceWithCategoriesById(sourceId));
+        }
+        [HttpDelete]
+        public IActionResult RemoveCategory(int id)
+        {
+            return Ok(_categoryService.RemoveCategory(id));
+        }
+        [HttpGet]
+        public PartialViewResult GetAddCategoryPartial()
+        {
+            return PartialView("~/Views/Shared/Partials/_CategoryAddPartial.cshtml");
+        }
+        [HttpPost]
+        public PartialViewResult AddCategory(string name,string url,int sourceId)
+        {
+            _categoryService.AddCategory(name, url,sourceId);
+            return PartialView("~/Views/Shared/Partials/_CategoryAddPartial.cshtml");
+        }
+        public PartialViewResult GetAllCategories()
+        {
+            List<CategoryDTO> categories = _categoryService.GetAllCategories();
             return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml",categories);
         }
+        public PartialViewResult RunRssGenerator(string name, string url)
+        {
+            _categoryService.RunRssGenerator(url, name);
+            return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", _categoryService.GetAllCategories());
+        }
+        
+
     }
 }

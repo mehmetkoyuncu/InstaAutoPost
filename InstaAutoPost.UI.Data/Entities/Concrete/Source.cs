@@ -13,6 +13,7 @@ namespace InstaAutoPost.UI.Data.Entities.Concrete
         }
         public string Name { get; set; }
         public string Image { get; set; }
+        public string URL { get; set; }
         public virtual ICollection<Category> Categories { get; set; }
 
 

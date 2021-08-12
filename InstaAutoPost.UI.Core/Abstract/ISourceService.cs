@@ -8,7 +8,7 @@ namespace InstaAutoPost.UI.Core.Abstract
 {
     public interface ISourceService
     {
-        string Add(string name, string image);
+        int Add(string name, string image,string url);
         string DeleteById(int id);
         Source GetById(int id);
         List<Source> GetByName(string name);

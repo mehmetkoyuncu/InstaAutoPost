@@ -34,9 +34,9 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             return PartialView("~/Views/Shared/Partials/_SourceAddPartial.cshtml");
         }
         [HttpPost]
-        public IActionResult AddSource(string name,string image)
+        public IActionResult AddSource(string name,string image,string url)
         {
-            return Ok(_sourceService.Add(name, image));
+            return Ok(_sourceService.Add(name, image,url));
         }
         [HttpGet]
         public IActionResult GetSourceById(int id)

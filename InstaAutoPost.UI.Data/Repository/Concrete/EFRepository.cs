@@ -29,7 +29,10 @@ namespace InstaAutoPost.UI.Data.Repository.Concrete
         {
             _dbset.Add(entity);
         }
-
+        public void AddList(List<TEntity> entityList)
+        {
+            _dbset.AddRange(entityList);
+        }
         public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> filter)
         {
             return _dbset.Where(filter);

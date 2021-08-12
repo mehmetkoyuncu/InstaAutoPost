@@ -1,118 +1,84 @@
 ﻿@model List<CategoryDTO>
-<div class="breadcome-area">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="breadcome-list">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                            <div class="breadcomb-wp">
-                                <div class="breadcomb-icon">
-                                    <img width="50px" src="@Model[0].Source.Image" />
+@{ if (Model.Count > 0)
+    {
+        <div class="breadcome-area">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="breadcome-list">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="breadcomb-wp">
+                                        <div class="breadcomb-icon">
+                                            <img width="50px" src="@Model[0].Source.Image" />
+                                        </div>
+                                        <div class="breadcomb-ctn">
+                                            <h2>@Model[0].Source.Name</h2>
+                                            <p> <span class="bread-ntd">@Model.Count adet kategori bulunmaktadır</span></p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="breadcomb-ctn">
-                                    <h2>@Model[0].Source.Name</h2>
-                                    <p> <span class="bread-ntd">@Model.Count adet kategori bulunmaktadır</span></p>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="add-product" id="add_category_button">
+                                        <a onclick="AddCategoryView(this,@Model[0].Source.Id)" id="add_view_category_button" class="btn btn-primary"><i class="far fa-plus-square mr-2"></i><span cla>Kategori Ekle</span></a>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                            <div class="add-category" style="float:right">
-                                <a onclick="AddCategoryView(this)" id="add_view_category_button" class="btn btn-primary"><i class="far fa-plus-square mr-2"></i><span cla>Kategori Ekle</span></a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="analysis-progrebar-area mg-b-30">
-    <div class="container-fluid">
-        <div class="row">
-            @foreach (var item in Model)
+        <div class="analysis-progrebar-area mg-b-30" id="category_list_container">
+            <div class="container-fluid">
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="margin-bottom:20px;">
+                            <div class="analysis-progrebar reso-mg-b-30">
+                                <div class="analysis-progrebar-content">
+                                    <h5>
+                                        @item.Name
+                                        <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveCategory(@item.Id,@item.Source.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash" style="float:right;"><i class="fas fa-trash-alt"></i></button>
+                                        <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="GetEditSourceView(this,@item.Id)" class="pd-setting-ed btn btn-success" style="float:right;"><i class="fas fa-edit"></i></button>
+                                        <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsSource(@item.Id)" class="pd-setting-ed btn btn-warning" data-original-title="Trash" style="float:right"><i class="fas fa-eye"></i></button>
+
+                                    </h5>
+                                    <h2>%<span class="counter">@item.SendedPostPercent</span></h2>
+                                    <div class="progress progress-mini">
+                                        @if (item.SendedPostPercent <= 25)
+                                        {
+                                            <div style="width: @item.SendedPostPercent%" class="progress-bar progress-bar-danger bg-red"></div>
+                                        }
+                                        else if (item.SendedPostPercent > 25 && item.SendedPostPercent <= 50)
+                                        {
+                                            <div style="width: @item.SendedPostPercent%" class="progress-bar progress-bar-warning bg-warning"></div>
+                                        }
+                                        else if (item.SendedPostPercent > 50 && item.SendedPostPercent <= 75)
+                                        {
+                                            <div style="width: @item.SendedPostPercent%" class="progress-bar progress-bar-info bg-info"></div>
+                                        }
+                                        else
+                                        {
+                                            <div style="width: @item.SendedPostPercent%" class="progress-bar progress-bar-success bg-success"></div>
+                                        }
+                                    </div>
+                                    <div class="m-t-sm small">
+                                        <p>@item.SourceContentsDTO.Count() kayıttan @item.SendedContentCount içerik post olarak gönderildi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+            else
             {
+                <p style="margin-left:30px;color:white;">Kategori kaydı bulunmamaktadır.</p>
+            }
+    }
 
-                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="margin-bottom:20px;">
-                    <div class="analysis-progrebar reso-mg-b-30">
-                        <div class="analysis-progrebar-content">
-                            <h5>
-                                @item.Name
-                                <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSource(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash" style="float:right;"><i class="fas fa-trash-alt"></i></button>
-                                <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="GetEditSourceView(this,@item.Id)" class="pd-setting-ed btn btn-success" style="float:right;"><i class="fas fa-edit"></i></button>
-                                <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsSource(@item.Id)" class="pd-setting-ed btn btn-warning" data-original-title="Trash" style="float:right"><i class="fas fa-eye"></i></button>
-
-                            </h5>
-                        <h2>%<span class="counter">@item.SendedPostPercent</span></h2>
-                        <div class="progress progress-mini">
-                            @if (item.SendedPostPercent <= 25)
-                            {
-                                <div style="width: @item.SendedPostPercent%" class="progress-bar progress-bar-danger bg-red"></div>
-                            }
-                            else if (item.SendedPostPercent > 25 && item.SendedPostPercent <= 50)
-                            {
-                                <div style="width: @item.SendedPostPercent%" class="progress-bar progress-bar-warning bg-warning"></div>
-                            }
-                            else if (item.SendedPostPercent > 50 && item.SendedPostPercent <= 75)
-                            {
-                                <div style="width: @item.SendedPostPercent%" class="progress-bar progress-bar-info bg-info"></div>
-                            }
-                            else
-                            {
-                                <div style="width: @item.SendedPostPercent%" class="progress-bar progress-bar-success bg-success"></div>
-                            }
-                        </div>
-                        <div class="m-t-sm small">
-                            <p>@item.SourceContentsDTO.Count() kayıttan @item.SendedContentCount içerik post olarak gönderildi.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-
-            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <div class="analysis-progrebar reso-mg-b-30">
-                    <div class="analysis-progrebar-content">
-                        <h5>Memory</h5>
-                        <h2><span class="counter">70</span>%</h2>
-                        <div class="progress progress-mini">
-                            <div style="width: 78%;" class="progress-bar"></div>
-                        </div>
-                        <div class="m-t-sm small">
-                            <p>Server down since 12:32 pm.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <div class="analysis-progrebar reso-mg-b-30 res-mg-t-30">
-                    <div class="analysis-progrebar-content">
-                        <h5>Data</h5>
-                        <h2><span class="counter">50</span>%</h2>
-                        <div class="progress progress-mini">
-                            <div style="width: 38%;" class="progress-bar progress-bar-danger"></div>
-                        </div>
-                        <div class="m-t-sm small">
-                            <p>Server down since 8:32 pm.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <div class="analysis-progrebar res-mg-t-30">
-                    <div class="analysis-progrebar-content">
-                        <h5>Space</h5>
-                        <h2><span class="counter">40</span>%</h2>
-                        <div class="progress progress-mini">
-                            <div style="width: 28%;" class="progress-bar progress-bar-danger"></div>
-                        </div>
-                        <div class="m-t-sm small">
-                            <p>Server down since 5:32 pm.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

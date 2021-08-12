@@ -4,14 +4,16 @@ using InstaAutoPost.UI.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InstaAutoPost.UI.Data.Migrations
 {
     [DbContext(typeof(RSSContextEF))]
-    partial class RSSContextEFModelSnapshot : ModelSnapshot
+    [Migration("20210811123156_entitiesChanged")]
+    partial class entitiesChanged
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

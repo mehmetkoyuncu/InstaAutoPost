@@ -1,10 +1,12 @@
 ﻿$(document).ready(function () {
     RenderBodyClear();
+    StartLoader();
     RefreshGetSourceLoad();
 });
 function RefreshGetSourceLoad() {
-    StartLoader();
-    $('#codeSource').load('Source/GetSources', StopLoader());
+    $('#codeSource').load('Source/GetSources', function () {
+        StopLoader()
+    });
 }
 
 function GetAllSource() {

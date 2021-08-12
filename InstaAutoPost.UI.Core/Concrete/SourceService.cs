@@ -21,19 +21,19 @@ namespace InstaAutoPost.UI.Core.Concrete
             uow = new EFUnitOfWork(new RSSContextEF());
         }
 
-        public string Add(string name, string image)
+        public int Add(string name, string image,string url)
         {
             Source source = new Source()
             {
                 InsertedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 Name = name,
-                Image = image
+                Image = image,
+                URL=url,
+                IsDeleted=false
             };
-            uow.GetRepository<Source>().Add(source);
-            int result = uow.SaveChanges();
-            string sResult = result == 0 ? "Hata! kaynak eklenemedi" : "Kaynak başarıyla eklendi";
-            return sResult;
+            uow.GetRepository<Source>().Add(source); 
+            return uow.SaveChanges();
         }
 
         public string DeleteById(int id)
@@ -56,6 +56,11 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             return uow.GetRepository<Source>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
         }
+        public Source GetByURL(string url,string name)
+        {
+            return uow.GetRepository<Source>().Get(x => (x.URL == url||x.Name==name) && x.IsDeleted == false).FirstOrDefault();
+        }
+
 
         public List<Source> GetByName(string name)
         {

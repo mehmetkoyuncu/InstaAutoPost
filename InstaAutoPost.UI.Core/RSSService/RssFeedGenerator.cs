@@ -19,7 +19,6 @@ namespace InstaAutoPost.UI.Core.RSSService
             _rssLink = categoryLink;
             _rssName = categoryName;
         }
-
         public void RSSCreator()
         {
             CategoryService categoryService = new CategoryService();
@@ -55,7 +54,7 @@ namespace InstaAutoPost.UI.Core.RSSService
                         _category = CategoryGet(categoryService);
                     else
                         throw new Exception("Kategori eklenirken hata oluştu.");
-                    int sourceContentResult=SourceContentAdd(sourceContentService, feed, _category);
+                    int sourceContentResult = SourceContentAdd(sourceContentService, feed, _category);
                     if (sourceContentResult > 0)
                     {
                         //Buraya devamı yazılacak..
@@ -104,13 +103,18 @@ namespace InstaAutoPost.UI.Core.RSSService
             SourceContent sourceContent = null;
             foreach (var element in feed.Items)
             {
+                string content = null;
+                if (element.Summary != null || element.Content != null)
+                    content = element.Summary != null ? element.Summary.Text : ((TextSyndicationContent)element.Content).Text.ToString();
+                else
+                    content = null;
                 sourceContent = new SourceContent()
                 {
                     ContentInsertAt = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now,
                     InsertedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     CategoryId = _category.Id,
-                    Description = element.Summary != null ? element.Summary.Text : ((TextSyndicationContent)element.Content).Text.ToString(),
+                    Description = content,
                     SourceContentId = element.Id,
                     IsDeleted = false,
                     SendOutForPost = false,
@@ -142,11 +146,11 @@ namespace InstaAutoPost.UI.Core.RSSService
         {
             if (feed.Links.Count != 0)
             {
-                _source = sourceService.GetByURL(feed.Links[0].Uri.OriginalString,feed.Title.Text);
+                _source = sourceService.GetByURL(feed.Links[0].Uri.OriginalString, feed.Title.Text);
             }
             else if (!string.IsNullOrEmpty(feed.Id))
             {
-                _source = sourceService.GetByURL(feed.Id,feed.Title.Text);
+                _source = sourceService.GetByURL(feed.Id, feed.Title.Text);
             }
             if (_source == null)
                 throw new Exception("Kaynak eklendi fakat getirilirken hata oluştu");
@@ -174,16 +178,16 @@ namespace InstaAutoPost.UI.Core.RSSService
         {
             return categoryService.GetByRSSURL(_rssLink);
         }
-        private  Source SourceControl(SourceService sourceService, SyndicationFeed feed)
+        private Source SourceControl(SourceService sourceService, SyndicationFeed feed)
         {
             Source controlSource = null;
             if (feed.Links.Count != 0)
             {
-                controlSource = sourceService.GetByURL(feed.Links[0].Uri.OriginalString,feed.Title.Text);
+                controlSource = sourceService.GetByURL(feed.Links[0].Uri.OriginalString, feed.Title.Text);
             }
             else if (!string.IsNullOrEmpty(feed.Id))
             {
-                controlSource = sourceService.GetByURL(feed.Id,feed.Title.Text);
+                controlSource = sourceService.GetByURL(feed.Id, feed.Title.Text);
             }
 
             return controlSource;

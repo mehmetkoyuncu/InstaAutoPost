@@ -1,11 +1,20 @@
 ﻿using InstaAutoPost.UI.Core.Abstract;
+using InstaAutoPost.UI.Core.Common.CharacterConverter;
+using InstaAutoPost.UI.Core.Common.DTOS;
 using InstaAutoPost.UI.Core.Concrete;
 using InstaAutoPost.UI.Data.Entities.Concrete;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace InstaAutoPost.UI.Core.RSSService
 {
@@ -14,16 +23,21 @@ namespace InstaAutoPost.UI.Core.RSSService
 
         private readonly string _rssLink;
         private readonly string _rssName;
-        public RssFeedGenerator(string categoryLink, string categoryName)
+        private readonly IHostEnvironment _environment;
+        public RssFeedGenerator(string categoryLink, string categoryName, IHostEnvironment environment)
         {
             _rssLink = categoryLink;
             _rssName = categoryName;
+            _environment = environment;
         }
-        public void RSSCreator()
+        public RssResultDTO RSSCreator()
         {
+            var result = 0;
+            Category _category=null;
             CategoryService categoryService = new CategoryService();
             SourceService sourceService = new SourceService();
             SourceContentService sourceContentService = new SourceContentService();
+            ImagesService imageService = new ImagesService();
             SyndicationFeed feed = null;
 
             try
@@ -33,7 +47,7 @@ namespace InstaAutoPost.UI.Core.RSSService
                     feed = SyndicationFeed.Load(reader);
                 }
             }
-            catch { throw new Exception("Doğru bir RSS kodu giriniz.."); } // TODO: Deal with unavailable resource.
+            catch (Exception ex) { throw new Exception("Doğru bir RSS kodu giriniz.."); } // TODO: Deal with unavailable resource.
 
             Category controlCategory = CategoryControl(categoryService);
             Source controlSource = SourceControl(sourceService, feed);
@@ -49,15 +63,14 @@ namespace InstaAutoPost.UI.Core.RSSService
                     else
                         throw new Exception("Kaynak eklenirken hata oluştu.");
                     int categoryResult = CategoryAdd(categoryService, _source);
-                    Category _category;
                     if (categoryResult > 0)
                         _category = CategoryGet(categoryService);
                     else
                         throw new Exception("Kategori eklenirken hata oluştu.");
-                    int sourceContentResult = SourceContentAdd(sourceContentService, feed, _category);
+                    int sourceContentResult = SourceContentAdd(sourceContentService, feed, _category, imageService);
                     if (sourceContentResult > 0)
                     {
-                        //Buraya devamı yazılacak..
+                        result = sourceContentResult;
                     }
                     else
                         throw new Exception("İçerikler yüklenemedi");
@@ -72,16 +85,16 @@ namespace InstaAutoPost.UI.Core.RSSService
                         else
                             throw new Exception("Kategori yanlış kaydedilmiştir.");
 
-                        Category _category;
+                       
                         if (categoryResult > 0)
                             _category = CategoryGet(categoryService);
                         else
                             throw new Exception("Kategori eklenirken hata oluştu.");
 
-                        int sourceContentResult = SourceContentAdd(sourceContentService, feed, _category);
+                        int sourceContentResult = SourceContentAdd(sourceContentService, feed, _category, imageService);
                         if (sourceContentResult > 0)
                         {
-                            //Buraya devamı yazılacak..
+                            result = sourceContentResult;
                         }
                         else
                             throw new Exception("İçerikler yüklenemedi");
@@ -94,20 +107,42 @@ namespace InstaAutoPost.UI.Core.RSSService
 
 
             }
-
+            return new RssResultDTO() {RssAddedCount=result,CategoryId=_category.Id };
         }
-        private int SourceContentAdd(SourceContentService sourceContentService, SyndicationFeed feed, Category _category)
+        private int SourceContentAdd(SourceContentService sourceContentService, SyndicationFeed feed, Category _category, ImagesService imagesService)
         {
             List<SourceContent> sourceContentList = new List<SourceContent>();
-
             SourceContent sourceContent = null;
+            string content = null;
             foreach (var element in feed.Items)
             {
-                string content = null;
+                string image = null;
+
+
                 if (element.Summary != null || element.Content != null)
-                    content = element.Summary != null ? element.Summary.Text : ((TextSyndicationContent)element.Content).Text.ToString();
+                {
+                    content = element.Summary != null ? element.Summary.Text : ((TextSyndicationContent)element.Content).Text.Trim().ToString();
+
+                }
+                if (element.Links.Any(x => x.RelationshipType != null ? x.RelationshipType.Contains("enclosure") : false))
+                {
+                    image = (element.Links.Where(x => x.RelationshipType != null ? x.RelationshipType.Contains("enclosure") : false).Select(x => x.Uri.OriginalString.Trim().ToLower()).FirstOrDefault());
+                }
+                else if (element.ElementExtensions.Any(x => x.OuterName != null ? x.OuterName.Contains("image") : false))
+                {
+                    foreach (SyndicationElementExtension extension in element.ElementExtensions)
+                    {
+                        if (extension.OuterName=="image"||extension.OuterName=="ipimage")
+                        {
+                            XElement ele = extension.GetObject<XElement>();
+                            image = ele.Value.Trim();
+                        }
+
+                    }
+                }
                 else
-                    content = null;
+                    image = SliceImage(image, content);
+                var imageData =  DownloadImage(image, ((element.Title.Text.Substring(0, 10)).Replace(" ", "")) + (Guid.NewGuid().ToString()), ImageFormat.Jpeg);
                 sourceContent = new SourceContent()
                 {
                     ContentInsertAt = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now,
@@ -118,8 +153,8 @@ namespace InstaAutoPost.UI.Core.RSSService
                     SourceContentId = element.Id,
                     IsDeleted = false,
                     SendOutForPost = false,
-                    Link = null,
-                    Title = element.Title.Text
+                    imageURL = imageData,
+                    Title = element.Title.Text.Trim()
                 };
                 sourceContentList.Add(sourceContent);
             }
@@ -129,6 +164,25 @@ namespace InstaAutoPost.UI.Core.RSSService
             int sourceContentResult = sourceContentService.AddSourceContent(sourceContentList);
             return sourceContentResult;
         }
+
+        private static string SliceImage(string imageL, string content)
+        {
+            int imgurLBeginIndex = content.IndexOf("<img");
+
+            if (imgurLBeginIndex != -1)
+            {
+                int imgUrlEndIndex = content.IndexOf(">", imgurLBeginIndex);
+                string URL = content.Substring(imgurLBeginIndex, (imgUrlEndIndex - imgurLBeginIndex) + 1);
+                string beginString = "src=";
+                int imageBeginIndex = URL.IndexOf(beginString);
+                imageBeginIndex += imageBeginIndex;
+
+                int imageLastIndex = URL.IndexOf("\"", imageBeginIndex);
+                imageL = URL.Substring(imageBeginIndex, (imageLastIndex - imageBeginIndex));
+            }
+            return imageL;
+        }
+
         private Category CategoryGet(CategoryService categoryService)
         {
             Category _category = categoryService.GetByRSSURL(_rssLink);
@@ -161,19 +215,63 @@ namespace InstaAutoPost.UI.Core.RSSService
             int sourceResult = 0;
             if (feed.ImageUrl != null)
             {
-                sourceResult = sourceService.Add(feed.Title.Text, feed.ImageUrl.OriginalString, feed.Links[0].Uri.OriginalString);
+
+                string imageSrc = null;
+
+                imageSrc = DownloadImage(feed.ImageUrl.OriginalString, feed.Title.Text.Trim(), ImageFormat.Png);
+
+                sourceResult = sourceService.Add(feed.Title.Text.Trim(), imageSrc, feed.Links[0].Uri.OriginalString);
             }
             else if (feed.Links.Count != 0)
             {
-                sourceResult = sourceService.Add(feed.Title.Text, null, feed.Links[0].Uri.OriginalString);
+                sourceResult = sourceService.Add(feed.Title.Text.Trim(), null, feed.Links[0].Uri.OriginalString);
             }
             else
             {
-                sourceResult = sourceService.Add(feed.Title.Text, null, feed.Id);
+                sourceResult = sourceService.Add(feed.Title.Text.Trim(), null, feed.Id);
             }
 
             return sourceResult;
         }
+
+        private string DownloadImage(string imageURL, string fileName, ImageFormat imageFormat)
+        {
+            string imageSrc;
+            try
+            {
+                string sImageFormat = "." + ((imageFormat.ToString()).ToLower());
+                CharacterConvertGenerator generator = new CharacterConvertGenerator();
+                fileName = generator.TurkishToEnglish(fileName);
+                fileName = generator.RemovePunctuation(fileName);
+                WebClient client = new WebClient();
+                Stream stream = client.OpenRead(imageURL);
+                Bitmap bitmap; bitmap = new Bitmap(stream);
+
+                if (bitmap != null)
+                {
+
+                    System.IO.FileStream fs = System.IO.File.Open(Path.Combine(_environment.ContentRootPath + @"/wwwroot/images", fileName + sImageFormat), FileMode.Create);
+                    bitmap.Save(fs, imageFormat);
+                    fs.Close();
+
+
+                }
+
+                stream.Flush();
+                stream.Close();
+                client.Dispose();
+                imageSrc = fileName + sImageFormat;
+
+
+            }
+            catch (Exception ex)
+            {
+                imageSrc = null;
+            }
+
+            return imageSrc;
+        }
+
         private Category CategoryControl(CategoryService categoryService)
         {
             return categoryService.GetByRSSURL(_rssLink);

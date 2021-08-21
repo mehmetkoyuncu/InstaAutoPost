@@ -29,6 +29,8 @@ namespace InstaAutoPost.UI.WebUI
             services.AddControllersWithViews();
             services.AddScoped<ISourceService, SourceService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IRssRunnerService, RssRunnerService>();
+            services.AddScoped<ISourceContentService, SourceContentService>();
 
         }
 

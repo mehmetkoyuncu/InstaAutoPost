@@ -47,6 +47,11 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             string result = _sourceService.DeleteById(id);
             return Ok(Json(result));
         }
+        [HttpGet]
+        public PartialViewResult GetUpsertPartial()
+        {
+            return PartialView("~/Views/Shared/Partials/_UpsertPartial.cshtml");
+        }
 
     }
 }

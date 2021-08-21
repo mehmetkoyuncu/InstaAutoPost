@@ -1203,11 +1203,8 @@ ul.two-part-sp li{
 .mini-navbar .header-top-area{
 	left: 80px;
 }
-.add-product a {
+#upsert_button {
     float: right;
-    position: absolute;
-    top: 20px;
-    right: 35px;
     background: #152036;
     padding: 6px 20px;
     color: #fff;

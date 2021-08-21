@@ -8,7 +8,7 @@ namespace InstaAutoPost.UI.Data.Context
 {
     public class RSSContextEF:DbContext
     {
-        public DbSet<Image> Images { get; set; }
+        public DbSet<SourceContentImage> Images { get; set; }
         public DbSet<Source> Sources { get; set; }
         public DbSet<SourceContent> SourceContents { get; set; }
         public DbSet<Category> Categories { get; set; }

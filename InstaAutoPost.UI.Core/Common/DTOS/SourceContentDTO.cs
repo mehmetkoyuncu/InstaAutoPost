@@ -5,19 +5,15 @@ using System.Text;
 
 namespace InstaAutoPost.UI.Core.Common.DTOS
 {
-    public class SourceContentDTO: DTOAbstractBase
+    public class SourceContentDTO
     {
-        public SourceContentDTO()
-        {
-            ImagesDTO = new List<ImageDTO>();
-        }
-        public string Link { get; set; }
+        public int Id { get; set; }
+        public string imageURL { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime ContentInsertAt { get; set; }
         public bool SendOutForPost { get; set; }
-        public int CategoryId { get; set; }
-        public virtual CategoryDTO Category { get; set; }
-        public virtual ICollection<ImageDTO> ImagesDTO { get; set; }
+        public string CategoryName { get; set; }
+        public string SourceName { get; set; }
     }
 }

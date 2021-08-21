@@ -14,12 +14,12 @@ namespace InstaAutoPost.UI.Core.AutoMapper
         {
             CreateMap<CategoryDTO, Category>();
             CreateMap<SourceDTO, Source>();
-            CreateMap<ImageDTO, Image>();
+            CreateMap<ImageDTO, SourceContentImage>();
             CreateMap<SourceContentDTO, SourceContent>();
             CreateMap<Category, CategoryDTO>().ForMember(sd=>sd.SendedContentCount,o=>o.MapFrom(x=>x.SourceContents.Where(x=>x.SendOutForPost==true).Count())).ForMember(sd=>sd.SourceContentsDTO,o=>o.MapFrom(x=>x.SourceContents));
             CreateMap<CategoryDTO, Category>();
             CreateMap<Source, SourceDTO>();
-            CreateMap<Image, ImageDTO>();
+            CreateMap<SourceContentImage, ImageDTO>();
             CreateMap<SourceContent, SourceContentDTO>();
             CreateMap<SourceWithCategoryCountDTO, Source>();
             CreateMap<Source, SourceWithCategoryCountDTO>()

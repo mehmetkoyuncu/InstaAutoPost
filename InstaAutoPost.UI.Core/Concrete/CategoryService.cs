@@ -7,6 +7,7 @@ using InstaAutoPost.UI.Data.Entities.Concrete;
 using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
 using InstaAutoPost.UI.Data.UnitOfWork.Concrete;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace InstaAutoPost.UI.Core.Concrete
         }
         public List<CategoryDTO> GetSourceWithCategoriesById(int id)
         {
-            List<Category> categories = _uow.GetRepository<Category>().Get(x => x.SourceId == id && x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false)).ToList();
+            List<Category> categories = _uow.GetRepository<Category>().Get(x => x.Id == id && x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false)).ToList();
             List<CategoryDTO> categoryDTOs = Mapping.Mapper.Map<List<CategoryDTO>>(categories);
             foreach (var item in categoryDTOs)
             {
@@ -57,8 +58,8 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             _uow.GetRepository<Category>().Add(new Category
             {
-                Name = name,
-                Link = url,
+                Name = name.Trim(),
+                Link = url.Trim(),
                 InsertedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false,
@@ -90,10 +91,10 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             return _uow.GetRepository<Category>().Get(x => x.Link == rssUrl && x.IsDeleted == false).FirstOrDefault();
         }
-        public void RunRssGenerator(string url,string name)
+        public RssResultDTO RunRssGenerator(string url,string name, IHostEnvironment environment)
         {
-            RssFeedGenerator generator = new RssFeedGenerator(url, name);
-            generator.RSSCreator();
+            RssFeedGenerator generator = new RssFeedGenerator(url, name,environment);
+            return generator.RSSCreator();
         }
     }
 }

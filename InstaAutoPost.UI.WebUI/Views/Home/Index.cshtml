@@ -1,23 +1,10 @@
 ﻿<link href="~/css/projectStyles/source.css" rel="stylesheet" />
 <link href="~/css/projectStyles/category.css" rel="stylesheet" />
-@section BreadCrumpIcon {
-    <link href="~/css/projectStyles/source.css" rel="stylesheet" />
-    <img width="50px" src="@ViewBag.BreadCrumpImage" alt="@ViewBag.BreadCrumpHeader" />
-}
-@section BreadCrumpHeader {
-    @ViewBag.BreadCrumpHeader
-}
-@section BreadCrumpText {
-    @ViewBag.BreadCrumpText
-}
-@section DownloadReport {
-    <button data-toggle="tooltip" data-placement="left" title="Excel olarak indir" class="btn"><i class="icon nalika-download"></i></button>
-}
-
 
 @section Scripts {
     <script src="~/js/projectScripts/source.js"></script>
     <script src="~/js/projectScripts/category.js"></script>
+    <script src="~/js/projectScripts/rssGenerator.js"></script>
 
 }
 <div id="codeSource"></div>

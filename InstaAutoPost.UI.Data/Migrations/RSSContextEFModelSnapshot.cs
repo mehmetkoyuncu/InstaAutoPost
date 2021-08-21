@@ -132,9 +132,6 @@ namespace InstaAutoPost.UI.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Link")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("SendOutForPost")
                         .HasColumnType("bit");
 
@@ -146,6 +143,9 @@ namespace InstaAutoPost.UI.Data.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("imageURL")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

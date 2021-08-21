@@ -7,7 +7,7 @@ namespace InstaAutoPost.UI.Data.Entities.Concrete
 {
     public class SourceContent : EntityBase, IEntity
     {
-        public string Link { get; set; }
+        public string imageURL { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime ContentInsertAt { get; set; }
@@ -15,7 +15,7 @@ namespace InstaAutoPost.UI.Data.Entities.Concrete
         public int CategoryId { get; set; }
         public string SourceContentId { get; set; }
         public virtual Category Category { get; set; }
-        public virtual ICollection<Image> Images { get; set; }
+        public virtual ICollection<SourceContentImage> Images { get; set; }
 
     }
 }

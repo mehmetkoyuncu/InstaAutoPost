@@ -121,7 +121,7 @@ namespace InstaAutoPost.UI.Core.RSSService
 
                 if (element.Summary != null || element.Content != null)
                 {
-                    content = element.Summary != null ? element.Summary.Text : ((TextSyndicationContent)element.Content).Text.Trim().ToString();
+                    content = ContentSlice(element);
 
                 }
                 if (element.Links.Any(x => x.RelationshipType != null ? x.RelationshipType.Contains("enclosure") : false))
@@ -163,6 +163,25 @@ namespace InstaAutoPost.UI.Core.RSSService
                 throw new Exception("Bu linkte içerik bulunmamaktadır.");
             int sourceContentResult = sourceContentService.AddSourceContent(sourceContentList);
             return sourceContentResult;
+        }
+
+        private static string ContentSlice(SyndicationItem element)
+        {
+            string content = element.Summary != null ? element.Summary.Text : ((TextSyndicationContent)element.Content).Text.Trim().ToString();
+            if (content.Contains('<') && content.Contains('>'))
+            {
+                foreach (var item in content)
+                {
+                    if (item == '<')
+                    {
+                        int beginIndex = content.IndexOf(item);
+                        int lastIndex = content.IndexOf('>');
+                        content = content.Remove(beginIndex, (lastIndex - beginIndex) + 1);
+                    }
+                }
+            }
+
+            return content;
         }
 
         private static string SliceImage(string imageL, string content)

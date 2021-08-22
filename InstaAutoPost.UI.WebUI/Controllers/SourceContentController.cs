@@ -16,7 +16,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         }
         public PartialViewResult GetSourceContent(int categoryId)
         {
-            return Ok(_sourceContentService.GetSourceContent(categoryId));
+            return PartialView("~/Views/Shared/Partials/_SourceContentListPartial.cshtml", _sourceContentService.GetSourceContent(categoryId));
         }
         public IActionResult Index()
         {

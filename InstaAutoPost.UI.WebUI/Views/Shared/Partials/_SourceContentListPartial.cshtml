@@ -7,7 +7,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
                             <h4 id="source_content_header">İçerik Listesi</h4>
-                            <div class="alert alert-info alert-dismissible" id="source_content_result">
+                            <div class="alert alert-info alert-dismissible" style="display:none" id="source_content_result">
                                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 
                             </div>
@@ -32,14 +32,23 @@
                                         <td><img width="20px" src="~/images/@item.imageURL" alt="@item.Title.Substring(0,5)"></td>
                                         <td> @item.Title.Substring(0, 20) ...</td>
                                         <td>@item.Description.Substring(0, 20) ...</td>
-                                        <td>@item.SendOutForPost</td>
+                                        <td>
+                                            @if (item.SendOutForPost)
+                                            {
+                                                <span class="badge badge-pill badge-success">Paylaşıldı</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-pill badge-success">Paylaşılmadı</span>
+                                            }
+                                        </td>
                                         <td>@item.ContentInsertAt.ToShortDateString()</td>
                                         <td>@item.CategoryName</td>
                                         <td>@item.SourceName</td>
                                         <td style="text-align:center;">
                                             <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsSource(@item.Id)" class="pd-setting-ed btn btn-warning" data-original-title="Trash"><i class="fas fa-eye"></i></button>
                                             <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="GetEditSourceView(this,@item.Id)" class="pd-setting-ed btn btn-success"><i class="fas fa-edit"></i></button>
-                                            <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSource(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash"><i class="fas fa-trash-alt"></i></button>
+                                            <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSourceContent(@item.Id,@item.CategoryId)" class="pd-setting-ed btn btn-danger" data-original-title="Trash"><i class="fas fa-trash-alt"></i></button>
                                         </td>
                                     </tr>
                                 }

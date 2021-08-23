@@ -27,7 +27,7 @@ namespace InstaAutoPost.UI.Core.Concrete
         public List<SourceContentDTO> GetSourceContent(int categoryId)
         {
             var sourcontent = _uow.GetRepository<SourceContent>()
-                .Get(x => x.CategoryId == categoryId)
+                .Get(x => x.CategoryId == categoryId&&x.IsDeleted==false)
                 .Include(x => x.Category)
                 .Include(x => x.Category.Source)
                 .Select(x => new SourceContentDTO()
@@ -39,10 +39,23 @@ namespace InstaAutoPost.UI.Core.Concrete
                     imageURL = x.imageURL,
                     SendOutForPost = x.SendOutForPost,
                     SourceName = x.Category.Source.Name,
-                    Title = x.Title
+                    Title = x.Title,
+                    CategoryId=x.CategoryId
                 }).OrderByDescending(x => x.ContentInsertAt).ToList();
             return sourcontent;
 
+        }
+        public SourceContent GetSourceContentById(int id)
+        {
+            return _uow.GetRepository<SourceContent>().Get(x => x.Id == id&&x.IsDeleted==false).FirstOrDefault();
+        }
+        public string RemoveSourceContent(int id)
+        {
+            SourceContent sourceContent = GetSourceContentById(id);
+            _uow.GetRepository<SourceContent>().Remove(sourceContent);
+            int result = _uow.SaveChanges();
+            string sResult = result == 0 ? "Hata! kaynak silinemedi" : "Kaynak başarıyla silindi";
+            return sResult;
         }
     }
 }

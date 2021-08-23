@@ -18,7 +18,10 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             _categoryService = categoryService;
          
         }
-
+        public IActionResult Index()
+        {
+            return View();
+        }
         public PartialViewResult GetCategoriesWithSource(int sourceId)
         {
             return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", _categoryService.GetSourceWithCategoriesById(sourceId));
@@ -43,6 +46,11 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         {
             List<CategoryDTO> categories = _categoryService.GetAllCategories();
             return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", categories);
+        }
+        public PartialViewResult GetCategoryBySourceId(int id)
+        {
+            List<CategoryDTO> categoryList = _categoryService.GetAllCategoryBySourceId(id);
+            return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", categoryList);
         }
     }
 }

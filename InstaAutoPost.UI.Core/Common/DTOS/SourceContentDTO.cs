@@ -15,5 +15,6 @@ namespace InstaAutoPost.UI.Core.Common.DTOS
         public bool SendOutForPost { get; set; }
         public string CategoryName { get; set; }
         public string SourceName { get; set; }
+        public int CategoryId { get; set; }
     }
 }

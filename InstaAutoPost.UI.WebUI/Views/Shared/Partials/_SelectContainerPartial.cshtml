@@ -1,0 +1,30 @@
+﻿@model List<SelectboxSourceDTO>
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list" id="breadcome_layout">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="breadcomb-wp">
+
+                                <div class="breadcomb-ctn">
+                                    <div id="">
+                                        <select onchange="SelectSource()" name="select" id="select_source" class="form-control pro-edt-select form-control-primary">
+                                            <option value="-1">TÜM KATEGORİLER</option>
+                                            @foreach (var item in Model)
+                                            {
+                                                <option value="@item.Id">@item.Name.ToUpper()</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

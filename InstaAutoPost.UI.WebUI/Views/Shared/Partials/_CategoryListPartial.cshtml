@@ -8,8 +8,8 @@
                     @foreach (var item in Model)
                     {
 
-                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="margin-bottom:20px;">
-                            <div class="analysis-progrebar reso-mg-b-30">
+                        <div class=" col-md-3" style="margin-bottom:20px;">
+                            <div class="analysis-progrebar @*reso-mg-b-30*@">
                                 <div class="analysis-progrebar-content">
                                     <h5>
                                         @item.Name
@@ -44,7 +44,7 @@
                                         <div id="source_image_content">
                                             @if (String.IsNullOrEmpty(item.Source.Image))
                                             {
-                                                <small style="color:white">@item.Name</small>
+                                                <small style="color:white">@item.Source.Name</small>
                                             }
                                             else
                                             {

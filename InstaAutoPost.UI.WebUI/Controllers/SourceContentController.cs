@@ -18,6 +18,12 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         {
             return PartialView("~/Views/Shared/Partials/_SourceContentListPartial.cshtml", _sourceContentService.GetSourceContent(categoryId));
         }
+        [HttpDelete]
+        public IActionResult RemoveSourceContent(int id)
+        {
+            string result = _sourceContentService.RemoveSourceContent(id);
+            return Json(result);
+        }
         public IActionResult Index()
         {
             return View();

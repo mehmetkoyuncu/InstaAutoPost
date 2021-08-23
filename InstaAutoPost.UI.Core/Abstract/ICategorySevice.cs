@@ -14,8 +14,10 @@ namespace InstaAutoPost.UI.Core.Abstract
         string RemoveCategory(int id);
         Category GetById(int id);
         Category GetByRSSURL(string rssUrl);
-        int AddCategory(string name, string url,int sourceId);
-       
+        int AddCategory(string name, string url, int sourceId);
+        List<CategoryDTO> GetAllCategoryBySourceId(int id);
+
+
 
     }
 }

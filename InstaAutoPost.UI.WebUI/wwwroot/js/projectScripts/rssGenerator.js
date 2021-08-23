@@ -10,6 +10,7 @@
                 CloseUpsertView();
                 $('#run_rss').attr('onclick', 'GetRssAddView()');
                 $('#source_content_header').text("Eklenen İçerikler");
+                $('#source_content_result').show();
                 $('#source_content_result').append('<strong>' + data.value.rssAddedCount + ' adet içerik eklendi.</strong>');
                 StopLoader();
             });
@@ -25,3 +26,4 @@ function GetRssAddView() {
     UpsertChange(true, 'RSS', '');
     StopLoader();
 }
+

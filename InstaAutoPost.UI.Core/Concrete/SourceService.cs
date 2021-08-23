@@ -21,7 +21,7 @@ namespace InstaAutoPost.UI.Core.Concrete
             uow = new EFUnitOfWork(new RSSContextEF());
         }
 
-        public int Add(string name, string image,string url)
+        public int Add(string name, string image, string url)
         {
             Source source = new Source()
             {
@@ -29,10 +29,10 @@ namespace InstaAutoPost.UI.Core.Concrete
                 UpdatedAt = DateTime.Now,
                 Name = name,
                 Image = image,
-                URL=url,
-                IsDeleted=false
+                URL = url,
+                IsDeleted = false
             };
-            uow.GetRepository<Source>().Add(source); 
+            uow.GetRepository<Source>().Add(source);
             return uow.SaveChanges();
         }
 
@@ -48,7 +48,7 @@ namespace InstaAutoPost.UI.Core.Concrete
 
         public List<SourceDTO> GetAll()
         {
-            List<Source> sourceList = uow.GetRepository<Source>().Get(x => x.IsDeleted == false).OrderByDescending(x=>x.UpdatedAt).ToList();
+            List<Source> sourceList = uow.GetRepository<Source>().Get(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
             return Mapping.Mapper.Map<List<SourceDTO>>(sourceList);
         }
 
@@ -56,9 +56,9 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             return uow.GetRepository<Source>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
         }
-        public Source GetByURL(string url,string name)
+        public Source GetByURL(string url, string name)
         {
-            return uow.GetRepository<Source>().Get(x => (x.URL == url||x.Name==name) && x.IsDeleted == false).FirstOrDefault();
+            return uow.GetRepository<Source>().Get(x => (x.URL == url || x.Name == name) && x.IsDeleted == false).FirstOrDefault();
         }
 
 
@@ -74,8 +74,8 @@ namespace InstaAutoPost.UI.Core.Concrete
 
         public SourceWithCategoryCountDTO GetSourceWithCategoryCount(int id)
         {
-            Source source = uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Id == id).Include(x=>x.Categories.Where(x=>x.IsDeleted==false)).FirstOrDefault();
-            SourceWithCategoryCountDTO sourceDTO=Mapping.Mapper.Map<SourceWithCategoryCountDTO>(source);
+            Source source = uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Id == id).Include(x => x.Categories.Where(x => x.IsDeleted == false)).FirstOrDefault();
+            SourceWithCategoryCountDTO sourceDTO = Mapping.Mapper.Map<SourceWithCategoryCountDTO>(source);
             return sourceDTO;
         }
 
@@ -91,5 +91,16 @@ namespace InstaAutoPost.UI.Core.Concrete
             return sResult;
         }
 
+        public List<SelectboxSourceDTO> GetSourcesForSelectBox()
+        {
+            List<SelectboxSourceDTO> sources = uow.GetRepository<Source>()
+                .Get(x => x.IsDeleted == false)
+                .Select(x => new SelectboxSourceDTO()
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToList();
+            return sources;
+        }
     }
 }

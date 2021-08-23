@@ -10,5 +10,7 @@ namespace InstaAutoPost.UI.Core.Abstract
     {
         int AddSourceContent(List<SourceContent> sourceContent);
         List<SourceContentDTO> GetSourceContent(int categoryId);
+        string RemoveSourceContent(int id);
+        SourceContent GetSourceContentById(int id);
     }
 }

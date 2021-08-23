@@ -1,4 +1,4 @@
-﻿<div class="single-product-tab-area mg-b-30" id="add_category_view_content">
+﻿<div class="single-product-tab-area mg-b-30">
     <!-- Single pro tab review Start-->
     <div class="single-pro-review-area">
         <div class="container-fluid">
@@ -6,26 +6,34 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="review-tab-pro-inner">
                         <ul id="myTab3" class="tab-review-design">
-                            <li class="active"><a href="#description"><i class="icon nalika-edit" aria-hidden="true"></i> Ekle / Düzenle</a></li>
-                            <li style="float:right"><button type="button" onclick="RemoveAddCategoryView()" class="btn btn-danger"><i class="fa fa-times adminpro-danger-error" aria-hidden="true"></i> Kapat</button></li>
+                            <li class="active"><a href="#description"><i class="icon nalika-edit" aria-hidden="true"></i> Product Edit</a></li>
+                            <li><a href="#reviews"><i class="icon nalika-picture" aria-hidden="true"></i> Pictures</a></li>
+                            <li><a href="#INFORMATION"><i class="icon nalika-chat" aria-hidden="true"></i> Review</a></li>
                         </ul>
                         <div id="myTabContent" class="tab-content custom-product-edit">
                             <div class="product-tab-list tab-pane fade active in" id="description">
                                 <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="review-content-section" id="input_upsert_section">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <div class="review-content-section">
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-edit" aria-hidden="true"></i></span>
+                                                <input type="text" id="upsert_category_name" class="form-control" placeholder="Kategori Adı">
+                                            </div>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-favorites" aria-hidden="true"></i></span>
+                                                <input type="text" id="upsert_category_url" class="form-control" placeholder="Kategori Linki">
+                                            </div>
                                         </div>
                                     </div>
-
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="text-center custom-pro-edt-ds">
-                                            <button id="upsert_category_button" type="button" class="btn btn-ctl-bt waves-effect waves-light m-r-10">
-                                                Ekle
+                                            <button type="button" class="btn btn-ctl-bt waves-effect waves-light m-r-10">
+                                                Save
                                             </button>
-                                            <button onclick="ClearCategory()" type="button" class="btn btn-ctl-bt waves-effect waves-light">
-                                                Temizle
+                                            <button type="button" class="btn btn-ctl-bt waves-effect waves-light">
+                                                Discard
                                             </button>
                                         </div>
                                     </div>

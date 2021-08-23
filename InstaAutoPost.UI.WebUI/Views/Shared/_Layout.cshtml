@@ -65,6 +65,7 @@
         ============================================ -->
     <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
     <link href="~/css/projectStyles/common.css" rel="stylesheet" />
+    @RenderSection("Styles", false)
 </head>
 
 <body>
@@ -104,8 +105,8 @@
                                 <li><a title="Dashboard v.2" href="index-1.html"><span class="mini-sub-pro">Dashboard v.2</span></a></li>
                                 <li><a title="Dashboard v.3" href="index-2.html"> <span class="mini-sub-pro">Dashboard v.3</span></a></li>
                                 <li><a title="Kaynak Listesi" asp-action="Index" asp-controller="Source"><span class="mini-sub-pro">Product List</span></a></li>
-                                <li><a title="Kategoriler" onclick="GetRssAddView()"><span class="mini-sub-pro">Kategoriler</span></a></li>
-                                <li><a title="Product Detail" href="product-detail.html"><span class="mini-sub-pro">Product Detail</span></a></li>
+                                <li><a title="RSS Generator" onclick="GetRssAddView()"><span class="mini-sub-pro">RSS Generator</span></a></li>
+                                <li><a title="Kategoriler" asp-action="Index" asp-controller="Category"><span class="mini-sub-pro">Kategoriler</span></a></li>
                                 <li><a title="Product Cart" href="product-cart.html"><span class="mini-sub-pro">Product Cart</span></a></li>
                                 <li><a title="Product Payment" href="product-payment.html"><span class="mini-sub-pro">Product Payment</span></a></li>
                                 <li><a title="Analytics" href="analytics.html"><span class="mini-sub-pro">Analytics</span></a></li>
@@ -963,7 +964,7 @@
                 </div>
             </div>
             <!-- Mobile Menu end -->
-            <div class="breadcome-area">
+            <div class="breadcome-area" id="breadcomb_container">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -982,8 +983,8 @@
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <div class="breadcomb-report">
-                                            <button id="breadcomp_report" data-toggle="tooltip" data-placement="left" title="Excel olarak indir" class="btn"><i class="icon nalika-download"></i></button>
-                                            <a style="margin-left:10px;" id="upsert_button" class="btn btn-primary"><i class="far fa-plus-square mr-2"></i><span></span></a>
+                                            <button   id="report" data-toggle="tooltip" data-placement="left" title="Excel olarak indir" class="btn btn-primary"><i class="icon nalika-download"></i></button>
+                                            <button data-toggle="tooltip" data-placement="bottom" title="Ekle" style="margin-left:10px;" id="insert_button" class="btn btn-primary"><i class="far fa-plus-square mr-2"></i><span></span></button>
                                         </div>
                                     </div>
                                 </div>
@@ -993,7 +994,7 @@
                 </div>
             </div>
         </div>
-        <div id="render-body">
+        <div id="render_body">
             @RenderBody()
         </div>
         <div class="footer-copyright-area">

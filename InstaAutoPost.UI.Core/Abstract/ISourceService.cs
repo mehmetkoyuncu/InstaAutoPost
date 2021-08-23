@@ -16,5 +16,6 @@ namespace InstaAutoPost.UI.Core.Abstract
         List<SourceDTO> GetAll();
         List<Source> GetDeletedSource();
         SourceWithCategoryCountDTO GetSourceWithCategoryCount(int id);
+        List<SelectboxSourceDTO> GetSourcesForSelectBox();
     }
 }

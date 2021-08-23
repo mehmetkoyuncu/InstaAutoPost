@@ -56,5 +56,9 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         {
             return PartialView("~/Views/Shared/Partials/_SourceDetailPartial.cshtml", _sourceService.GetSourceWithCategoryCount(id));
         }
+        public IActionResult GetSourceSelectContainer()
+        {
+            return PartialView("~/Views/Shared/Partials/_SelectContainerPartial.cshtml", _sourceService.GetSourcesForSelectBox());
+        }
     }
 }

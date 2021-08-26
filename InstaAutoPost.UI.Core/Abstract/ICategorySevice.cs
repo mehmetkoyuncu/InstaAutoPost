@@ -9,13 +9,16 @@ namespace InstaAutoPost.UI.Core.Abstract
 {
     public interface ICategoryService
     {
-        List<CategoryDTO> GetSourceWithCategoriesById(int id);
         List<CategoryDTO> GetAllCategories();
-        string RemoveCategory(int id);
+        int RemoveCategory(int id);
         Category GetById(int id);
         Category GetByRSSURL(string rssUrl);
         int AddCategory(string name, string url, int sourceId);
         List<CategoryDTO> GetAllCategoryBySourceId(int id);
+        List<SelectboxSourceDTO> GetSourcesIdandName();
+        int EditCategory(int id, string name, int sourceId);
+        int AddCategory(string name, int sourceId);
+        List<CategoryDTO> ApplyOrderCategoryList(int sourceId, int orderId);
 
 
 

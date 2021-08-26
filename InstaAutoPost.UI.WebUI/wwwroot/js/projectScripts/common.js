@@ -16,7 +16,7 @@ function StopLoader() {
 }
 //BreadComb değiştirir
 function ChangeBreadComb(title, text, image) {
-    $('#breadcomb_image').attr("src", image);
+    $('#breadcomb_image').attr("src", "/img/breadcomb/" + image);
     $('#breadcomb_header').text(title);
     $('#breadcomb_text').text(text);
 }
@@ -31,19 +31,14 @@ function ChangeReportButton(type) {
 }
 
 
-
-
-
-
-
-
-
-function CloseUpsertView() {
+//Ekle formu kapat
+function CloseAddView() {
     StartLoader();
-    $('#upsert_container').remove();
+    $('#add_view').remove();
     $('#insert_button').show();
     StopLoader();
 }
-function ClearInput() {
-    $('#upsert_input_section input').val("");
+//Ekle formu inputları temizle
+function ClearAddView() {
+    $('#add_view input').val('');
 }

@@ -17,6 +17,7 @@ namespace InstaAutoPost.UI.Core.Common.DTOS
         public virtual SourceDTO Source { get; set; }
         public int SendedContentCount { get; set; }
         public int SendedPostPercent { get; set; }
+        public List<SourceDTO> SourceIdNameList { get; set; }
         public virtual ICollection<SourceContentDTO> SourceContentsDTO { get; set; }
     }
 }

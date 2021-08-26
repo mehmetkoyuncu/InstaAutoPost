@@ -1,11 +1,69 @@
-﻿@model List<CategoryDTO>
-@{ if (Model.Count > 0)
+﻿@model Tuple<List<CategoryDTO>, List<SelectboxSourceDTO>>
+
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list" id="breadcome_layout">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="row">
+
+                                <div class=" col-sm-12 col-md-6 col-lg-6">
+                                    <div class="col-md-6">
+                                        <select style="margin:10px 0px;" onchange="SelectSource()" name="select" id="select_source" class="form-control pro-edt-select form-control-primary">
+                                            <option value="-1">TÜM KATEGORİLER</option>
+                                            @foreach (var item in Model.Item2)
+                                            {
+                                                <option value="@item.Id">@item.Name.ToUpper()</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                    <div class="col-md-6 col-md-offset-7 col-lg-offset-6">
+                                        <select onchange="ApplyOrder()" style="margin:10px 0px"  name="select" id="select_order" class="form-control pro-edt-select form-control-primary">
+                                            <option value="-1">SIRALA</option>
+                                            <option value="1">A-Z SIRALA</option>
+                                            <option value="2">Z-A SIRALA</option>
+                                            <option value="3">KAYNAK ADI A-Z SIRALA</option>
+                                            <option value="4">KAYNAK ADI Z-A SIRALA</option>
+                                            <option value="5">ÖNCE EN FAZLA İÇERİK KAYDI OLAN</option>
+                                            <option value="6">ÖNCE EN AZ İÇERİK KAYDI OLAN</option>
+                                            <option value="7">ÖNCE POST OLARAK GÖNDERİLEN İÇERİĞİ EN FAZLA OLAN</option>
+                                            <option value="8">ÖNCE POST OLARAK GÖNDERİLEN İÇERİĞİ EN AZ OLAN</option>
+                                            <option value="9">GÜNCELLEME TARİHİNE GÖRE SIRALA (ÖNCE ESKİ)</option>
+                                            <option value="10">GÜNCELLEME TARİHİNE GÖRE SIRALA (ÖNCE YENİ)</option>
+                                            <option value="11">EKLEME TARİHİNE GÖRE SIRALA (ÖNCE ESKİ)</option>
+                                            <option value="12">EKLEME TARİHİNE GÖRE SIRALA (ÖNCE YENİ)</option>
+                                            <option value="0">FİLTREYİ KALDIR</option>
+                                        </select>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                           
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@{ if (Model.Item1.Count > 0)
     {
 
         <div class="analysis-progrebar-area mg-b-30" id="category_list_container">
             <div class="container-fluid">
                 <div class="row">
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Item1)
                     {
 
                         <div class=" col-md-3" style="margin-bottom:20px;">
@@ -14,7 +72,7 @@
                                     <h5>
                                         @item.Name
                                         <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveCategory(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash" style="float:right;"><i class="fas fa-trash-alt"></i></button>
-                                        <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="UpsertChange(false,@item.Id)" class="pd-setting-ed btn btn-success" style="float:right;"><i class="fas fa-edit"></i></button>
+                                        <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditCategoryView(@item.Id, '@item.Name',@item.Source.Id)" class="pd-setting-ed btn btn-success" style="float:right;"><i class="fas fa-edit"></i></button>
                                         <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsSource(@item.Id)" class="pd-setting-ed btn btn-warning" data-original-title="Trash" style="float:right"><i class="fas fa-eye"></i></button>
 
                                     </h5>

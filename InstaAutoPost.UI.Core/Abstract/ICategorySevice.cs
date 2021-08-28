@@ -14,11 +14,11 @@ namespace InstaAutoPost.UI.Core.Abstract
         Category GetById(int id);
         Category GetByRSSURL(string rssUrl);
         int AddCategory(string name, string url, int sourceId);
-        List<CategoryDTO> GetAllCategoryBySourceId(int id);
+        List<CategoryDTO> GetAllCategoryBySourceId(int id, string searchText);
         List<SelectboxSourceDTO> GetSourcesIdandName();
         int EditCategory(int id, string name, int sourceId);
         int AddCategory(string name, int sourceId);
-        List<CategoryDTO> ApplyOrderCategoryList(int sourceId, int orderId);
+        List<CategoryDTO> Filter(int sourceId, int orderId, string searchText);
 
 
 

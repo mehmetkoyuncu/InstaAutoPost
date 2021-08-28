@@ -50,18 +50,14 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         public PartialViewResult GetAllCategories()
         {
             List<CategoryDTO> categories = _categoryService.GetAllCategories();
-            List<SelectboxSourceDTO> sources = _categoryService.GetSourcesIdandName();
-            var tuple = Tuple.Create<List<CategoryDTO>, List<SelectboxSourceDTO>>(categories, sources);
-            return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", tuple);
+            return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", categories);
         }
         #endregion
-        #region Id'ye Göre Kategori Listesini Getir
-        public PartialViewResult GetCategoryBySourceId(int id)
+        #region Filtre
+        public IActionResult Filter(int sourceId, int orderId, string searchText)
         {
-            List<CategoryDTO> categories = _categoryService.GetAllCategoryBySourceId(id);
-            List<SelectboxSourceDTO> sources = _categoryService.GetSourcesIdandName();
-            var tuple = Tuple.Create<List<CategoryDTO>, List<SelectboxSourceDTO>>(categories, sources);
-            return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", tuple);
+            List<CategoryDTO> categories = _categoryService.Filter(sourceId, orderId, searchText);
+            return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", categories);
         }
         #endregion
         #region Kategori Düzenle
@@ -72,13 +68,18 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             return Json(result);
         }
         #endregion
-        #region Sırala
-        public IActionResult ApplyOrder(int sourceId, int orderId)
+        #region Id'ye Göre Kategori Listesini Getir
+        public PartialViewResult GetCategoryBySourceId(int id, string searchText)
         {
-            List<CategoryDTO> categories = _categoryService.ApplyOrderCategoryList(sourceId, orderId);
+            List<CategoryDTO> categories = _categoryService.GetAllCategoryBySourceId(id, searchText);
+            return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", categories);
+        }
+        #endregion
+        #region Source id ve isimlerini getir
+        public IActionResult GetSourcesIdAndNameList()
+        {
             List<SelectboxSourceDTO> sources = _categoryService.GetSourcesIdandName();
-            var tuple = Tuple.Create<List<CategoryDTO>, List<SelectboxSourceDTO>>(categories, sources);
-            return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", tuple);
+            return PartialView("~/Views/Shared/Partials/_CategoryOptionsPartial.cshtml", sources);
         }
         #endregion
 

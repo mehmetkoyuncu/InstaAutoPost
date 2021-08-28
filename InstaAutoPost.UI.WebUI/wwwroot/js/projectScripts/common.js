@@ -9,6 +9,7 @@ var typeEnum = {
 function StartLoader() {
     /*  $("#loader").delay(50).fadeIn();*/
     $("#loader").show();
+
 }
 //Loader bitirir.
 function StopLoader() {

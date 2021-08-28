@@ -83,20 +83,8 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             List<Category> categories = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false)).ToList();
             List<CategoryDTO> categoryDTOs = Mapping.Mapper.Map<List<CategoryDTO>>(categories);
+            return SetPercentAndCount(categoryDTOs);
 
-            foreach (var item in categoryDTOs)
-            {
-                int sourceContentCount = item.SourceContentsDTO.Count;
-                if (sourceContentCount != 0)
-                {
-                    int sendedSource = item.SourceContentsDTO.Where(x => x.SendOutForPost == true).Count();
-                    int sendedPercent = Convert.ToInt32(Math.Ceiling(Convert.ToDouble((100 * sendedSource) / sourceContentCount)));
-                    item.SendedPostPercent = sendedPercent;
-                }
-                else
-                    item.SendedPostPercent = 0;
-            }
-            return categoryDTOs;
         }
         #endregion
         #region Kaynak Listesini Getir
@@ -112,83 +100,186 @@ namespace InstaAutoPost.UI.Core.Concrete
             return sources;
         }
         #endregion
-        #region Sırala
-        public List<CategoryDTO> ApplyOrderCategoryList(int sourceId, int orderId)
+        #region Filtre
+        public List<CategoryDTO> Filter(int sourceId, int orderId,string searchText)
         {
             List<Category> categoryList = null;
             switch (orderId)
             {
+                case -1:
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
+                    break;
                 case 0:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x=>x.Source).OrderByDescending(x => x.UpdatedAt).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).OrderByDescending(x => x.UpdatedAt).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                       categoryList= _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x=>x.IsDeleted==false).Include(x=>x.SourceContents).Where(x=>x.IsDeleted==false).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else if(sourceId==-1&&!string.IsNullOrWhiteSpace(searchText))
+                       categoryList= _uow.GetRepository<Category>().Get(x => x.IsDeleted == false&&x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else if(sourceId>-1&& string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId==sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())&&x.SourceId==sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
                     break;
                 case 1:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderBy(x => x.Name).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Include(x => x.SourceContents).OrderBy(x => x.Name).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.Name).ToList();
+                    else if (sourceId ==- 1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.Name).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.Name).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.Name).ToList();
                     break;
                 case 2:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderByDescending(x => x.Name).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Include(x => x.SourceContents).OrderByDescending(x => x.Name).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.Name).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.Name).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.Name).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.Name).ToList();
                     break;
                 case 3:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x=>x.Source).Include(x => x.SourceContents).OrderBy(x => x.Source.Name).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x=>x.Source).Include(x => x.SourceContents).OrderBy(x => x.Source.Name).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.Source.Name).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.Source.Name).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.Source.Name).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.Source.Name).ToList();
                     break;
                 case 4:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderByDescending(x => x.Source.Name).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Include(x => x.SourceContents).OrderByDescending(x => x.Source.Name).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.Source.Name).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.Source.Name).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.Source.Name).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.Source.Name).ToList();
                     break;
                 case 5:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderByDescending(x => x.SourceContents.Count()).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Include(x => x.SourceContents).OrderByDescending(x => x.SourceContents.Count()).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SourceContents.Count()).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SourceContents.Count()).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SourceContents.Count()).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SourceContents.Count()).ToList();
                     break;
                 case 6:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderBy(x => x.SourceContents.Count()).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Include(x => x.SourceContents).OrderBy(x => x.SourceContents.Count()).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.SourceContents.Count()).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.SourceContents.Count()).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.SourceContents.Count()).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.SourceContents.Count()).ToList();
                     break;
                 case 7:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderByDescending(x => x.SourceContents.Where(x=>x.SendOutForPost).Count()).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Include(x => x.SourceContents).OrderByDescending(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList();
                     break;
                 case 8:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderBy(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Include(x => x.SourceContents).OrderBy(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.SourceContents.Where(x => x.SendOutForPost).Count()).ToList();
                     break;
                 case 9:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderBy(x => x.UpdatedAt).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).OrderBy(x => x.UpdatedAt).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.UpdatedAt).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.UpdatedAt).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.UpdatedAt).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.UpdatedAt).ToList();
                     break;
                 case 10:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderByDescending(x => x.UpdatedAt).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).OrderByDescending(x => x.UpdatedAt).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
                     break;
                 case 11:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderBy(x => x.InsertedAt).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).OrderBy(x => x.InsertedAt).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.InsertedAt).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.InsertedAt).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.InsertedAt).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderBy(x => x.InsertedAt).ToList();
                     break;
                 case 12:
-                    categoryList = sourceId != -1 ? _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Include(x => x.SourceContents).OrderByDescending(x => x.InsertedAt).ToList() : _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).OrderByDescending(x => x.InsertedAt).ToList();
+                    if (sourceId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.InsertedAt).ToList();
+                    else if (sourceId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.InsertedAt).ToList();
+                    else if (sourceId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.InsertedAt).ToList();
+                    else
+                        categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower()) && x.SourceId == sourceId).Include(x => x.Source).Where(x => x.IsDeleted == false).Include(x => x.SourceContents).Where(x => x.IsDeleted == false).OrderByDescending(x => x.InsertedAt).ToList();    
                     break;
-                default:categoryList = null;
+                default:
+                    categoryList = null;
                     break;
             }
 
             List<CategoryDTO> categoryDTOs = Mapping.Mapper.Map<List<CategoryDTO>>(categoryList);
-            foreach (var item in categoryDTOs)
-            {
-                int sourceContentCount = item.SourceContentsDTO.Count;
-                if (sourceContentCount != 0)
-                {
-                    int sendedSource = item.SourceContentsDTO.Where(x => x.SendOutForPost == true).Count();
-                    int sendedPercent = Convert.ToInt32(Math.Ceiling(Convert.ToDouble((100 * sendedSource) / sourceContentCount)));
-                    item.SendedPostPercent = sendedPercent;
-                }
-                else
-                    item.SendedPostPercent = 0;
-            }
-            return categoryDTOs;
+            return SetPercentAndCount(categoryDTOs);
+
         }
         #endregion
-        #region, URL'e göre kategoriyi getir
+        #region URL'e göre kategoriyi getir
         public Category GetByRSSURL(string rssUrl)
         {
             return _uow.GetRepository<Category>().Get(x => x.Link == rssUrl && x.IsDeleted == false).FirstOrDefault();
         }
         #endregion
         #region Kaynak Id'sine göre kategori listesini getir
-        public List<CategoryDTO> GetAllCategoryBySourceId(int id)
+        public List<CategoryDTO> GetAllCategoryBySourceId(int id,string searchText)
         {
-            List<Category> categories = _uow.GetRepository<Category>().Get(x => x.SourceId == id && x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false)).ToList();
-
+            List<Category> categories = null;
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+               categories = _uow.GetRepository<Category>().Get(x => x.SourceId == id && x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false)).ToList();
+            }
+            else {
+                categories = _uow.GetRepository<Category>().Get(x => x.SourceId == id && x.IsDeleted == false&&x.Name.ToLower().Contains(searchText.ToLower())).OrderByDescending(x => x.UpdatedAt).Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false)).ToList();
+            }
             List<CategoryDTO> categoryDTOs = Mapping.Mapper.Map<List<CategoryDTO>>(categories);
+            return SetPercentAndCount(categoryDTOs);
+        }
+        #endregion
+        #region Kategori içeriği yüzde ayarları
+        private List<CategoryDTO> SetPercentAndCount(List<CategoryDTO> categoryDTOs)
+        {
             foreach (var item in categoryDTOs)
             {
                 int sourceContentCount = item.SourceContentsDTO.Count;
@@ -202,8 +293,6 @@ namespace InstaAutoPost.UI.Core.Concrete
                     item.SendedPostPercent = 0;
             }
             return categoryDTOs;
-
-
         }
         #endregion
     }

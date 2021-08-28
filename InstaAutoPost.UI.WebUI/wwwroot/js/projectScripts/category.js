@@ -2,11 +2,18 @@
 
 //Kategorileri Getirir
 function LoadCategories() {
-    var selectedItem = $("#select_source").val();
     var contentDiv = $(document.createElement('div')).attr("id", "list_categories_container");
     $('#render_body').append(contentDiv);
     $('#list_categories_container').load('Category/GetAllCategories', function () {
-        ChangeSelectedItem(selectedItem);
+        var options = $('#category_options');
+        if (options.length > 0)
+            return
+        else {
+            var contentDiv = $(document.createElement('div')).attr("id", "list_options_container");
+            $('#list_categories_container').before(contentDiv);
+            $('#list_options_container').load('Category/GetSourcesIdAndNameList', function () {
+            });
+        }
     });
 };
 
@@ -67,11 +74,10 @@ function AddCategory() {
         type: "POST",
         url: "Category/AddCategory",
         async: false,
-        data: { 'name': $('#upsert_category_name').val(), 'sourceId': $("#source_select_list").val() },
+        data: { 'name': $('#upsert_category_name').val(), 'sourceId': sourceId },
         success: function (data) {
-            $('#list_categories_container').load('Category/GetCategoryBySourceId', { 'id': sourceId }, function () {
-                ChangeSelectedItem(sourceId);
-            });
+            ClearFilter();
+            LoadCategories();
             CloseAddView();
             StopLoader();
         }
@@ -87,9 +93,8 @@ function EditCategory(id) {
         async: false,
         data: { 'id': parseInt(id), 'name': name, 'sourceId': parseInt(sourceId) },
         success: function (data) {
-            $('#list_categories_container').load('Category/GetCategoryBySourceId', { 'id': sourceId }, function () {
-                ChangeSelectedItem(sourceId);
-            });
+            ClearFilter();
+            LoadCategories();
             CloseAddView();
             StopLoader();
         }
@@ -107,10 +112,8 @@ function RemoveCategory(id) {
         async: false,
         data: { 'id': parseid },
         success: function (data) {
-            var selectedItem = $("#select_source").val();
-            $('#list_categories_container').load('Category/GetCategoryBySourceId', { 'id': selectedItem }, function () {
-                ChangeSelectedItem(selectedItem);
-            });
+            ClearFilter();
+            LoadCategories();
             StopLoader();
         }
     });
@@ -119,26 +122,16 @@ function RemoveCategory(id) {
 //Selectbox ile seçim yapıldığında kaynak id'sine göre listenin yenilenmesi
 function SelectSource() {
     StartLoader();
-    var selectedItem = $("#select_source").val();
-    if (selectedItem == -1)
-        LoadCategories();
-    else if (selectedItem == "")
+    var sourceId = parseInt($("#select_source").val());
+    var orderId = parseInt($('#select_order').val());
+    var searchText = $('#search_box').val();
+    if (sourceId == "")
         return;
     else {
-        $('#list_categories_container').load('Category/GetCategoryBySourceId', { 'id': selectedItem }, function () {
-            ChangeSelectedItem(selectedItem);
+        $('#list_categories_container').load('Category/Filter', { 'sourceId': sourceId, 'orderId': orderId, 'searchText': searchText }, function () {
         });
     }
     StopLoader();
-}
-
-//Selectbox value idnin load sırasında tutulması
-function ChangeSelectedItem(id) {
-    $("#select_source option[value=" + parseInt(id) + "]").attr('selected', 'selected');
-}
-//Order idnin load esnasında tutlması
-function ChangeSelectedOrder(id) {
-    $("#select_order option[value=" + parseInt(id) + "]").attr('selected', 'selected');
 }
 
 
@@ -147,19 +140,34 @@ function ApplyOrder() {
     StartLoader();
     var sourceId = parseInt($("#select_source").val());
     var orderId = parseInt($('#select_order').val());
+    var searchText = $('#search_box').val();
     if (orderId == -1) {
         StopLoader();
         return;
     }
     else {
-        $('#list_categories_container').load('Category/ApplyOrder', { 'sourceId': sourceId, 'orderId': orderId }, function () {
-            ChangeSelectedItem(sourceId);
-            ChangeSelectedFilter(orderId);
+        $('#list_categories_container').load('Category/Filter', { 'sourceId': sourceId, 'orderId': orderId, 'searchText': searchText }, function () {
         });
     }
     StopLoader();
 }
 
+
+//Search
+function SearchCategory() {
+    var sourceId = parseInt($("#select_source").val());
+    var orderId = parseInt($('#select_order').val());
+    var searchText = $('#search_box').val()
+    var sourceId=$("#select_source").val();
+    $('#list_categories_container').load('Category/Filter', { 'sourceId': sourceId, 'orderId': orderId, 'searchText': searchText }, function () {
+    });
+}
+
+function ClearFilter() {
+$("#select_source option[value=" + -1 + "]").attr('selected', 'selected');
+    $("#select_order option[value=" + -1 + "]").attr('selected', 'selected');
+    $('#search_box').val('');
+}
 
 
 

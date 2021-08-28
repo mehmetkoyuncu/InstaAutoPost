@@ -1,0 +1,60 @@
+﻿@model  List<SelectboxSourceDTO>
+<div class="breadcome-area" id="category_options">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list" id="breadcome_layout">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="row">
+
+                                <div class=" col-sm-12 col-md-6 col-lg-6">
+                                    <div class="col-md-6">
+                                        <select style="margin:10px 0px;" onchange="SelectSource()" name="select" id="select_source" class="form-control pro-edt-select form-control-primary">
+                                            <option value="-1">TÜM KATEGORİLER</option>
+                                            @foreach (var item in Model)
+                                            {
+                                                <option value="@item.Id">@item.Name.ToUpper()</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select onchange="ApplyOrder()" style="margin:10px 0px" name="select" id="select_order" class="form-control pro-edt-select form-control-primary">
+                                            <option value="-1">SIRALA</option>
+                                            <option value="1">A-Z SIRALA</option>
+                                            <option value="2">Z-A SIRALA</option>
+                                            <option value="3">KAYNAK ADI A-Z SIRALA</option>
+                                            <option value="4">KAYNAK ADI Z-A SIRALA</option>
+                                            <option value="5">ÖNCE EN FAZLA İÇERİK KAYDI OLAN</option>
+                                            <option value="6">ÖNCE EN AZ İÇERİK KAYDI OLAN</option>
+                                            <option value="7">ÖNCE POST OLARAK GÖNDERİLEN İÇERİĞİ EN FAZLA OLAN</option>
+                                            <option value="8">ÖNCE POST OLARAK GÖNDERİLEN İÇERİĞİ EN AZ OLAN</option>
+                                            <option value="9">GÜNCELLEME TARİHİNE GÖRE SIRALA (ÖNCE ESKİ)</option>
+                                            <option value="10">GÜNCELLEME TARİHİNE GÖRE SIRALA (ÖNCE YENİ)</option>
+                                            <option value="11">EKLEME TARİHİNE GÖRE SIRALA (ÖNCE ESKİ)</option>
+                                            <option value="12">EKLEME TARİHİNE GÖRE SIRALA (ÖNCE YENİ)</option>
+                                            <option value="0">FİLTREYİ KALDIR</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-6 col-lg-6" style="text-align:right;">
+                                    <div class="row" style="padding:0px 15px;">
+                                        <div class="col-md-offset-7" style="padding:0px 15px;">
+                                            <div class="input-group custom-go-button" style="margin:10px 0px;">
+                                                <input type="text" id="search_box" onkeyup="SearchCategory()" class="form-control" placeholder="Kategorilerde Ara..">
+                                                <span class="input-group-btn"><span class="btn btn-primary" style="cursor:context-menu"><i class="fa fa-search"></i></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

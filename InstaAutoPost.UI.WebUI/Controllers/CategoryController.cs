@@ -40,9 +40,9 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         #endregion
         #region Kategori Ekle
         [HttpPost]
-        public JsonResult AddCategory(string name, int sourceId)
+        public JsonResult AddCategory(string name, int sourceId,string tags)
         {
-            int result = _categoryService.AddCategory(name, sourceId);
+            int result = _categoryService.AddCategory(name, sourceId,tags);
             return Json(result);
         }
         #endregion
@@ -60,11 +60,18 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             return PartialView("~/Views/Shared/Partials/_CategoryListPartial.cshtml", categories);
         }
         #endregion
+        #region Kategori detayı getir
+        public IActionResult GetCategoryDetail(int id)
+        {
+            CategoryDTO category = _categoryService.GetCategoryDTOById(id);
+            return PartialView("~/Views/Shared/Partials/_CategoryDetailPartial.cshtml", category);
+        }
+        #endregion
         #region Kategori Düzenle
         [HttpPut]
-        public IActionResult EditCategory(int id, string name, int sourceId)
+        public IActionResult EditCategory(int id, string name, int sourceId,string tags)
         {
-            int result = _categoryService.EditCategory(id, name, sourceId);
+            int result = _categoryService.EditCategory(id, name, sourceId,tags);
             return Json(result);
         }
         #endregion

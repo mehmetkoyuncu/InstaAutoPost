@@ -1,101 +1,114 @@
-﻿$(document).ready(function () {
+﻿
+
+//Kaynakları Getirir
+function LoadSources() {
     RenderBodyClear();
-    StartLoader();
-    RefreshGetSourceLoad();
-});
-function RefreshGetSourceLoad() {
-    $('#codeSource').load('Source/GetSources', function () {
-        StopLoader()
-    });
-}
-
-function GetAllSource() {
-    RefreshGetSourceLoad();
-}
-function RemoveAddSourceView() {
-    StartLoader();
-    $('#add_source').remove();
-    $('#add_view_source_button').show();
-    StopLoader();
-}
-
-function AddSourceView(element) {
-    StartLoader();
-    var contentDiv = $(document.createElement('div')).attr("id", "add_source");
-    $('#source_list_container').before(contentDiv);
-    $('#add_source').load('Source/GetAddSourcesPartial', function () {
-        $('#upsert_button').text('Ekle');
-        $('#upsert_button').attr('onclick', "AddSource()");
-        $('#add_view_source_button').hide();
+    var contentDiv = $(document.createElement('div')).attr("id", "list_sources_container");
+    $('#render_body').append(contentDiv);
+    $('#list_sources_container').load('Source/GetAllSources', function () {
+        var options = $('#source_options');
+        if (options.length > 0)
+            return
+        else {
+            var contentDiv = $(document.createElement('div')).attr("id", "list_options_container");
+            $('#list_sources_container').before(contentDiv);
+            $('#list_options_container').load('Source/GetSourceFilterView', function () {
+            });
+        }
         StopLoader();
     });
+};
+
+//Sayfa yüklendiğinde
+$(document).ready(function () {
+    StartLoader();
+    ChangeInsertButton(typeEnum.Source, "Kaynak");
+    ChangeBreadComb("Kaynaklar", "Kaynakları buradan, listeleyebilir,yeni bir kaynak ekleyebilir, silebilir ve güncelleyebilirsiniz.", "source.jpg");
+    ChangeReportButton(typeEnum.Source)
+    LoadSources();
+});
+
+
+
+//Kategori Ekle formu getir
+function AddSourceView() {
+    var viewControl = $('#add_view');
+    if (viewControl.length > 0) {
+        window.alert("Açık olan formu kapatınız");
+        return;
+    }
+    ClearAddView();
+    var contentDiv = $(document.createElement('div')).attr("id", "add_view");
+    $('#breadcomb_container').after(contentDiv);
+    $('#add_view').hide().load("Source/GetAddSourcePartial", function () {
+        $('#insert_update_button').attr('onclick', "AddSource()");
+        $('#insert_button').hide();
+        $('#add_view').fadeIn(1000);
+    });
 }
 
+//Kategori Düzenle formu getir
+function EditSourceView(id, name,imageUrl) {
+    var viewControl = $('#add_view');
+    if (viewControl.length > 0) {
+        window.alert("Açık olan formu kapatınız");
+        return;
+    }
+    ClearAddView();
+    var contentDiv = $(document.createElement('div')).attr("id", "add_view");
+    $('#breadcomb_container').after(contentDiv);
+    $('#add_view').hide().load("Source/GetAddSourcePartial", function () {
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+        $('#insert_update_button').attr('onclick', 'EditSource(' + id + ')');
+        $('#upsert_source_name').val(name);
+        $("#upsert_source_imageLink").val(imageUrl);
+        $('#insert_update_button').text('Düzenle');
+        $('#insert_button').hide();
+        $("html").animate({ "scrollTop": $("#add_view").scrollTop() + 100 });
+        $('#add_view').fadeIn(1000);
+    });
+}
+
+
+
+//Kaynak Ekle
 function AddSource() {
     StartLoader();
+   var name= $('#upsert_source_name').val();
+   var imageLink= $("#upsert_source_imageLink").val();
     $.ajax({
         type: "POST",
         url: "Source/AddSource",
         async: false,
-        data: { 'name': $('#source_name').val(), 'image': $('#source_image').val() },
+        data: { 'name': name, 'image': imageLink },
         success: function (data) {
-            $('#codeSource').load('Source/GetSources', function () {
-                $('#add_view_source_button').hide();
-                RemoveAddSourceView();
-                StopLoader();
-            });
+            LoadSources();
+            CloseAddView();
+            ClearFilter();
         }
     });
+}
 
-}
-function GetEditSourceView(element, id) {
-    StartLoader();
-    if ($('#add_source').length == 0) {
-        parseid = parseInt(id);
-        $.ajax({
-            type: "GET",
-            url: "Source/GetSourceById",
-            async: false,
-            data: { 'id': parseid },
-            success: function (data) {
-                var contentDiv = $(document.createElement('div')).attr("id", "add_source");
-                $('#source_list_container').before(contentDiv);
-                $('#add_source').load('Source/GetAddSourcesPartial', function () {
-                    $('#add_view_source_button').hide();
-                    $('#source_image').val(data.image)
-                    $('#source_name').val(data.name);
-                    $('#upsert_button').text('Düzenle');
-                    $('#upsert_button').attr('onclick', 'EditSource(' + id + ')');
-                    StopLoader();
-                });
-            }
-        });
-    }
-    else {
-        alert("Seçili olanı kapat");
-        StopLoader();
-    };
-}
-function ClearSource() {
-    $('#source_image').val("");
-    $('#source_name').val("")
-}
+//Kaynak Düzenle
 function EditSource(id) {
-    StartLoader();
-    parseid = parseInt(id);
+    var name = $('#upsert_source_name').val();
+    var imageLink = $("#upsert_source_imageLink").val();
+    StartLoader();;
     $.ajax({
         type: "PUT",
         url: "Source/EditSource",
         async: false,
-        data: { 'id': parseid, 'name': $('#source_name').val(), 'image': $('#source_image').val() },
+        data: { 'id': parseInt(id), 'name': name, 'image': imageLink },
         success: function (data) {
-            $('#codeSource').load('Source/GetSources', function () {
-                RemoveAddSourceView();
-                StopLoader();
-            });
+            LoadSources();
+            CloseAddView();
+            ClearFilter();
         }
     });
 }
+
+
+//Kaynak Sil
 function RemoveSource(id) {
     StartLoader();
     parseid = parseInt(id);
@@ -105,32 +118,68 @@ function RemoveSource(id) {
         async: false,
         data: { 'id': parseid },
         success: function (data) {
-            $('#codeSource').load('Source/GetSources', StopLoader());
+            LoadSources();
+            ClearFilter();
         }
     });
 }
 
-function DetailsSource(id) {
+//Sırala
+function ApplyOrder() {
     StartLoader();
-    parseid = parseInt(id);
-    var contentDiv = $(document.createElement('div')).attr("id", "detailSource");
-    $('#source_list_container').before(contentDiv);
-    $('#detailSource').load('Source/DetailSource', { "id": parseid } , function () {
-        $("#detail_source_modal").modal('show');
+    var orderId = parseInt($('#select_order').val());
+    var searchText = $('#search_box').val();
+    if (orderId == -1) {
         StopLoader();
+        return;
+    }
+    else {
+        $('#list_sources_container').load('Source/Filter', {'orderId': orderId, 'searchText': searchText }, function () {
+            StopLoader();
+        });
+    }
+}
+
+
+//Arama
+function SearchSource() {
+    var orderId = parseInt($('#select_order').val());
+    var searchText = $('#search_box').val()
+    $('#list_sources_container').load('Source/Filter', { 'orderId': orderId, 'searchText': searchText }, function () {
     });
-
 }
 
-function CloseModal() {
-    $("#detail_source_modal").modal('hide');
-}
-
-function ViewDetail(id) {
+//Filtreyi Temizle
+function ClearFilter() {
     StartLoader();
-    CloseModal();
-    $('.modal-backdrop').remove();
-    parseid = parseInt(id);
-    GetCategories(id);
+    $("#select_order").val(-1);
+    $('#search_box').val('');
     StopLoader();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

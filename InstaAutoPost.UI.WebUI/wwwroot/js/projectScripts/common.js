@@ -5,10 +5,13 @@ var typeEnum = {
     Source: "Source",
     SourceContent: "SourceContent"
 };
+function RenderBodyClear() {
+    $('#render_body').empty();
+}
 //Loader Başlatır
 function StartLoader() {
     /*  $("#loader").delay(50).fadeIn();*/
-    $("#loader").show();
+    $("#loader").delay(50).fadeIn();
 
 }
 //Loader bitirir.
@@ -34,12 +37,13 @@ function ChangeReportButton(type) {
 
 //Ekle formu kapat
 function CloseAddView() {
-    StartLoader();
-    $('#add_view').remove();
+    $('#add_view').fadeOut(1000, function () {
+        $(this).remove();
+    })
     $('#insert_button').show();
-    StopLoader();
 }
 //Ekle formu inputları temizle
 function ClearAddView() {
     $('#add_view input').val('');
+    $('#add_view select').val(-1);
 }

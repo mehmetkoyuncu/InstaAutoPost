@@ -27,24 +27,10 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             ViewBag.breadCrump = "Anasayfa";
             return View();
         }
-        public PartialViewResult _SourcePartial()
-        {
-            var model = _sourceService.GetAll();
-            model = model.OrderByDescending(x => x.UpdatedAt).ToList();
-            return PartialView("~/Views/Shared/Partials/_SourcePartial.cshtml",model);
-        }
-        [HttpPost]
-       
-        [HttpPost]
-        public IActionResult EditSource(string image,string name,int id)
-        {
-            string result = _sourceService.Update(image,name,id);
-            return Ok(Json(result));
-        }
         [HttpDelete]
         public IActionResult RemoveSource(int id)
         {
-            string result = _sourceService.DeleteById(id);
+            int result = _sourceService.RemoveSource(id);
             return Ok(Json(result));
         }
         [HttpGet]

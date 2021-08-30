@@ -1,0 +1,61 @@
+﻿@model CategoryDTO
+
+<div class="modal fade bd-example-modal-lg" id="category_detail" tabindex="-1">
+    <div class="modal-dialog odal-dialog-centered" role="document">
+        <div class="single-product-tab-area mg-t-0 mg-b-30">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row" style="margin-bottom:5px;">
+                            <div class="col-md-12" style="text-align:right;">
+                                <button type="button" onclick="CloseCategoryModal()" class="btn btn-danger"><i class="fa fa-times adminpro-danger-error" aria-hidden="true"></i> Kapat</button>
+                            </div>
+                        </div>
+                        <div id="single-product-pr" class="single-product-pr">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="single-product-details res-pro-tb">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h1>@Model.Name</h1>
+                                            </div>
+                                        </div>
+                                        <span class="single-pro-star">
+                                            @for (int i = 0; i < Model.Name.Length/2; i++)
+                                            {
+                                            <i class="fa fa-star"></i>
+                                            }
+                                        </span>
+                                        <ul class="single-pro-price " style="color:white;">
+                                            <li><b>Toplam içerik Sayısı :</b> @Model.SourceContentsDTO.Count()</li>
+                                            @if (!String.IsNullOrEmpty(Model.Link))
+                                            {
+                                                <li><b>Link :</b> @Model.Link</li>
+                                            }
+                                            <li><b>Post Olarak Gönderilen İçerik Sayısı :</b> @Model.SendedContentCount</li>
+                                            <li><b>Eklenme Tarihi :</b> @Model.InsertedAt</li>
+                                            <li><b>Güncellenme Tarihi :</b> @Model.UpdatedAt</li>
+                                            <li><b>Etiketler :</b> @Model.Tags</li>
+                                        </ul>
+
+                                        <div class="color-quality-pro">
+                                            <div class="clear"></div>
+                                            <div class="row">
+                                                <div class="col-md-12" style="text-align:right;">
+                                                    <p style="color:white;border:1px solid; display:inline-block;padding:10px; border-radius:15px;">
+                                                        @Model.Source.Name
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,13 +1,17 @@
 ﻿using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.AutoMapper;
 using InstaAutoPost.UI.Core.Common.DTOS;
+using InstaAutoPost.UI.Core.RSSService;
+using InstaAutoPost.UI.Core.Utilities;
 using InstaAutoPost.UI.Data.Context;
 using InstaAutoPost.UI.Data.Entities.Concrete;
 using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
 using InstaAutoPost.UI.Data.UnitOfWork.Concrete;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 
@@ -15,10 +19,10 @@ namespace InstaAutoPost.UI.Core.Concrete
 {
     public class SourceService : ISourceService
     {
-        private readonly IUnitOfWork uow;
+        private readonly IUnitOfWork _uow;
         public SourceService()
         {
-            uow = new EFUnitOfWork(new RSSContextEF());
+            _uow = new EFUnitOfWork(new RSSContextEF());
         }
 
         public int Add(string name, string image, string url)
@@ -32,68 +36,48 @@ namespace InstaAutoPost.UI.Core.Concrete
                 URL = url,
                 IsDeleted = false
             };
-            uow.GetRepository<Source>().Add(source);
-            return uow.SaveChanges();
+            _uow.GetRepository<Source>().Add(source);
+            return _uow.SaveChanges();
         }
 
-        public string DeleteById(int id)
+        public List<SourceDTO> GetAllSources()
         {
-            Source source = GetById(id);
-            source.UpdatedAt = DateTime.Now;
-            uow.GetRepository<Source>().Remove(source);
-            int result = uow.SaveChanges();
-            string sResult = result == 0 ? "Hata! kaynak silinemedi" : "Kaynak başarıyla silindi";
-            return sResult;
-        }
-
-        public List<SourceDTO> GetAll()
-        {
-            List<Source> sourceList = uow.GetRepository<Source>().Get(x => x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).ToList();
-            return Mapping.Mapper.Map<List<SourceDTO>>(sourceList);
+            List<Source> sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x=>x.Categories.Where(x=>x.IsDeleted==false)).OrderByDescending(x => x.UpdatedAt).ToList();
+            List<SourceDTO> sourceDTOS=Mapping.Mapper.Map<List<SourceDTO>>(sourceList);
+            return sourceDTOS;
         }
 
         public Source GetById(int id)
         {
-            return uow.GetRepository<Source>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
+            return _uow.GetRepository<Source>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
         }
         public Source GetByURL(string url, string name)
         {
-            return uow.GetRepository<Source>().Get(x => (x.URL == url || x.Name == name) && x.IsDeleted == false).FirstOrDefault();
+            return _uow.GetRepository<Source>().Get(x => (x.URL == url || x.Name == name) && x.IsDeleted == false).FirstOrDefault();
         }
 
 
         public List<Source> GetByName(string name)
         {
-            return uow.GetRepository<Source>().Get(x => x.Name.ToLower().Contains(name.ToLower()) && x.IsDeleted == false).ToList();
+            return _uow.GetRepository<Source>().Get(x => x.Name.ToLower().Contains(name.ToLower()) && x.IsDeleted == false).ToList();
         }
 
         public List<Source> GetDeletedSource()
         {
-            return uow.GetRepository<Source>().Get(x => x.IsDeleted == true).ToList();
+            return _uow.GetRepository<Source>().Get(x => x.IsDeleted == true).ToList();
         }
 
         public SourceWithCategoryCountDTO GetSourceWithCategoryCount(int id)
         {
-            Source source = uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Id == id).Include(x => x.Categories.Where(x => x.IsDeleted == false)).FirstOrDefault();
+            Source source = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Id == id).Include(x => x.Categories.Where(x => x.IsDeleted == false)).FirstOrDefault();
             SourceWithCategoryCountDTO sourceDTO = Mapping.Mapper.Map<SourceWithCategoryCountDTO>(source);
             return sourceDTO;
         }
 
-        public string Update(string image, string name, int id)
-        {
-            Source updateSource = GetById(id);
-            updateSource.Image = image;
-            updateSource.Name = name;
-            updateSource.UpdatedAt = DateTime.Now;
-            uow.GetRepository<Source>().Update(updateSource);
-            int result = uow.SaveChanges();
-            string sResult = result == 0 ? "Hata! kaynak güncellenemedi" : "Kaynak başarıyla güncellendi";
-            return sResult;
-        }
 
         public List<SelectboxSourceDTO> GetSourcesForSelectBox()
         {
-            List<SelectboxSourceDTO> sources = uow.GetRepository<Source>()
+            List<SelectboxSourceDTO> sources = _uow.GetRepository<Source>()
                 .Get(x => x.IsDeleted == false)
                 .Select(x => new SelectboxSourceDTO()
                 {
@@ -101,6 +85,116 @@ namespace InstaAutoPost.UI.Core.Concrete
                     Name = x.Name
                 }).ToList();
             return sources;
+        }
+
+        public int AddSource(string name, string image,string contentRootPath)
+        {
+            ImageUtility imageU = new ImageUtility();
+            string imgSrc = imageU.Download(image, name, ImageFormat.Png,contentRootPath);
+
+            Source source = new Source()
+            {
+                InsertedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                Name = name,
+                Image = imgSrc.Substring(0,5) + Guid.NewGuid().ToString(),
+                IsDeleted = false
+            };
+            _uow.GetRepository<Source>().Add(source);
+            return _uow.SaveChanges();
+        }
+
+        public int EditSource(int id, string name, string image,string contentRootPath)
+        {
+            ImageUtility imageU = new ImageUtility();
+            string imgSrc = imageU.Download(image, name, ImageFormat.Png, contentRootPath);
+            Source updateSource = GetById(id);
+            updateSource.Image = imgSrc.Substring(0,5)+Guid.NewGuid().ToString();
+            updateSource.Name = name;
+            updateSource.UpdatedAt = DateTime.Now;
+            _uow.GetRepository<Source>().Update(updateSource);
+           return _uow.SaveChanges();
+        }
+
+        public int RemoveSource(int id)
+        {
+            Source source = GetById(id);
+            source.UpdatedAt = DateTime.Now;
+            _uow.GetRepository<Source>().Remove(source);
+            return _uow.SaveChanges();
+        }
+
+        public List<SourceDTO> Filter(int orderId, string searchText)
+        {
+            List<Source> sourceList = null;
+            switch (orderId)
+            {
+                case -1:
+                    if (!string.IsNullOrWhiteSpace(searchText))
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.UpdatedAt).ToList();
+                    break;
+                case 0:
+                    if (!string.IsNullOrWhiteSpace(searchText))
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.UpdatedAt).ToList();
+                    break;
+                case 1:
+                    if (!string.IsNullOrWhiteSpace(searchText))
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.Name).ToList();
+                    else
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.Name).ToList();
+                    break;
+                case 2:
+                    if (!string.IsNullOrWhiteSpace(searchText))
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.Name).ToList();
+                    else
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.Name).ToList();
+                    break;
+                case 3:
+                    if (!string.IsNullOrWhiteSpace(searchText))
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.Categories.Where(x => x.IsDeleted == false).Count()).ToList();
+                    else
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.Categories.Where(x => x.IsDeleted == false).Count()).ToList();
+                    break;
+                case 4:
+                    if (!string.IsNullOrWhiteSpace(searchText))
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.Categories.Where(x=>x.IsDeleted==false).Count()).ToList();
+                    else
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.Categories.Where(x => x.IsDeleted == false).Count()).ToList();
+                    break;
+                case 5:
+                    if (!string.IsNullOrWhiteSpace(searchText))
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.UpdatedAt).ToList();
+                    else
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.UpdatedAt).ToList();
+                    break;
+                case 6:
+                    if (!string.IsNullOrWhiteSpace(searchText))
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.UpdatedAt).ToList();
+                    else
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.UpdatedAt).ToList();
+                    break;
+                case 7:
+                    if (!string.IsNullOrWhiteSpace(searchText))
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.InsertedAt).ToList();
+                    else
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.InsertedAt).ToList();
+                    break;
+                case 8:
+                    if (!string.IsNullOrWhiteSpace(searchText))
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.InsertedAt).ToList();
+                    else
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.InsertedAt).ToList();
+                    break;
+                default:
+                    sourceList = null;
+                    break;
+            }
+            List<SourceDTO> sourceDTOS = Mapping.Mapper.Map<List<SourceDTO>>(sourceList);
+            return sourceDTOS;
         }
     }
 }

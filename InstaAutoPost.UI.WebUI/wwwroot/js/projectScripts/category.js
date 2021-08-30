@@ -2,6 +2,7 @@
 
 //Kategorileri Getirir
 function LoadCategories() {
+    RenderBodyClear();
     var contentDiv = $(document.createElement('div')).attr("id", "list_categories_container");
     $('#render_body').append(contentDiv);
     $('#list_categories_container').load('Category/GetAllCategories', function () {
@@ -14,6 +15,7 @@ function LoadCategories() {
             $('#list_options_container').load('Category/GetSourcesIdAndNameList', function () {
             });
         }
+        StopLoader();
     });
 };
 
@@ -21,10 +23,9 @@ function LoadCategories() {
 $(document).ready(function () {
     StartLoader();
     ChangeInsertButton(typeEnum.Category, "Kategori");
-    ChangeBreadComb("Kategoriler", "Kategorileri buradan, kaynak adına göre listeleyebilir,yeni bir kategori ekleyebilir, silebilir ve güncelleyebilirsiniz.", "category.jpg");
+    ChangeBreadComb("Kategoriler", "Kategorileri buradan, kaynak adına göre listeleyebilir,yeni bir kategori ekleyebilir, silebilir ve güncelleyebilirsiniz. Sosyal medya uygulamalarında kullanılacak etiket isimleri de burada kullanılır.", "category.jpg");
     ChangeReportButton(typeEnum.Category)
     LoadCategories();
-    StopLoader();
 });
 
 
@@ -39,14 +40,15 @@ function AddCategoryView() {
     ClearAddView();
     var contentDiv = $(document.createElement('div')).attr("id", "add_view");
     $('#breadcomb_container').after(contentDiv);
-    $('#add_view').load("Category/GetAddCategoryPartial", function () {
+    $('#add_view').hide().load("Category/GetAddCategoryPartial", function () {
         $('#insert_update_button').attr('onclick', "AddCategory()");
+        $('#insert_button').hide();
+        $('#add_view').fadeIn(1000);
     });
-    $('#insert_button').hide();
 }
 
 //Kategori Düzenle formu getir
-function EditCategoryView(id, name, sourceId) {
+function EditCategoryView(id, name,sourceId,tags) {
     var viewControl = $('#add_view');
     if (viewControl.length > 0) {
         window.alert("Açık olan formu kapatınız");
@@ -55,13 +57,17 @@ function EditCategoryView(id, name, sourceId) {
     ClearAddView();
     var contentDiv = $(document.createElement('div')).attr("id", "add_view");
     $('#breadcomb_container').after(contentDiv);
-    $('#add_view').load("Category/GetAddCategoryPartial", function () {
+    $('#add_view').hide().load("Category/GetAddCategoryPartial", function () {
+        $("html, body").animate({ scrollTop: 0 }, "slow");
         $('#insert_update_button').attr('onclick', 'EditCategory(' + id + ')');
         $('#upsert_category_name').val(name);
+        $("#upsert_category_tags").val(tags);
         $("#source_select_list option[value=" + sourceId + "]").attr('selected', 'selected');
         $('#insert_update_button').text('Düzenle');
+        $('#insert_button').hide();
+        $("html").animate({ "scrollTop": $("#add_view").scrollTop() +100 });
+        $('#add_view').fadeIn(1000);
     });
-    $('#insert_button').hide();
 }
 
 
@@ -69,34 +75,35 @@ function EditCategoryView(id, name, sourceId) {
 //Kategori Ekle
 function AddCategory() {
     StartLoader();
+    var name = $('#upsert_category_name').val()
     var sourceId = parseInt($("#source_select_list").val());
+    var tags = $("#upsert_category_tags").val();
     $.ajax({
         type: "POST",
         url: "Category/AddCategory",
         async: false,
-        data: { 'name': $('#upsert_category_name').val(), 'sourceId': sourceId },
+        data: { 'name': name, 'sourceId': sourceId, 'tags':tags },
         success: function (data) {
-            ClearFilter();
             LoadCategories();
             CloseAddView();
-            StopLoader();
+            ClearFilter();
         }
     });
 }
 function EditCategory(id) {
     var name = $('#upsert_category_name').val();
     var sourceId = parseInt($("#source_select_list").val());
+    var tags =$("#upsert_category_tags").val();
     StartLoader();;
     $.ajax({
         type: "PUT",
         url: "Category/EditCategory",
         async: false,
-        data: { 'id': parseInt(id), 'name': name, 'sourceId': parseInt(sourceId) },
+        data: { 'id': parseInt(id), 'name': name, 'sourceId': parseInt(sourceId), 'tags': tags },
         success: function (data) {
-            ClearFilter();
             LoadCategories();
             CloseAddView();
-            StopLoader();
+            ClearFilter();
         }
     });
 }
@@ -112,9 +119,8 @@ function RemoveCategory(id) {
         async: false,
         data: { 'id': parseid },
         success: function (data) {
-            ClearFilter();
             LoadCategories();
-            StopLoader();
+            ClearFilter();
         }
     });
 }
@@ -129,9 +135,9 @@ function SelectSource() {
         return;
     else {
         $('#list_categories_container').load('Category/Filter', { 'sourceId': sourceId, 'orderId': orderId, 'searchText': searchText }, function () {
+            StopLoader();
         });
     }
-    StopLoader();
 }
 
 
@@ -147,13 +153,13 @@ function ApplyOrder() {
     }
     else {
         $('#list_categories_container').load('Category/Filter', { 'sourceId': sourceId, 'orderId': orderId, 'searchText': searchText }, function () {
+            StopLoader();
         });
     }
-    StopLoader();
 }
 
 
-//Search
+//Arama
 function SearchCategory() {
     var sourceId = parseInt($("#select_source").val());
     var orderId = parseInt($('#select_order').val());
@@ -163,10 +169,30 @@ function SearchCategory() {
     });
 }
 
+//Filtreyi Temizle
 function ClearFilter() {
-$("#select_source option[value=" + -1 + "]").attr('selected', 'selected');
-    $("#select_order option[value=" + -1 + "]").attr('selected', 'selected');
+    StartLoader();
+$("#select_source").val(-1);
+    $("#select_order").val(-1);
     $('#search_box').val('');
+    StopLoader();
+}
+
+
+//Kategori Detay Modalı Getir
+function DetailsCategoryView(id) {
+    var contentDiv = $(document.createElement('div')).attr("id", "detail_categories_container");
+    $('#list_categories_container').append(contentDiv);
+    $('#detail_categories_container').load('Category/GetCategoryDetail', { 'id': parseInt(id) }, function () {
+        $('#category_detail').modal('show');
+    });
+}
+
+//Kategori Detay Modalı Kaldır
+function CloseCategoryModal() {
+    $('#category_detail').modal('hide');
+    $('#detail_categories_container').remove();
+    $('.modal-backdrop').remove();
 }
 
 

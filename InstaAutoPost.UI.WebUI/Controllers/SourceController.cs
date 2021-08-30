@@ -1,5 +1,7 @@
 ﻿using InstaAutoPost.UI.Core.Abstract;
+using InstaAutoPost.UI.Core.Common.DTOS;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,55 +12,68 @@ namespace InstaAutoPost.UI.WebUI.Controllers
     public class SourceController : Controller
     {
         private readonly ISourceService _sourceService;
-        public SourceController(ISourceService sourceService)
+        private readonly IHostEnvironment _environment;
+        public SourceController(ISourceService sourceService,IHostEnvironment environmet)
         {
             _sourceService = sourceService;
+            _environment = environmet;
         }
         public IActionResult Index()
         {
-            ViewBag.BreadCrumpHeader="Kaynak";
-            ViewBag.BreadCrumpText="Örnek Metin";
-            ViewBag.BreadCrumpImage="https://i1.sndcdn.com/avatars-000288473023-nw5wu6-t500x500.jpg";
-
             return View();
         }
 
-        [HttpGet]
-        public PartialViewResult GetSources()
+        #region Kaynakları Getir
+        public PartialViewResult GetAllSources()
         {
-            return PartialView("~/Views/Shared/Partials/_SourceListPartial.cshtml", _sourceService.GetAll());
+            List<SourceDTO> sources = _sourceService.GetAllSources();
+            return PartialView("~/Views/Shared/Partials/_SourceListPartial.cshtml", sources);
         }
+        #endregion
+        #region Kaynak Ekle Partial'ı Getir
         [HttpGet]
-        public PartialViewResult GetAddSourcesPartial()
+        public PartialViewResult GetAddSourcePartial()
         {
             return PartialView("~/Views/Shared/Partials/_SourceAddPartial.cshtml");
         }
+        #endregion
+        #region Kaynak Ekle
         [HttpPost]
-        public IActionResult AddSource(string name,string image,string url)
+        public JsonResult AddSource(string name,string image)
         {
-            return Ok(_sourceService.Add(name, image,url));
+            int result = _sourceService.AddSource(name,image,_environment.ContentRootPath);
+            return Json(result);
         }
-        [HttpGet]
-        public IActionResult GetSourceById(int id)
-        {
-            return Ok(_sourceService.GetById(id));
-        }
+        #endregion
+        #region Kaynak Düzenle
         [HttpPut]
-        public IActionResult EditSource(int id,string name, string image)
+        public IActionResult EditSource(int id, string name, string image)
         {
-            return Ok(_sourceService.Update(image,name,id));
+            int result = _sourceService.EditSource(id, name, image,_environment.ContentRootPath);
+            return Json(result);
         }
+        #endregion
+        #region Kaynak Sil
+        [HttpDelete]
         public IActionResult RemoveSource(int id)
         {
-            return Ok(_sourceService.DeleteById(id));
+            return Ok(_sourceService.RemoveSource(id));
         }
-        public IActionResult DetailSource(int id)
+        #endregion
+        #region Filtreyi Getir
+        public IActionResult GetSourceFilterView()
         {
-            return PartialView("~/Views/Shared/Partials/_SourceDetailPartial.cshtml", _sourceService.GetSourceWithCategoryCount(id));
+            return PartialView("~/Views/Shared/Partials/_SourceOptionsPartial.cshtml");
         }
-        public IActionResult GetSourceSelectContainer()
+        #endregion
+        #region Filtre
+        public IActionResult Filter(int orderId, string searchText)
         {
-            return PartialView("~/Views/Shared/Partials/_SelectContainerPartial.cshtml", _sourceService.GetSourcesForSelectBox());
+            List<SourceDTO> sources = _sourceService.Filter(orderId,searchText);
+            return PartialView("~/Views/Shared/Partials/_SourceListPartial.cshtml", sources);
         }
+
+        #endregion
+
     }
 }

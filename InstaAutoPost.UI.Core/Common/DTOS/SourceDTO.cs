@@ -9,10 +9,12 @@ namespace InstaAutoPost.UI.Core.Common.DTOS
     {
         public SourceDTO()
         {
-            CategoriesDTO = new List<CategoryDTO>();
+            Categories = new List<CategoryDTO>();
         }
         public string Name { get; set; }
         public string Image { get; set; }
-        public virtual ICollection<CategoryDTO> CategoriesDTO { get; set; }
+        public string URL { get; set; }
+        public int  CategoryCount { get; set; }
+        public virtual ICollection<CategoryDTO> Categories { get; set; }
     }
 }

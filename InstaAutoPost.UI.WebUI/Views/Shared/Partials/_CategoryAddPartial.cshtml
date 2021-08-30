@@ -1,6 +1,6 @@
 ﻿@model List<SelectboxSourceDTO>
 
-<div class="single-product-tab-area mg-b-30">
+<div class="single-product-tab-area mg-b-30" style="margin-bottom:0px;">
     <!-- Single pro tab review Start-->
     <div class="single-pro-review-area">
         <div class="container-fluid">
@@ -27,10 +27,14 @@
                                                 </select>
                                             </div>
                                             <div class="input-group mg-b-pro-edt">
-
                                                 <span class="input-group-addon"><i class="icon nalika-edit" aria-hidden="true"></i></span>
                                                 <input type="text" id="upsert_category_name" class="form-control" placeholder="Kategori Adı">
                                             </div>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-favorites" aria-hidden="true"></i></span>
+                                                <input type="text" id="upsert_category_tags" class="form-control" placeholder="Etiketler">
+                                            </div>
+                                            <span class="help-block small" style="color:white"><i class="fas fa-exclamation-circle"></i> Etiket isimlerini virgül kullanarak giriniz. (Örn: haber,sağlık)</span>
                                         </div>
                                     </div>
                                 </div>

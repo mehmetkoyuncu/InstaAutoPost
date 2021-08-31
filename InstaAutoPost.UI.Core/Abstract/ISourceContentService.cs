@@ -9,11 +9,13 @@ namespace InstaAutoPost.UI.Core.Abstract
     public interface ISourceContentService
     {
         int AddSourceContent(List<SourceContent> sourceContent);
+        int AddSourceContent(SourceContentDTO sourcContent,string contentRootPath);
         List<SourceContentDTO> GetSourceContent(int categoryId);
         List<SourceContentDTO> GetSourceContentList();
-        List<SelectboxCategoryDTO> GetCategoriesIdAndName();
+        List<SelectboxCategoryDTO> GetCategoriesIdAndName(int sourceId);
         List<SelectboxSourceDTO> GetSourcesIdAndName();
-        string RemoveSourceContent(int id);
+        int RemoveSourceContent(int id);
         SourceContent GetSourceContentById(int id);
+        int EditSourceContent(SourceContentDTO sourceContentDTO,string contentRootPath);
     }
 }

@@ -43,7 +43,7 @@
                                     <tr>
                                         <td><img width="20px" src="~/images/@item.imageURL" alt="@item.Title"></td>
                                         <td>@item.Title</td>
-                                        <td>>@item.Description</td>
+                                        <td>@item.Description</td>
                                         <td>
                                             @if (item.SendOutForPost)
                                             {
@@ -59,8 +59,8 @@
                                         <td>@item.SourceName</td>
                                         <td style="text-align:center;">
                                             <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsSource(@item.Id)" class="pd-setting-ed btn btn-warning" data-original-title="Trash"><i class="fas fa-eye"></i></button>
-                                            <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="GetEditSourceView(this,@item.Id)" class="pd-setting-ed btn btn-success"><i class="fas fa-edit"></i></button>
-                                            <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSourceContent(@item.Id,@item.CategoryId)" class="pd-setting-ed btn btn-danger" data-original-title="Trash"><i class="fas fa-trash-alt"></i></button>
+                                            <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSourceContentView(@item.Id, '@item.Title', '@item.imageURL', '@item.Tags', '@item.Description',@item.CategoryId,@item.SourceId)" class="pd-setting-ed btn btn-success"><i class="fas fa-edit"></i></button>
+                                            <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSourceContent(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash"><i class="fas fa-trash-alt"></i></button>
                                         </td>
                                     </tr>
                                 }

@@ -10,3 +10,8 @@
 ::-ms-input-placeholder { /* Microsoft Edge */
     color: white;
 }
+
+#category_select_list[disabled=disabled], #category_select_list:disabled {
+    background-color: #152036 !important;
+    color:gray !important;
+}

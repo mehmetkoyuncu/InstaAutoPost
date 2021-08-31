@@ -2,6 +2,7 @@
 using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.AutoMapper;
 using InstaAutoPost.UI.Core.Common.DTOS;
+using InstaAutoPost.UI.Core.Utilities;
 using InstaAutoPost.UI.Data.Context;
 using InstaAutoPost.UI.Data.Entities.Concrete;
 using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
@@ -9,6 +10,7 @@ using InstaAutoPost.UI.Data.UnitOfWork.Concrete;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 
@@ -69,10 +71,10 @@ namespace InstaAutoPost.UI.Core.Concrete
                 }).ToList();
             return sources;
         }
-        public List<SelectboxCategoryDTO> GetCategoriesIdAndName()
+        public List<SelectboxCategoryDTO> GetCategoriesIdAndName(int sourceId)
         {
             List<SelectboxCategoryDTO> sources = _uow.GetRepository<Category>()
-                .Get(x => x.IsDeleted == false)
+                .Get(x => x.IsDeleted == false&&x.SourceId==sourceId)
                 .Select(x => new SelectboxCategoryDTO()
                 {
                     Id = x.Id,
@@ -82,13 +84,43 @@ namespace InstaAutoPost.UI.Core.Concrete
         }
 
 
-        public string RemoveSourceContent(int id)
+        public int RemoveSourceContent(int id)
         {
             SourceContent sourceContent = GetSourceContentById(id);
             _uow.GetRepository<SourceContent>().Remove(sourceContent);
             int result = _uow.SaveChanges();
-            string sResult = result == 0 ? "Hata! kaynak silinemedi" : "Kaynak başarıyla silindi";
-            return sResult;
+            return result;
+        }
+
+        public int AddSourceContent(SourceContentDTO sourcContentDTO,string contentRootPath)
+        {
+            SourceContent sourceContent = Mapping.Mapper.Map<SourceContentDTO, SourceContent>(sourcContentDTO);
+            ImageUtility imageU = new ImageUtility();
+            string imgSrc = imageU.Download(sourceContent.imageURL, sourceContent.Title, ImageFormat.Jpeg, contentRootPath);
+            sourceContent.imageURL = imgSrc;
+            sourceContent.UpdatedAt = DateTime.Now;
+            sourceContent.InsertedAt = DateTime.Now;
+            sourceContent.SendOutForPost = false;
+            sourceContent.IsDeleted = false;
+            sourceContent.ContentInsertAt = DateTime.Now;
+            _uow.GetRepository<SourceContent>().Add(sourceContent);
+            return _uow.SaveChanges();
+        }
+
+        public int EditSourceContent(SourceContentDTO sourceContentDTO,string contentRootPath)
+        {
+            SourceContent selectedSourceContent = GetSourceContentById(sourceContentDTO.Id);
+                ImageUtility imageU = new ImageUtility();
+                string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath);
+                selectedSourceContent.imageURL = imgSrc;
+
+            selectedSourceContent.CategoryId = sourceContentDTO.CategoryId;
+            selectedSourceContent.Description = sourceContentDTO.Description;
+            selectedSourceContent.Tags = sourceContentDTO.Tags;
+            selectedSourceContent.Title = sourceContentDTO.Title;
+            selectedSourceContent.UpdatedAt = DateTime.Now;
+            _uow.GetRepository<SourceContent>().Update(selectedSourceContent);
+            return _uow.SaveChanges();
         }
     }
 }

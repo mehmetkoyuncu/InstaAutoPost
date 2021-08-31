@@ -31,15 +31,15 @@ function AddSourceContentView() {
     ClearAddView();
     var contentDiv = $(document.createElement('div')).attr("id", "add_view");
     $('#breadcomb_container').after(contentDiv);
-    $('#add_view').hide().load("SourceContent/GetAddContentPartial", function () {
+    $('#add_view').hide().load("SourceContent/GetAddSourceContentPartial", function () {
         $('#insert_update_button').attr('onclick', "AddSourceContent()");
         $('#insert_button').hide();
         $('#add_view').fadeIn(1000);
     });
 }
 
-//Kategori Düzenle formu getir
-function EditSourceView(id, name, imageUrl) {
+//İçerik Düzenle formu getir
+function EditSourceContentView(id, title, imageURL, tags, description, categoryId, sourceId) {
     var viewControl = $('#add_view');
     if (viewControl.length > 0) {
         window.alert("Açık olan formu kapatınız");
@@ -48,11 +48,20 @@ function EditSourceView(id, name, imageUrl) {
     ClearAddView();
     var contentDiv = $(document.createElement('div')).attr("id", "add_view");
     $('#breadcomb_container').after(contentDiv);
-    $('#add_view').hide().load("Source/GetAddSourcePartial", function () {
+    $('#add_view').hide().load("SourceContent/GetAddSourceContentPartial", function () {
+
         $("html, body").animate({ scrollTop: 0 }, "slow");
-        $('#insert_update_button').attr('onclick', 'EditSource(' + id + ')');
-        $('#upsert_source_name').val(name);
-        $("#upsert_source_imageLink").val(imageUrl);
+        $('#insert_update_button').attr('onclick', 'EditSourceContent(' + id + ')');
+        $('#upsert_sourceContent_title').val(title);
+        $("#upsert_sourceContent_imageLink").val(imageURL);
+        $("#upsert_sourceContent_tags").val(tags);
+        $("#upsert_sourceContent_description").val(description);
+        $("#source_select_list").val(sourceId);
+        $("#category_select_list").val(categoryId);
+
+        AddSourceSelect();
+        $('#category_select_list').removeAttr("disabled");
+
         $('#insert_update_button').text('Düzenle');
         $('#insert_button').hide();
         $("html").animate({ "scrollTop": $("#add_view").scrollTop() + 100 });
@@ -62,36 +71,86 @@ function EditSourceView(id, name, imageUrl) {
 
 
 
-//Kaynak Ekle
-function AddSource() {
+
+
+function AddSourceSelect() {
+    var sourceId = parseInt($("#source_select_list").val());
+    $.ajax({
+        type: "GET",
+        url: "SourceContent/GetCategoryIdAndName",
+        async: false,
+        data: { 'sourceId': sourceId },
+        success: function (data) {
+            $("#category_select_list").empty();
+            $(function () {
+                $.each(data, function (index, value) {
+                    $('#category_select_list').append("<option value=" + value.id + ">" + value.name + "</option>");
+                    $('#category_select_list').removeAttr("disabled");
+                });
+            });
+        }
+    });
+}
+
+
+
+
+//İçerik Ekle
+function AddSourceContent() {
     StartLoader();
-    var name = $('#upsert_source_name').val();
-    var imageLink = $("#upsert_source_imageLink").val();
+    var sourceId = parseInt($("#source_select_list").val());
+    var categoryId = parseInt($("#category_select_list").val());
+    if (categoryId <= -1 || !categoryId) {
+        alert("Kategori alanı boş olamaz..");
+        return;
+    }
+    if (!sourceId || sourceId <= -1) {
+        alert("Kaynak alanı boş olamaz..");
+        return;
+    }
+    var title = $('#upsert_sourceContent_title').val();
+    var imageURL = $("#upsert_sourceContent_imageLink").val();
+    var tags = $("#upsert_sourceContent_tags").val();
+    var description = $("#upsert_sourceContent_description").val();
+
     $.ajax({
         type: "POST",
-        url: "Source/AddSource",
+        url: "SourceContent/AddSourceContent",
         async: false,
-        data: { 'name': name, 'image': imageLink },
+        data: { 'title': title, 'categoryId': categoryId, 'imageURL': imageURL, 'tags': tags, 'description': description },
         success: function (data) {
-            LoadSources();
+            LoadContents();
             CloseAddView();
             ClearFilter();
         }
     });
 }
 
-//Kaynak Düzenle
-function EditSource(id) {
-    var name = $('#upsert_source_name').val();
-    var imageLink = $("#upsert_source_imageLink").val();
-    StartLoader();;
+//İçerik Düzenle
+function EditSourceContent(id) {
+    StartLoader();
+    var sourceId = parseInt($("#source_select_list").val());
+    var categoryId = parseInt($("#category_select_list").val());
+    if (categoryId <= -1 || !categoryId) {
+        alert("Kategori alanı boş olamaz..");
+        return;
+    }
+    if (!sourceId || sourceId <= -1) {
+        alert("Kaynak alanı boş olamaz..");
+        return;
+    }
+    var title = $('#upsert_sourceContent_title').val();
+    var imageURL = $("#upsert_sourceContent_imageLink").val();
+    var tags = $("#upsert_sourceContent_tags").val();
+    var description = $("#upsert_sourceContent_description").val();
+
     $.ajax({
         type: "PUT",
-        url: "Source/EditSource",
+        url: "SourceContent/EditSourceContent",
         async: false,
-        data: { 'id': parseInt(id), 'name': name, 'image': imageLink },
+        data: { 'id': parseInt(id), 'title': title, 'categoryId': categoryId, 'imageURL': imageURL, 'tags': tags, 'description': description },
         success: function (data) {
-            LoadSources();
+            LoadContents();
             CloseAddView();
             ClearFilter();
         }
@@ -99,17 +158,17 @@ function EditSource(id) {
 }
 
 
-//Kaynak Sil
-function RemoveSource(id) {
+//İçerik Sil
+function RemoveSourceContent(id) {
     StartLoader();
     parseid = parseInt(id);
     $.ajax({
         type: "DELETE",
-        url: "Source/RemoveSource",
+        url: "SourceContent/RemoveSourceContent",
         async: false,
         data: { 'id': parseid },
         success: function (data) {
-            LoadSources();
+            LoadContents();
             ClearFilter();
         }
     });

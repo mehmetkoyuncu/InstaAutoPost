@@ -42,8 +42,8 @@ namespace InstaAutoPost.UI.Core.Concrete
 
         public List<SourceDTO> GetAllSources()
         {
-            List<Source> sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x=>x.Categories.Where(x=>x.IsDeleted==false)).OrderByDescending(x => x.UpdatedAt).ToList();
-            List<SourceDTO> sourceDTOS=Mapping.Mapper.Map<List<SourceDTO>>(sourceList);
+            List<Source> sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.UpdatedAt).ToList();
+            List<SourceDTO> sourceDTOS = Mapping.Mapper.Map<List<SourceDTO>>(sourceList);
             return sourceDTOS;
         }
 
@@ -87,41 +87,64 @@ namespace InstaAutoPost.UI.Core.Concrete
             return sources;
         }
 
-        public int AddSource(string name, string image,string contentRootPath)
+        public int AddSource(string name, string image, string contentRootPath)
         {
             ImageUtility imageU = new ImageUtility();
-            string imgSrc = imageU.Download(image, name, ImageFormat.Png,contentRootPath);
+            string imgSrc = imageU.Download(image, name, ImageFormat.Png, contentRootPath);
 
             Source source = new Source()
             {
                 InsertedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 Name = name,
-                Image = imgSrc.Substring(0,5) + Guid.NewGuid().ToString(),
+                Image = imgSrc,
                 IsDeleted = false
             };
             _uow.GetRepository<Source>().Add(source);
             return _uow.SaveChanges();
         }
 
-        public int EditSource(int id, string name, string image,string contentRootPath)
+        public int EditSource(int id, string name, string image, string contentRootPath)
         {
-            ImageUtility imageU = new ImageUtility();
-            string imgSrc = imageU.Download(image, name, ImageFormat.Png, contentRootPath);
+            string imgSrc = null;
             Source updateSource = GetById(id);
-            updateSource.Image = imgSrc.Substring(0,5)+Guid.NewGuid().ToString();
+            if (updateSource.Image != image)
+            {
+                ImageUtility imageU = new ImageUtility();
+                imgSrc = imageU.Download(image, name, ImageFormat.Png, contentRootPath);
+                updateSource.Image = imgSrc;
+            }
             updateSource.Name = name;
             updateSource.UpdatedAt = DateTime.Now;
             _uow.GetRepository<Source>().Update(updateSource);
-           return _uow.SaveChanges();
+            return _uow.SaveChanges();
         }
 
         public int RemoveSource(int id)
         {
-            Source source = GetById(id);
-            source.UpdatedAt = DateTime.Now;
-            _uow.GetRepository<Source>().Remove(source);
-            return _uow.SaveChanges();
+            int result = 0;
+            try
+            {
+                Source source = GetById(id);
+                source.UpdatedAt = DateTime.Now;
+                _uow.GetRepository<Source>().Remove(source);
+                List<Category> categoryList = _uow.GetRepository<Category>().Get(x => x.SourceId == source.Id).ToList();
+                foreach (var item in categoryList)
+                {
+                    _uow.GetRepository<Category>().Remove(item);
+                    List<SourceContent> sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.CategoryId == item.Id).ToList();
+                    foreach (var sourceContent in sourceContentList)
+                        _uow.GetRepository<SourceContent>().Remove(sourceContent);
+                }
+
+                result = _uow.SaveChanges();
+            }
+            catch (Exception)
+            {
+                result = 0;
+            }
+            return result;
+
         }
 
         public List<SourceDTO> Filter(int orderId, string searchText)
@@ -161,7 +184,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                     break;
                 case 4:
                     if (!string.IsNullOrWhiteSpace(searchText))
-                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.Categories.Where(x=>x.IsDeleted==false).Count()).ToList();
+                        sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false && x.Name.ToLower().Contains(searchText.ToLower())).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.Categories.Where(x => x.IsDeleted == false).Count()).ToList();
                     else
                         sourceList = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false)).OrderBy(x => x.Categories.Where(x => x.IsDeleted == false).Count()).ToList();
                     break;

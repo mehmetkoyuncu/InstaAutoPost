@@ -21,6 +21,8 @@ namespace InstaAutoPost.UI.Core.Utilities
                 CharacterConvertGenerator generator = new CharacterConvertGenerator();
                 fileName = generator.TurkishToEnglish(fileName);
                 fileName = generator.RemovePunctuation(fileName);
+                fileName = fileName.Substring(0, 5);
+                fileName = fileName + Guid.NewGuid().ToString();
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(imageURL);
                 Bitmap bitmap; bitmap = new Bitmap(stream);

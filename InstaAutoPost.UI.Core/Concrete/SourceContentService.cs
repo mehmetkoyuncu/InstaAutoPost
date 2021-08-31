@@ -1,4 +1,6 @@
-﻿using InstaAutoPost.UI.Core.Abstract;
+﻿using AutoMapper;
+using InstaAutoPost.UI.Core.Abstract;
+using InstaAutoPost.UI.Core.AutoMapper;
 using InstaAutoPost.UI.Core.Common.DTOS;
 using InstaAutoPost.UI.Data.Context;
 using InstaAutoPost.UI.Data.Entities.Concrete;
@@ -27,7 +29,7 @@ namespace InstaAutoPost.UI.Core.Concrete
         public List<SourceContentDTO> GetSourceContent(int categoryId)
         {
             var sourcontent = _uow.GetRepository<SourceContent>()
-                .Get(x => x.CategoryId == categoryId&&x.IsDeleted==false)
+                .Get(x => x.CategoryId == categoryId && x.IsDeleted == false)
                 .Include(x => x.Category)
                 .Include(x => x.Category.Source)
                 .Select(x => new SourceContentDTO()
@@ -40,15 +42,46 @@ namespace InstaAutoPost.UI.Core.Concrete
                     SendOutForPost = x.SendOutForPost,
                     SourceName = x.Category.Source.Name,
                     Title = x.Title,
-                    CategoryId=x.CategoryId
+                    CategoryId = x.CategoryId
                 }).OrderByDescending(x => x.ContentInsertAt).ToList();
             return sourcontent;
 
         }
         public SourceContent GetSourceContentById(int id)
         {
-            return _uow.GetRepository<SourceContent>().Get(x => x.Id == id&&x.IsDeleted==false).FirstOrDefault();
+            return _uow.GetRepository<SourceContent>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
         }
+
+        public List<SourceContentDTO> GetSourceContentList()
+        {
+            List<SourceContent> sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).Include(x=>x.Category).Include(x=>x.Category.Source).ToList();
+            List<SourceContentDTO> sourceContents = Mapping.Mapper.Map<List<SourceContentDTO>>(sourceContentList);
+            return sourceContents;
+        }
+        public List<SelectboxSourceDTO> GetSourcesIdAndName()
+        {
+            List<SelectboxSourceDTO> sources = _uow.GetRepository<Source>()
+                .Get(x => x.IsDeleted == false)
+                .Select(x => new SelectboxSourceDTO()
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToList();
+            return sources;
+        }
+        public List<SelectboxCategoryDTO> GetCategoriesIdAndName()
+        {
+            List<SelectboxCategoryDTO> sources = _uow.GetRepository<Category>()
+                .Get(x => x.IsDeleted == false)
+                .Select(x => new SelectboxCategoryDTO()
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToList();
+            return sources;
+        }
+
+
         public string RemoveSourceContent(int id)
         {
             SourceContent sourceContent = GetSourceContentById(id);

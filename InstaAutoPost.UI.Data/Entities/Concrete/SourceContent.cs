@@ -14,6 +14,7 @@ namespace InstaAutoPost.UI.Data.Entities.Concrete
         public bool SendOutForPost { get; set; }
         public int CategoryId { get; set; }
         public string SourceContentId { get; set; }
+        public string Tags { get; set; }
         public virtual Category Category { get; set; }
         public virtual ICollection<SourceContentImage> Images { get; set; }
 

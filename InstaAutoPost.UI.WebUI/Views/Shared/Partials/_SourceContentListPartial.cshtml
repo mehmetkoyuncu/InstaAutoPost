@@ -1,4 +1,8 @@
 ﻿@model List<SourceContentDTO>
+
+
+
+
 <div class="product-status mg-b-30" id="source_list_container">
     <div class="container-fluid">
         <div class="row">
@@ -27,19 +31,27 @@
                                 </tr>
                                 @foreach (var item in Model)
                                 {
+                                    if (item.Title.Length >= 20)
+                                    {
+                                        item.Title = item.Title.Substring(0, 20) + "...";
 
+                                    }
+                                    if (item.Description.Length >= 20)
+                                    {
+                                        item.Description = item.Description.Substring(0, 20) + "...";
+                                    }
                                     <tr>
-                                        <td><img width="20px" src="~/images/@item.imageURL" alt="@item.Title.Substring(0,5)"></td>
-                                        <td> @item.Title.Substring(0, 20) ...</td>
-                                        <td>@item.Description.Substring(0, 20) ...</td>
+                                        <td><img width="20px" src="~/images/@item.imageURL" alt="@item.Title"></td>
+                                        <td>@item.Title</td>
+                                        <td>>@item.Description</td>
                                         <td>
                                             @if (item.SendOutForPost)
                                             {
-                                                <span class="badge badge-pill badge-success">Paylaşıldı</span>
+                                                <span class="badge badge-pill badge-primary" style="background-color: #5CB85C">Paylaşıldı</span>
                                             }
                                             else
                                             {
-                                                <span class="badge badge-pill badge-success">Paylaşılmadı</span>
+                                                <span class="badge badge-pill badge-primary">Paylaşılmadı</span>
                                             }
                                         </td>
                                         <td>@item.ContentInsertAt.ToShortDateString()</td>
@@ -68,6 +80,7 @@
             </div>
         </div>
     </div>
+</div>
 
 
 

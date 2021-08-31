@@ -1,6 +1,6 @@
-﻿@model List<SelectboxSourceDTO>
+﻿@model Tuple<List<SelectboxCategoryDTO>, List<SelectboxSourceDTO>>
 
-<div class="single-product-tab-area mg-b-30" style="margin-bottom:0px;">
+<div class="single-product-tab-area mg-b-30" style="margin-bottom:25px;">
     <!-- Single pro tab review Start-->
     <div class="single-pro-review-area">
         <div class="container-fluid">
@@ -20,7 +20,17 @@
                                                 <span class="input-group-addon"><i class="icon nalika-like" aria-hidden="true"></i></span>
                                                 <select name="select" id="source_select_list" class="form-control pro-edt-select form-control-primary">
                                                     <option value="-1">Bir kaynak seçiniz..</option>
-                                                    @foreach (var item in Model)
+                                                    @foreach (var item in Model.Item2)
+                                                    {
+                                                        <option value="@item.Id">@item.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-favorites" aria-hidden="true"></i></span>
+                                                <select name="select" id="category_select_list" class="form-control pro-edt-select form-control-primary">
+                                                    <option value="-1">Bir kategori seçiniz..</option>
+                                                    @foreach (var item in Model.Item1)
                                                     {
                                                         <option value="@item.Id">@item.Name</option>
                                                     }
@@ -28,13 +38,23 @@
                                             </div>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon"><i class="icon nalika-edit" aria-hidden="true"></i></span>
-                                                <input type="text" id="upsert_category_name" class="form-control" placeholder="Kategori Adı">
+                                                <input type="text" id="upsert_sourceContent_name" class="form-control" placeholder="İçerik Başlığı">
+                                            </div>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-picture" aria-hidden="true"></i></span>
+                                                <input type="text" id="upsert_sourceContent_imageLink" class="form-control" placeholder="İçerik Görsel Linki">
                                             </div>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon"><i class="icon nalika-favorites-button" aria-hidden="true"></i></span>
-                                                <input type="text" id="upsert_category_tags" class="form-control" placeholder="Etiketler">
+                                                <input type="text" id="upsert_sourceContent_tags" class="form-control" placeholder="Etiketler">
+                                            </div>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-chat" aria-hidden="true"></i></span>
+                                                <textarea rows="5" cols="60" id="upsert_sourceContent_description" class="form-control" placeholder="İçerik Açıklaması"></textarea>
                                             </div>
                                             <span class="help-block small" style="color:white"><i class="fas fa-exclamation-circle"></i> Etiket isimlerini virgül kullanarak giriniz. (Örn: haber,sağlık)</span>
+                                            <span class="help-block small" style="color:white"><i class="icon nalika-like"></i> Görsel linki için, Google Görseller bölümünden, görselin linki alınıp kopyalanabilir.</span>
+
                                         </div>
                                     </div>
                                 </div>

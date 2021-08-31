@@ -13,6 +13,7 @@ namespace InstaAutoPost.UI.Core.Common.DTOS
         public string Description { get; set; }
         public DateTime ContentInsertAt { get; set; }
         public bool SendOutForPost { get; set; }
+        public string Tags { get; set; }
         public string CategoryName { get; set; }
         public string SourceName { get; set; }
         public int CategoryId { get; set; }

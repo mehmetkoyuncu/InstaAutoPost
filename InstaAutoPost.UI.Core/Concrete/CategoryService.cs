@@ -44,10 +44,23 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region Kategori Sil
         public int RemoveCategory(int id)
         {
-            Category category = GetById(id);
-            category.UpdatedAt = DateTime.Now;
-            _uow.GetRepository<Category>().Remove(category);
-            return _uow.SaveChanges();
+            int result = 0;
+            try
+            {
+                Category category = GetById(id);
+                category.UpdatedAt = DateTime.Now;
+                _uow.GetRepository<Category>().Remove(category);
+                List<SourceContent> sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.CategoryId == category.Id).ToList();
+                foreach (var item in sourceContentList)
+                    _uow.GetRepository<SourceContent>().Remove(item);
+                result= _uow.SaveChanges();
+
+            }
+            catch (Exception)
+            {
+                result = 0;
+            }
+            return result;
         }
         #endregion
         #region Kategori Ekle (Link)

@@ -142,7 +142,7 @@ namespace InstaAutoPost.UI.Core.RSSService
                 }
                 else
                     image = SliceImage(image, content);
-                var imageData =  DownloadImage(image, ((element.Title.Text.Substring(0, 10)).Replace(" ", "")) + (Guid.NewGuid().ToString()), ImageFormat.Jpeg);
+                var imageData =  DownloadImage(image, ((element.Title.Text.Substring(0, 5)).Replace(" ", "")) + (Guid.NewGuid().ToString()), ImageFormat.Jpeg);
                 sourceContent = new SourceContent()
                 {
                     ContentInsertAt = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now,

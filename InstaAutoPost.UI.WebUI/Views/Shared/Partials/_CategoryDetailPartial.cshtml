@@ -1,7 +1,7 @@
 ﻿@model CategoryDTO
 
 <div class="modal fade bd-example-modal-lg" id="category_detail" tabindex="-1">
-    <div class="modal-dialog odal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="single-product-tab-area mg-t-0 mg-b-30">
             <div class="container-fluid">
                 <div class="row">
@@ -17,7 +17,7 @@
                                     <div class="single-product-details res-pro-tb">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <h1>@Model.Name</h1>
+                                                <h1 style="word-wrap: break-word !important;">@Model.Name</h1>
                                             </div>
                                         </div>
                                         <span class="single-pro-star">
@@ -27,22 +27,22 @@
                                             }
                                         </span>
                                         <ul class="single-pro-price " style="color:white;">
-                                            <li><b>Toplam içerik Sayısı :</b> @Model.SourceContentsDTO.Count()</li>
+                                            <li style="word-wrap: break-word !important;"><b>Toplam içerik Sayısı :</b> @Model.SourceContentsDTO.Count()</li>
                                             @if (!String.IsNullOrEmpty(Model.Link))
                                             {
-                                                <li><b>Link :</b> @Model.Link</li>
+                                                <li style="word-wrap: break-word !important;"><b>Link :</b> @Model.Link</li>
                                             }
-                                            <li><b>Post Olarak Gönderilen İçerik Sayısı :</b> @Model.SendedContentCount</li>
-                                            <li><b>Eklenme Tarihi :</b> @Model.InsertedAt</li>
-                                            <li><b>Güncellenme Tarihi :</b> @Model.UpdatedAt</li>
-                                            <li><b>Etiketler :</b> @Model.Tags</li>
+                                            <li style="word-wrap: break-word !important;"><b>Post Olarak Gönderilen İçerik Sayısı :</b> @Model.SendedContentCount</li>
+                                            <li style="word-wrap: break-word !important;"><b>Eklenme Tarihi :</b> @Model.InsertedAt</li>
+                                            <li style="word-wrap: break-word !important;"><b>Güncellenme Tarihi :</b> @Model.UpdatedAt</li>
+                                            <li style="word-wrap: break-word !important;"><b>Etiketler :</b> @Model.Tags</li>
                                         </ul>
 
                                         <div class="color-quality-pro">
                                             <div class="clear"></div>
                                             <div class="row">
                                                 <div class="col-md-12" style="text-align:right;">
-                                                    <p style="color:white;border:1px solid; display:inline-block;padding:10px; border-radius:15px;">
+                                                    <p style="color: white; border: 1px solid; display: inline-block; padding: 10px; border-radius: 15px; word-wrap: break-word !important;">
                                                         @Model.Source.Name
                                                     </p>
                                                 </div>

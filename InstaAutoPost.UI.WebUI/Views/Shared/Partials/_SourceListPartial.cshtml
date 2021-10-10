@@ -15,15 +15,15 @@
                                     </div>
                                 </div>
                                 <div class="widget-text-box">
-                                    <h4>@item.Name.ToUpper()</h4>
+                                    <h4 style="word-wrap: break-word !important;">@item.Name.ToUpper()</h4>
                                     <ul style="color:white;">
                                         @if (!String.IsNullOrEmpty(item.URL))
                                         {
-                                            <li><b>Link : </b>@item.URL</li>
+                                            <li style="word-wrap: break-word !important;"><b>Link : </b>@item.URL</li>
                                         }
-                                        <li><b>Toplam kategori sayısı : </b>@item.Categories.Count()</li>
-                                        <li><b>Eklenme Tarihi : </b>@item.InsertedAt</li>
-                                        <li><b>Güncellenme Tarihi : </b>@item.UpdatedAt</li>
+                                        <li style="word-wrap: break-word !important;"><b>Toplam kategori sayısı : </b>@item.Categories.Count()</li>
+                                        <li style="word-wrap: break-word !important;"><b>Eklenme Tarihi : </b>@item.InsertedAt</li>
+                                        <li style="word-wrap: break-word !important;"><b>Güncellenme Tarihi : </b>@item.UpdatedAt</li>
                                     </ul>
                                     <div class="row">
                                         <div class="col-md-12">

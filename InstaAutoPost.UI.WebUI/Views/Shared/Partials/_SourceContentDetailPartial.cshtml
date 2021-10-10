@@ -1,0 +1,63 @@
+﻿@model SourceContentDTO
+<div class="modal fade bd-example-modal-lg" id="sourceContent_detail" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="single-product-tab-area mg-t-0 mg-b-30">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row" style="margin-bottom:5px;">
+                            <div class="col-md-12" style="text-align:right;">
+                                <button type="button" onclick="CloseSourceContentModal()" class="btn btn-danger"><i class="fa fa-times adminpro-danger-error" aria-hidden="true"></i> Kapat</button>
+                            </div>
+                        </div>
+                        <div id="single-product-pr" class="single-product-pr">
+                            <div class="row">
+                                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                                    <div id="myTabContent1" class="tab-content">
+                                        <div class="product-tab-list tab-pane fade active in" id="single-tab1">
+                                            <img src="~/images/@Model.imageURL" alt="">
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                    <div class="single-product-details res-pro-tb">
+                                        <h1 style="word-wrap: break-word !important;">@Model.Title</h1>
+                                        <span class="single-pro-star">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </span>
+                                        <ul class="single-pro-price " style="color:white;">
+                                            <li style="word-wrap: break-word !important;margin-bottom:5px;"><b>İçerik :</b> @Model.Description</li>
+                                            <li style="word-wrap: break-word !important;"><b>Kaynak Adı :</b> @Model.SourceName</li>
+                                            <li style="word-wrap: break-word !important;"><b>Kategori Adı :</b> @Model.CategoryName</li>
+                                            <li style="word-wrap: break-word !important;"><b>İçeriğin Yüklenme Tarihi :</b> @Model.ContentInsertAt</li>
+                                            <li style="word-wrap: break-word !important;">
+                                                <b>İçerik Gönderildi mi? :</b>
+                                                @if (@Model.SendOutForPost == true)
+                                                {
+                                                    <span>Evet</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Hayır</span>
+                                                }
+
+                                            </li>
+                                            <li style="word-wrap: break-word !important;"><b>Etiketler :</b> @Model.Tags</li>
+                                            <li style="word-wrap: break-word !important;"><b>Eklenme Tarihi :</b>@Model.InsertedAt</li>
+                                            <li style="word-wrap: break-word !important;"><b>Güncellenme Tarihi :</b>@Model.UpdatedAt</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

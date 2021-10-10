@@ -25,8 +25,9 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         public PartialViewResult GetAllContent()
         {
             List<SourceContentDTO> contents = _sourceContentService.GetSourceContentList();
-            return PartialView("~/Views/Shared/Partials/_SourceContentListPartial.cshtml",contents);
+            return PartialView("~/Views/Shared/Partials/_SourceContentListPartial.cshtml", contents);
         }
+
 
         public PartialViewResult GetAddSourceContentPartial()
         {
@@ -36,11 +37,12 @@ namespace InstaAutoPost.UI.WebUI.Controllers
 
         public JsonResult GetCategoryIdAndName(int sourceId)
         {
+            var a = _sourceContentService.GetCategoriesIdAndName(sourceId);
             return Json(_sourceContentService.GetCategoriesIdAndName(sourceId));
         }
         public JsonResult AddSourceContent(SourceContentDTO sourceContent)
         {
-            int result = _sourceContentService.AddSourceContent(sourceContent,_environment.ContentRootPath);
+            int result = _sourceContentService.AddSourceContent(sourceContent, _environment.ContentRootPath);
             return Json(result);
         }
         [HttpPut]
@@ -54,6 +56,21 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         {
             int result = _sourceContentService.RemoveSourceContent(id);
             return Json(result);
+        }
+        public IActionResult GetSourceContent(int id)
+        {
+            SourceContentDTO contents = _sourceContentService.GetSurceContentDTO(id);
+            return PartialView("~/Views/Shared/Partials/_SourceContentDetailPartial.cshtml", contents);
+        }
+        public IActionResult GetSourcesIdAndNameList()
+        {
+            List<SelectboxSourceDTO> sources = _sourceContentService.GetSourcesIdAndName();
+            return PartialView("~/Views/Shared/Partials/_SourceContentOptionsPartial.cshtml", sources);
+        }
+        public IActionResult Filter(int categoryId, int orderId, string searchText)
+        {
+            List<SourceContentDTO> contents = _sourceContentService.Filter(categoryId, orderId, searchText);
+            return PartialView("~/Views/Shared/Partials/_SourceContentListPartial.cshtml", contents);
         }
     }
 }

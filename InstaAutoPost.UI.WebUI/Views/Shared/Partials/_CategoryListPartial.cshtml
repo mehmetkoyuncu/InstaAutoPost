@@ -7,8 +7,7 @@
                 <div class="row">
                     @foreach (var item in Model)
                     {
-
-
+                        string tags = item.Tags != null ? item.Tags : "";
 
                         <div class=" col-md-6 col-lg-3 col-xl-3" style="margin-bottom:20px;">
                             <div class="analysis-progrebar @*reso-mg-b-30*@">
@@ -25,7 +24,7 @@
                                         }
                                         @name
                                     <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveCategory(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash" style="float:right;"><i class="fas fa-trash-alt"></i></button>
-                                    <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditCategoryView(@item.Id, '@item.Name.Trim()',@item.Source.Id, '@item.Tags.Trim()')" class="pd-setting-ed btn btn-success" style="float:right;"><i class="fas fa-edit"></i></button>
+                                    <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditCategoryView(@item.Id, '@item.Name.Trim()',@item.Source.Id, '@tags')" class="pd-setting-ed btn btn-success" style="float:right;"><i class="fas fa-edit"></i></button>
                                     <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsCategoryView(@item.Id)" class="pd-setting-ed btn btn-warning" data-original-title="Trash" style="float:right"><i class="fas fa-eye"></i></button>
 
                                     </h5>

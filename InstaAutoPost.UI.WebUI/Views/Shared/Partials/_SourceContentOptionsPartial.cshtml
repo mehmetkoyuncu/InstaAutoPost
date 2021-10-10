@@ -1,0 +1,66 @@
+﻿@model List<SelectboxSourceDTO>
+<div class="breadcome-area" id="sourceContent_options">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list" id="breadcome_layout">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="row">
+
+                                <div class=" col-sm-12 col-md-6 col-lg-6">
+                                    <div class="col-md-4">
+                                        <select style="margin:10px 0px;" onchange="SelectSource()" name="select" id="select_source" class="form-control pro-edt-select form-control-primary">
+                                            <option value="-1">Bir kaynak seçiniz..</option>
+                                            @foreach (var item in Model)
+                                            {
+                                                <option value="@item.Id">@item.Name.ToUpper()</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <select onchange="SelectCategory()" style="margin:10px 0px;" name="select" disabled id="category_select_list" class="form-control pro-edt-select form-control-primary">
+                                            <option value="-1">ÖNCE BİR KAYNAK SEÇİNİZ..</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select onchange="ApplyOrder()" style="margin:10px 0px" name="select" id="select_order" class="form-control pro-edt-select form-control-primary">
+                                            <option value="-1">SIRALA</option>
+                                            <option value="1">A-Z SIRALA</option>
+                                            <option value="2">Z-A SIRALA</option>
+                                            <option value="3">AÇIKLAMA A-Z SIRALA</option>
+                                            <option value="4">AÇIKLAMA Z-A SIRALA</option>
+                                            <option value="5">ÖNCE POST OLARAK GÖNDERİLEN İÇERİKLER</option>
+                                            <option value="6">ÖNCE POST OLARAK GÖNDERİLMEYEN İÇERİKLER</option>
+                                            <option value="7">GÜNCELLEME TARİHİNE GÖRE SIRALA (ÖNCE ESKİ)</option>
+                                            <option value="8">GÜNCELLEME TARİHİNE GÖRE SIRALA (ÖNCE YENİ)</option>
+                                            <option value="9">EKLEME TARİHİNE GÖRE SIRALA (ÖNCE ESKİ)</option>
+                                            <option value="10">EKLEME TARİHİNE GÖRE SIRALA (ÖNCE YENİ)</option>
+                                            <option value="11">YÜKLENME TARİHİNE GÖRE SIRALA (ÖNCE ESKİ)</option>
+                                            <option value="12">YÜKLENME TARİHİNE GÖRE SIRALA (ÖNCE YENİ)</option>
+                                            <option value="0">FİLTREYİ KALDIR</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-6 col-lg-6" style="text-align:right;">
+                                    <div class="row" style="padding:0px 15px;">
+                                        <div class="col-md-offset-7" style="padding:0px 15px;">
+                                            <div class="input-group custom-go-button" style="margin:10px 0px;">
+                                                <input type="text" id="search_box" onkeyup="SearchSourceContent()" class="form-control" placeholder="İçeriklerde Ara..">
+                                                <span class="input-group-btn"><span class="btn btn-primary" style="cursor:context-menu"><i class="fa fa-search"></i></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

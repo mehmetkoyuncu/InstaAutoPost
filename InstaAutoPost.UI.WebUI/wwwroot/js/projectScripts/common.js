@@ -3,7 +3,8 @@
 var typeEnum = {
     Category: "Category",
     Source: "Source",
-    SourceContent: "SourceContent"
+    SourceContent: "SourceContent",
+    RssGenerator: "RssGenerator"
 };
 function RenderBodyClear() {
     $('#render_body').empty();
@@ -47,3 +48,5 @@ function ClearAddView() {
     $('#add_view input').val('');
     $('#add_view select').val(-1);
 }
+
+

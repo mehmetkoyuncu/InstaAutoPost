@@ -6,6 +6,15 @@ function LoadContents() {
     var contentDiv = $(document.createElement('div')).attr("id", "list_content_container");
     $('#render_body').append(contentDiv);
     $('#list_content_container').load('SourceContent/GetAllContent', function () {
+        var options = $('#sourceContent_options');
+        if (options.length > 0)
+            return;
+        else {
+            var contentDiv = $(document.createElement('div')).attr("id", "list_options_container");
+            $('#list_content_container').before(contentDiv);
+            $('#list_options_container').load('SourceContent/GetSourcesIdAndNameList', function () {
+            });
+        }
         StopLoader();
     });
 };
@@ -70,26 +79,30 @@ function EditSourceContentView(id, title, imageURL, tags, description, categoryI
 }
 
 
-
-
-
-function AddSourceSelect() {
-    var sourceId = parseInt($("#source_select_list").val());
-    $.ajax({
-        type: "GET",
-        url: "SourceContent/GetCategoryIdAndName",
-        async: false,
-        data: { 'sourceId': sourceId },
-        success: function (data) {
+function SelectSource() {
+    var sourceId = parseInt($("#select_source").val());
+        if (sourceId == -1) {
             $("#category_select_list").empty();
-            $(function () {
-                $.each(data, function (index, value) {
-                    $('#category_select_list').append("<option value=" + value.id + ">" + value.name + "</option>");
-                    $('#category_select_list').removeAttr("disabled");
-                });
-            });
+            $('#category_select_list').append("<option value=" + -1 + ">ÖNCE BİR KAYNAK SEÇİNİZ..</option>");
+            $('#category_select_list').attr("disabled", true);
+            return;
         }
-    });
+        $.ajax({
+            type: "GET",
+            url: "SourceContent/GetCategoryIdAndName",
+            async: false,
+            data: { 'sourceId': sourceId },
+            success: function (data) {
+                $("#category_select_list").empty();
+                $(function () {
+                    $('#category_select_list').append("<option value=" + -1 + ">Bir kategori seçiniz..</option>");
+                    $.each(data, function (index, value) {
+                        $('#category_select_list').append("<option value=" + value.id + ">" + value.name + "</option>");
+                        $('#category_select_list').removeAttr("disabled");
+                    });
+                });
+            }
+        });
 }
 
 
@@ -125,6 +138,23 @@ function AddSourceContent() {
         }
     });
 }
+
+function SelectCategory() {
+
+    var categoryId = parseInt($("#category_select_list").val());
+    var orderId = parseInt($('#select_order').val());
+    var searchText = $('#search_box').val();
+    if (categoryId == "" || categoryId==-1)
+        return;
+    else {
+        StartLoader();
+        $('#list_content_container').load('SourceContent/Filter', { 'categoryId': categoryId, 'orderId': orderId, 'searchText': searchText }, function () {
+            StopLoader();
+        });
+    }
+}
+
+
 
 //İçerik Düzenle
 function EditSourceContent(id) {
@@ -177,14 +207,13 @@ function RemoveSourceContent(id) {
 //Sırala
 function ApplyOrder() {
     StartLoader();
+    var categoryId = parseInt($("#category_select_list").val());
     var orderId = parseInt($('#select_order').val());
     var searchText = $('#search_box').val();
-    if (orderId == -1) {
-        StopLoader();
+    if (categoryId == "")
         return;
-    }
     else {
-        $('#list_sources_container').load('Source/Filter', { 'orderId': orderId, 'searchText': searchText }, function () {
+        $('#list_content_container').load('SourceContent/Filter', { 'categoryId': categoryId, 'orderId': orderId, 'searchText': searchText }, function () {
             StopLoader();
         });
     }
@@ -192,23 +221,71 @@ function ApplyOrder() {
 
 
 //Arama
-function SearchSource() {
+function SearchSourceContent() {
+    StartLoader();
+    var categoryId = parseInt($("#category_select_list").val());
     var orderId = parseInt($('#select_order').val());
-    var searchText = $('#search_box').val()
-    $('#list_sources_container').load('Source/Filter', { 'orderId': orderId, 'searchText': searchText }, function () {
-    });
+    var searchText = $('#search_box').val();
+    if (categoryId == "")
+        return;
+    else {
+        $('#list_content_container').load('SourceContent/Filter', { 'categoryId': categoryId, 'orderId': orderId, 'searchText': searchText }, function () {
+            StopLoader();
+        });
+    }
 }
 
 //Filtreyi Temizle
 function ClearFilter() {
     StartLoader();
+    $("#select_source").val(-1);
     $("#select_order").val(-1);
     $('#search_box').val('');
     StopLoader();
 }
 
+//Kategori Detay Modalı Getir
+function DetailsSourceContentView(id) {
+    var contentDiv = $(document.createElement('div')).attr("id", "detail_sourceContent_container");
+    $('#source_list_container').append(contentDiv);
+    $('#detail_sourceContent_container').load('SourceContent/GetSourceContent', { 'id': parseInt(id) }, function () {
+        $('#sourceContent_detail').modal('show');
+    });
+}
+
+//Kategori Detay Modalı Kaldır
+function CloseSourceContentModal() {
+    $('#sourceContent_detail').modal('hide');
+    $('#detail_sourceContent_container').remove();
+    $('.modal-backdrop').remove();
+}
 
 
+function AddSourceSelect() {
+    var sourceId = parseInt($("#source_select_list").val());
+    if (sourceId == -1) {
+        $("#category_select_list").empty();
+        $('#category_select_list').append("<option value=" + -1 + ">Bir kategori seçiniz..</option>");
+        $('#category_select_list').attr("disabled", true);
+        return;
+    }
+    $.ajax({
+        type: "GET",
+        url: "SourceContent/GetCategoryIdAndName",
+        async: false,
+        data: { 'sourceId': sourceId },
+        success: function (data) {
+            $("#category_select_list").empty();
+            $(function () {
+                $.each(data, function (index, value) {
+                    $('#category_select_list').append("<option value=" + value.id + ">" + value.name + "</option>");
+                    $('#category_select_list').removeAttr("disabled");
+                });
+            
+            });
+        }
+    });
+}
 
 
 

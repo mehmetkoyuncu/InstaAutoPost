@@ -13,6 +13,11 @@ namespace InstaAutoPost.UI.WebUI.Controllers
     {
         IRssRunnerService _rssGeneratorService;
         IHostEnvironment _environment;
+
+        public IActionResult Index()
+        {
+            return View();
+        }
         public RssRunnerController(IRssRunnerService service, IHostEnvironment environment)
         {
             _rssGeneratorService = service;
@@ -26,6 +31,10 @@ namespace InstaAutoPost.UI.WebUI.Controllers
                 return Ok(Json(result));
             else
                 return Ok(Json("İçerikler kaydedilemedi"));
+        }
+        public PartialViewResult GetRSSGeneratorPartial()
+        {
+            return PartialView("~/Views/Shared/Partials/_RSSGeneratorAddPartial.cshtml");
         }
     }
 }

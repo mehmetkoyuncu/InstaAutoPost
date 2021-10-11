@@ -65,6 +65,7 @@
         ============================================ -->
     <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
     <link href="~/css/projectStyles/common.css" rel="stylesheet" />
+    <link href="~/js/toastr/toastr.css" rel="stylesheet" />
     @RenderSection("Styles", false)
 </head>
 
@@ -104,7 +105,7 @@
                                 <li><a title="Kaynaklar" asp-action="Index" asp-controller="Source"><span class="mini-sub-pro">Kaynaklar</span></a></li>
                                 <li><a title="Kategoriler" asp-action="Index" asp-controller="Category"><span class="mini-sub-pro">Kategoriler</span></a></li>
                                 <li><a title="İçerikler" asp-action="Index" asp-controller="SourceContent"><span class="mini-sub-pro">İçerikler</span></a></li>
-                             
+
                             </ul>
                         </li>
                         <li>
@@ -978,7 +979,7 @@
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <div class="breadcomb-report">
-                                            <button  id="report" data-toggle="tooltip" data-placement="left" title="Excel olarak indir" class="btn btn-primary"><i class="icon nalika-download"></i></button>
+                                            <button id="report" data-toggle="tooltip" data-placement="left" title="Excel olarak indir" class="btn btn-primary"><i class="icon nalika-download"></i></button>
                                             <button data-toggle="tooltip" data-placement="bottom" title="Ekle" style="margin-left:10px;" id="insert_button" class="btn btn-primary"><i class="far fa-plus-square mr-2"></i><span></span></button>
                                         </div>
                                     </div>
@@ -1061,6 +1062,8 @@
     <!-- project JS
     ============================================ -->
     <script src="~/js/projectScripts/common.js"></script>
+    <script src="~/js/sweetAlert/swalert.js"></script>
+    <script src="~/js/toastr/toastr.min.js"></script>
 
     @RenderSection("Scripts", false)
 </body>

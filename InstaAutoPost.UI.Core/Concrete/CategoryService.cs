@@ -25,7 +25,10 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region Id'ye göre kategoriyi getir
         public Category GetById(int id)
         {
-            return _uow.GetRepository<Category>().Get(x => x.Id == id && x.IsDeleted == false).Include(x=>x.Source).Include(x=>x.SourceContents.Where(x => x.IsDeleted == false)).FirstOrDefault();
+            return _uow.GetRepository<Category>()
+                .Get(x => x.Id == id && x.IsDeleted == false)
+                .Include(x=>x.Source).Include(x=>x.SourceContents.Where(x => x.IsDeleted == false))
+                .FirstOrDefault();
         }
      
         #endregion
@@ -40,6 +43,11 @@ namespace InstaAutoPost.UI.Core.Concrete
             _uow.GetRepository<Category>().Update(category);
             return _uow.SaveChanges();
         }
+        public CategoryImageViewDTO GetCategoryById(int id)
+        {
+            Category category = _uow.GetRepository<Category>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
+            return Mapping.Mapper.Map<Category, CategoryImageViewDTO>(category);
+        }
         #endregion
         #region Kategori Sil
         public int RemoveCategory(int id)
@@ -50,7 +58,9 @@ namespace InstaAutoPost.UI.Core.Concrete
                 Category category = GetById(id);
                 category.UpdatedAt = DateTime.Now;
                 _uow.GetRepository<Category>().Remove(category);
-                List<SourceContent> sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.CategoryId == category.Id).ToList();
+                List<SourceContent> sourceContentList = _uow.GetRepository<SourceContent>()
+                    .Get(x => x.CategoryId == category.Id)
+                    .ToList();
                 foreach (var item in sourceContentList)
                     _uow.GetRepository<SourceContent>().Remove(item);
                 result= _uow.SaveChanges();
@@ -94,13 +104,18 @@ namespace InstaAutoPost.UI.Core.Concrete
             return _uow.SaveChanges();
         }
         #endregion
-        #region Kategorileri Getir
+        #region Tüm Kategorileri Getir
         public List<CategoryDTO> GetAllCategories()
         {
-            List<Category> categories = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false)).OrderByDescending(x => x.UpdatedAt).ToList();
+            List<Category> categories = _uow.GetRepository<Category>()
+                .Get(x => x.IsDeleted == false)
+                .Include(x => x.Source)
+                .Include(x => x.SourceContents
+                .Where(x => x.IsDeleted == false))
+                .OrderByDescending(x => x.UpdatedAt)
+                .ToList();
             List<CategoryDTO> categoryDTOs = Mapping.Mapper.Map<List<CategoryDTO>>(categories);
             return SetPercentAndCount(categoryDTOs);
-
         }
         #endregion
         #region Kaynak Listesini Getir
@@ -284,10 +299,22 @@ namespace InstaAutoPost.UI.Core.Concrete
             List<Category> categories = null;
             if (string.IsNullOrWhiteSpace(searchText))
             {
-               categories = _uow.GetRepository<Category>().Get(x => x.SourceId == id && x.IsDeleted == false).OrderByDescending(x => x.UpdatedAt).Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false)).ToList();
+               categories = _uow.GetRepository<Category>()
+                    .Get(x => x.SourceId == id && x.IsDeleted == false)
+                    .OrderByDescending(x => x.UpdatedAt)
+                    .Include(x => x.Source)
+                    .Include(x => x.SourceContents
+                    .Where(x => x.IsDeleted == false))
+                    .ToList();
             }
             else {
-                categories = _uow.GetRepository<Category>().Get(x => x.SourceId == id && x.IsDeleted == false&&x.Name.ToLower().Contains(searchText.ToLower())).OrderByDescending(x => x.UpdatedAt).Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false)).ToList();
+                categories = _uow.GetRepository<Category>()
+                    .Get(x => x.SourceId == id && x.IsDeleted == false&&x.Name.ToLower().Contains(searchText.ToLower()))
+                    .OrderByDescending(x => x.UpdatedAt)
+                    .Include(x => x.Source)
+                    .Include(x => x.SourceContents
+                    .Where(x => x.IsDeleted == false))
+                    .ToList();
             }
             List<CategoryDTO> categoryDTOs = Mapping.Mapper.Map<List<CategoryDTO>>(categories);
             return SetPercentAndCount(categoryDTOs);
@@ -310,11 +337,14 @@ namespace InstaAutoPost.UI.Core.Concrete
             }
             return categoryDTOs;
         }
+        #endregion
+        #region Id'ye göre CategoryDTO Getir
         public CategoryDTO GetCategoryDTOById(int id)
         {
             Category category = GetById(id);
             return Mapping.Mapper.Map<Category, CategoryDTO>(category);
         }
         #endregion
+
     }
 }

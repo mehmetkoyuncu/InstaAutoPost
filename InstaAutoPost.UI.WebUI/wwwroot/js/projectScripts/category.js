@@ -34,7 +34,7 @@ $(document).ready(function () {
 function AddCategoryView() {
     var viewControl = $('#add_view');
     if (viewControl.length > 0) {
-        window.alert("Açık olan formu kapatınız");
+        toastr.warning('İşlem yapmadan önce açık olan formu kapatın..');
         return;
     }
     ClearAddView();
@@ -48,10 +48,10 @@ function AddCategoryView() {
 }
 
 //Kategori Düzenle formu getir
-function EditCategoryView(id, name,sourceId,tags) {
+function EditCategoryView(id) {
     var viewControl = $('#add_view');
     if (viewControl.length > 0) {
-        window.alert("Açık olan formu kapatınız");
+        toastr.warning('İşlem yapmadan önce açık olan formu kapatın..');
         return;
     }
     ClearAddView();
@@ -60,6 +60,11 @@ function EditCategoryView(id, name,sourceId,tags) {
     $('#add_view').hide().load("Category/GetAddCategoryPartial", function () {
         $("html, body").animate({ scrollTop: 0 }, "slow");
         $('#insert_update_button').attr('onclick', 'EditCategory(' + id + ')');
+        var category = GetCategoryById(id);
+        var name = category.value.name.trim();
+        var sourceId = category.value.sourceId;
+        var tags = category.value.tags;
+        debugger;
         $('#upsert_category_name').val(name);
         $("#upsert_category_tags").val(tags);
         $("#source_select_list option[value=" + sourceId + "]").attr('selected', 'selected');
@@ -84,12 +89,25 @@ function AddCategory() {
         async: false,
         data: { 'name': name, 'sourceId': sourceId, 'tags':tags },
         success: function (data) {
+            if (data > 0)
+                toastr.success('Kayıt başarıyla eklendi..');
+            else
+                toastr.error('Kategori eklenirken hata oluştu !');
+            LoadCategories();
+            CloseAddView();
+            ClearFilter();
+        },
+        error: function () {
+            SetRequestError();
             LoadCategories();
             CloseAddView();
             ClearFilter();
         }
     });
 }
+
+
+//Kategori Güncelle
 function EditCategory(id) {
     var name = $('#upsert_category_name').val();
     var sourceId = parseInt($("#source_select_list").val());
@@ -101,6 +119,16 @@ function EditCategory(id) {
         async: false,
         data: { 'id': parseInt(id), 'name': name, 'sourceId': parseInt(sourceId), 'tags': tags },
         success: function (data) {
+            if (data > 0)
+                toastr.success('Kayıt başarıyla güncellendi..');
+            else
+                toastr.error('Kategori güncellenirken hata oluştu !');
+            LoadCategories();
+            CloseAddView();
+            ClearFilter();
+        },
+        error: function () {
+            SetRequestError();
             LoadCategories();
             CloseAddView();
             ClearFilter();
@@ -193,6 +221,22 @@ function CloseCategoryModal() {
     $('#category_detail').modal('hide');
     $('#detail_categories_container').remove();
     $('.modal-backdrop').remove();
+}
+
+function GetCategoryById(id) {
+    parseid = parseInt(id);
+    var result = 0;
+    $.ajax({
+        type: "GET",
+        url: "Category/GetCategoryById",
+        contentType: "application/json; charset=utf-8",
+        async: false,
+        data: { 'id': parseid },
+        success: function (data) {
+            result= data;
+        }
+    });
+    return result;
 }
 
 

@@ -22,7 +22,6 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         {
             return View();
         }
-
         #region Kategori Sil
         [HttpDelete]
         public IActionResult RemoveCategory(int id)
@@ -75,7 +74,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             return Json(result);
         }
         #endregion
-        #region Id'ye Göre Kategori Listesini Getir
+        #region Id'ye Göre Kategori Listesini Getir ve Partial Döndür
         public PartialViewResult GetCategoryBySourceId(int id, string searchText)
         {
             List<CategoryDTO> categories = _categoryService.GetAllCategoryBySourceId(id, searchText);
@@ -89,6 +88,12 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             return PartialView("~/Views/Shared/Partials/_CategoryOptionsPartial.cshtml", sources);
         }
         #endregion
-
+        #region Id'ye Göre Kategori Getir
+        public IActionResult GetCategoryById(int id)
+        {
+           CategoryImageViewDTO category= _categoryService.GetCategoryById(id);
+            return Ok(Json(category));
+        }
+        #endregion
     }
 }

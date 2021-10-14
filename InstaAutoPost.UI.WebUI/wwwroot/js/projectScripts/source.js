@@ -30,11 +30,11 @@ $(document).ready(function () {
 
 
 
-//Kategori Ekle formu getir
+//Kaynak Ekle formu getir
 function AddSourceView() {
     var viewControl = $('#add_view');
     if (viewControl.length > 0) {
-        window.alert("Açık olan formu kapatınız");
+        toastr.warning('İşlem yapmadan önce açık olan formu kapatın..');
         return;
     }
     ClearAddView();
@@ -44,14 +44,15 @@ function AddSourceView() {
         $('#insert_update_button').attr('onclick', "AddSource()");
         $('#insert_button').hide();
         $('#add_view').fadeIn(1000);
+        $('#form_controls label').hide();
     });
 }
 
-//Kategori Düzenle formu getir
-function EditSourceView(id, name,imageUrl) {
+//Kaynak Düzenle formu getir
+function EditSourceView(id, name, imageUrl) {
     var viewControl = $('#add_view');
     if (viewControl.length > 0) {
-        window.alert("Açık olan formu kapatınız");
+        toastr.warning('İşlem yapmadan önce açık olan formu kapatın..');
         return;
     }
     ClearAddView();
@@ -60,8 +61,11 @@ function EditSourceView(id, name,imageUrl) {
     $('#add_view').hide().load("Source/GetAddSourcePartial", function () {
         $("html, body").animate({ scrollTop: 0 }, "slow");
         $('#insert_update_button').attr('onclick', 'EditSource(' + id + ')');
+        var source = GetSourceById(id);
+        var name = source.value.name.trim();
+        var image = source.value.image;
         $('#upsert_source_name').val(name);
-        $("#upsert_source_imageLink").val(imageUrl);
+        $("#upsert_source_imageLink").val(image);
         $('#insert_update_button').text('Düzenle');
         $('#insert_button').hide();
         $("html").animate({ "scrollTop": $("#add_view").scrollTop() + 100 });
@@ -73,15 +77,33 @@ function EditSourceView(id, name,imageUrl) {
 
 //Kaynak Ekle
 function AddSource() {
+    var name = $('#upsert_source_name').val()
+    if (!name) {
+        toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
+        return;
+    }
+    var imageLink = $("#upsert_source_imageLink").val();
     StartLoader();
-   var name= $('#upsert_source_name').val();
-   var imageLink= $("#upsert_source_imageLink").val();
     $.ajax({
         type: "POST",
         url: "Source/AddSource",
         async: false,
         data: { 'name': name, 'image': imageLink },
         success: function (data) {
+            if (data > 0) {
+                toastr.success('Kayıt başarıyla eklendi..');
+                LoadSources();
+                CloseAddView();
+                ClearFilter();
+                StopLoader();
+            }
+            else {
+                toastr.error('Kayıt eklenirken hata oluştu !');
+                StopLoader();
+            }
+        },
+        error: function () {
+            SetRequestError();
             LoadSources();
             CloseAddView();
             ClearFilter();
@@ -91,15 +113,33 @@ function AddSource() {
 
 //Kaynak Düzenle
 function EditSource(id) {
-    var name = $('#upsert_source_name').val();
+    var name = $('#upsert_source_name').val()
+    if (!name) {
+        toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
+        return;
+    }
     var imageLink = $("#upsert_source_imageLink").val();
-    StartLoader();;
+    StartLoader();
     $.ajax({
         type: "PUT",
         url: "Source/EditSource",
         async: false,
         data: { 'id': parseInt(id), 'name': name, 'image': imageLink },
         success: function (data) {
+            if (data > 0) {
+                toastr.success('Kayıt başarıyla eklendi..');
+                LoadSources();
+                CloseAddView();
+                ClearFilter();
+                StopLoader();
+            }
+            else {
+                toastr.error('Kayıt eklenirken hata oluştu !');
+                StopLoader();
+            }
+        },
+        error: function () {
+            SetRequestError();
             LoadSources();
             CloseAddView();
             ClearFilter();
@@ -110,18 +150,42 @@ function EditSource(id) {
 
 //Kaynak Sil
 function RemoveSource(id) {
-    StartLoader();
-    parseid = parseInt(id);
-    $.ajax({
-        type: "DELETE",
-        url: "Source/RemoveSource",
-        async: false,
-        data: { 'id': parseid },
-        success: function (data) {
-            LoadSources();
-            ClearFilter();
+    Swal.fire({
+        title: 'Bu kaydı silmek istediğinizden emin misiniz ?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sil',
+        cancelButtonText: 'İptal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            StartLoader();
+            parseid = parseInt(id);
+            $.ajax({
+                type: "DELETE",
+                url: "Source/RemoveSource",
+                async: false,
+                data: { 'id': parseid },
+                success: function (data) {
+                    if (data > 0)
+                        toastr.success('Kayıt başarıyla silindi..');
+                    else
+                        toastr.error('Kayıt silinirken hata oluştu !');
+                    LoadSources();
+                    ClearFilter();
+                },
+                error: function () {
+                    SetRequestError();
+                    LoadCategories();
+                    ClearFilter();
+                }
+            });
         }
-    });
+    })
+
+
+
 }
 
 //Sırala
@@ -134,7 +198,7 @@ function ApplyOrder() {
         return;
     }
     else {
-        $('#list_sources_container').load('Source/Filter', {'orderId': orderId, 'searchText': searchText }, function () {
+        $('#list_sources_container').load('Source/Filter', { 'orderId': orderId, 'searchText': searchText }, function () {
             StopLoader();
         });
     }
@@ -142,11 +206,18 @@ function ApplyOrder() {
 
 
 //Arama
+var timer = null;
 function SearchSource() {
-    var orderId = parseInt($('#select_order').val());
-    var searchText = $('#search_box').val()
-    $('#list_sources_container').load('Source/Filter', { 'orderId': orderId, 'searchText': searchText }, function () {
-    });
+    RunSearchSpinner();
+    clearTimeout(timer);
+    timer = setTimeout(
+        function () {
+            var orderId = parseInt($('#select_order').val());
+            var searchText = $('#search_box').val()
+            $('#list_sources_container').load('Source/Filter', { 'orderId': orderId, 'searchText': searchText }, function () {
+            });
+            RunSearchSpinner('fa fa-search');
+        }, 1500);
 }
 
 //Filtreyi Temizle
@@ -157,6 +228,23 @@ function ClearFilter() {
     StopLoader();
 }
 
+
+//Düzenleme için id'ye göre kategoriyi getir
+function GetSourceById(id) {
+    parseid = parseInt(id);
+    var result = 0;
+    $.ajax({
+        type: "GET",
+        url: "Source/GetSourceById",
+        contentType: "application/json; charset=utf-8",
+        async: false,
+        data: { 'id': parseid },
+        success: function (data) {
+            result = data;
+        }
+    });
+    return result;
+}
 
 
 

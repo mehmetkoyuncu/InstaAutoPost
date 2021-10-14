@@ -4,7 +4,7 @@ using System.Text;
 
 namespace InstaAutoPost.UI.Core.Common.DTOS
 {
-    public class SelectboxCategoryDTO
+    public class SelectBoxCategoryDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }

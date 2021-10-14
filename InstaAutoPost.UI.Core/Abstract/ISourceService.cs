@@ -13,13 +13,10 @@ namespace InstaAutoPost.UI.Core.Abstract
         int AddSource(string name, string image,string contentRootPath);
         int RemoveSource (int id);
         Source GetById(int id);
-        List<Source> GetByName(string name);
         int EditSource(int id, string name, string image,string contentRootPath);
         List<SourceDTO> GetAllSources();
-        List<Source> GetDeletedSource();
-        SourceWithCategoryCountDTO GetSourceWithCategoryCount(int id);
-        List<SelectboxSourceDTO> GetSourcesForSelectBox();
         List<SourceDTO> Filter(int orderId, string searchText);
+        SourceAddOrUpdateDTO GetSourceById(int id);
 
     }
 }

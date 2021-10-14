@@ -17,10 +17,10 @@ namespace InstaAutoPost.UI.Core.Abstract
         int AddCategory(string name, string url, int sourceId);
         List<CategoryDTO> GetAllCategoryBySourceId(int id, string searchText);
         List<SelectboxSourceDTO> GetSourcesIdandName();
-        int EditCategory(int id,CategoryImageViewDTO categoryImageView);
-        int AddCategory(CategoryImageViewDTO categoryImageView);
+        int EditCategory(int id,CategoryAddOrUpdateDTO categoryImageView);
+        int AddCategory(CategoryAddOrUpdateDTO categoryImageView);
         List<CategoryDTO> Filter(int sourceId, int orderId, string searchText);
-        CategoryImageViewDTO GetCategoryById(int id);
+        CategoryAddOrUpdateDTO GetCategoryById(int id);
 
 
 

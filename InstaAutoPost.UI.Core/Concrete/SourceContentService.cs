@@ -80,11 +80,11 @@ namespace InstaAutoPost.UI.Core.Concrete
                 }).ToList();
             return sources;
         }
-        public List<SelectboxCategoryDTO> GetCategoriesIdAndName(int sourceId)
+        public List<SelectBoxCategoryDTO> GetCategoriesIdAndName(int sourceId)
         {
-            List<SelectboxCategoryDTO> sources = _uow.GetRepository<Category>()
+            List<SelectBoxCategoryDTO> sources = _uow.GetRepository<Category>()
                 .Get(x => x.IsDeleted == false&&x.SourceId==sourceId)
-                .Select(x => new SelectboxCategoryDTO()
+                .Select(x => new SelectBoxCategoryDTO()
                 {
                     Id = x.Id,
                     Name = x.Name
@@ -289,6 +289,11 @@ namespace InstaAutoPost.UI.Core.Concrete
             List<SourceContentDTO> sourceContents = Mapping.Mapper.Map<List<SourceContentDTO>>(sourceContentList);
             return sourceContents;
 
+        }
+
+        List<SelectboxSourceCategoryDTO> ISourceContentService.GetCategoriesIdAndName(int sourceId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

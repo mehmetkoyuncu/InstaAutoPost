@@ -5,12 +5,10 @@ using System.Text;
 
 namespace InstaAutoPost.UI.Core.Common.DTOS
 {
-    public class CategoryImageViewDTO
+    public class SourceAddOrUpdateDTO
     {
         [Required]
         public string Name { get; set; }
-        [Required, Range(0, Double.PositiveInfinity)]
-        public int SourceId { get; set; }
-        public string Tags { get; set; }
+        public string Image { get; set; }
     }
 }

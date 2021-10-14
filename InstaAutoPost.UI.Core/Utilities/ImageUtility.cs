@@ -21,7 +21,7 @@ namespace InstaAutoPost.UI.Core.Utilities
                 CharacterConvertGenerator generator = new CharacterConvertGenerator();
                 fileName = generator.TurkishToEnglish(fileName);
                 fileName = generator.RemovePunctuation(fileName);
-                fileName = fileName.Substring(0, 5);
+                fileName = fileName.Substring(0, 5).Trim();
                 fileName = fileName + Guid.NewGuid().ToString();
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(imageURL);
@@ -44,7 +44,7 @@ namespace InstaAutoPost.UI.Core.Utilities
             }
             catch (Exception ex)
             {
-                imageSrc = "Fotoğraf Yüklenemedi..";
+                imageSrc = null;
             }
 
             return imageSrc;

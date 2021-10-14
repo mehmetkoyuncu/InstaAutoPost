@@ -26,7 +26,8 @@ namespace InstaAutoPost.UI.Core.AutoMapper
             CreateMap<Source, SourceWithCategoryCountDTO>()
                 .ForMember(sd => sd.CatrgoryCount, o => o.MapFrom(x=>x.Categories.Count));
             CreateMap<Source, SelectboxSourceDTO>().ReverseMap();
-            CreateMap<Category, CategoryImageViewDTO>().ReverseMap();
+            CreateMap<Category, CategoryAddOrUpdateDTO>().ReverseMap();
+            CreateMap<Source, SourceAddOrUpdateDTO>().ReverseMap();
 
 
         }

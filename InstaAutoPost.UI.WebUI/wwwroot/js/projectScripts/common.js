@@ -42,7 +42,7 @@ function ChangeReportButton(type) {
 
 //Ekle formu kapat
 function CloseAddView() {
-    $('#add_view').fadeOut(1500, function () {
+    $('#add_view').fadeOut(1000, function () {
         $(this).remove();
     })
     $('#insert_button').show();

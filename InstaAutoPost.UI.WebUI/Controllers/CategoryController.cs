@@ -39,7 +39,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         #endregion
         #region Kategori Ekle
         [HttpPost]
-        public JsonResult AddCategory(CategoryImageViewDTO categoryImageView)
+        public JsonResult AddCategory(CategoryAddOrUpdateDTO categoryImageView)
         {
             int result = _categoryService.AddCategory(categoryImageView);
             if (!ModelState.IsValid)
@@ -70,7 +70,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         #endregion
         #region Kategori Düzenle
         [HttpPut]
-        public IActionResult EditCategory(int id,CategoryImageViewDTO categoryImageView)
+        public IActionResult EditCategory(int id,CategoryAddOrUpdateDTO categoryImageView)
         {
             int result = _categoryService.EditCategory(id,categoryImageView);
             return Json(result);
@@ -93,7 +93,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         #region Id'ye Göre Kategori Getir
         public IActionResult GetCategoryById(int id)
         {
-           CategoryImageViewDTO category= _categoryService.GetCategoryById(id);
+           CategoryAddOrUpdateDTO category= _categoryService.GetCategoryById(id);
             return Ok(Json(category));
         }
         #endregion

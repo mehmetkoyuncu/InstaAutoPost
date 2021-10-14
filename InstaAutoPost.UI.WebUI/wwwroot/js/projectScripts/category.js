@@ -69,7 +69,7 @@ function EditCategoryView(id) {
         $("#source_select_list option[value=" + sourceId + "]").attr('selected', 'selected');
         $('#insert_update_button').text('Düzenle');
         $('#insert_button').hide();
-        $("html").animate({ "scrollTop": $("#add_view").scrollTop() +100 });
+        $("html").animate({ "scrollTop": $("#add_view").scrollTop() + 100 });
         $('#add_view').fadeIn(1000);
         $('#form_controls label').show();
     });
@@ -89,7 +89,7 @@ function AddCategory() {
         type: "POST",
         url: "Category/AddCategory",
         async: false,
-        data: { 'name': name, 'sourceId': sourceId, 'tags':tags },
+        data: { 'name': name, 'sourceId': sourceId, 'tags': tags },
         success: function (data) {
             if (data > 0) {
                 toastr.success('Kayıt başarıyla eklendi..');
@@ -105,7 +105,7 @@ function AddCategory() {
                 toastr.error('Kayıt eklenirken hata oluştu !');
                 StopLoader();
             }
-           
+
         },
         error: function () {
             SetRequestError();
@@ -124,7 +124,7 @@ function EditCategory(id) {
         toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
         return;
     }
-    var tags =$("#upsert_category_tags").val();
+    var tags = $("#upsert_category_tags").val();
     StartLoader();;
     $.ajax({
         type: "PUT",
@@ -180,12 +180,10 @@ function RemoveCategory(id) {
                         toastr.error('Kayıt silinirken hata oluştu !');
                     LoadCategories();
                     ClearFilter();
-                    CloseAddView();
                 },
-                 error: function () {
+                error: function () {
                     SetRequestError();
                     LoadCategories();
-                    CloseAddView();
                     ClearFilter();
                 }
             });
@@ -230,7 +228,7 @@ var timer = null;
 function SearchCategory() {
     RunSearchSpinner();
     clearTimeout(timer);
-    timer=setTimeout(
+    timer = setTimeout(
         function () {
             var sourceId = parseInt($("#select_source").val());
             var orderId = parseInt($('#select_order').val());
@@ -245,7 +243,7 @@ function SearchCategory() {
 //Filtreyi Temizle
 function ClearFilter() {
     StartLoader();
-$("#select_source").val(-1);
+    $("#select_source").val(-1);
     $("#select_order").val(-1);
     $('#search_box').val('');
     StopLoader();
@@ -278,7 +276,7 @@ function GetCategoryById(id) {
         async: false,
         data: { 'id': parseid },
         success: function (data) {
-            result= data;
+            result = data;
         }
     });
     return result;

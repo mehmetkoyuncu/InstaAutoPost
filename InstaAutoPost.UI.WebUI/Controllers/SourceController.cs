@@ -13,7 +13,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
     {
         private readonly ISourceService _sourceService;
         private readonly IHostEnvironment _environment;
-        public SourceController(ISourceService sourceService,IHostEnvironment environmet)
+        public SourceController(ISourceService sourceService, IHostEnvironment environmet)
         {
             _sourceService = sourceService;
             _environment = environmet;
@@ -39,9 +39,9 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         #endregion
         #region Kaynak Ekle
         [HttpPost]
-        public JsonResult AddSource(string name,string image)
+        public JsonResult AddSource(string name, string image)
         {
-            int result = _sourceService.AddSource(name,image,_environment.ContentRootPath);
+            int result = _sourceService.AddSource(name, image, _environment.ContentRootPath);
             return Json(result);
         }
         #endregion
@@ -49,7 +49,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         [HttpPut]
         public IActionResult EditSource(int id, string name, string image)
         {
-            int result = _sourceService.EditSource(id, name, image,_environment.ContentRootPath);
+            int result = _sourceService.EditSource(id, name, image, _environment.ContentRootPath);
             return Json(result);
         }
         #endregion
@@ -69,10 +69,17 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         #region Filtre
         public IActionResult Filter(int orderId, string searchText)
         {
-            List<SourceDTO> sources = _sourceService.Filter(orderId,searchText);
+            List<SourceDTO> sources = _sourceService.Filter(orderId, searchText);
             return PartialView("~/Views/Shared/Partials/_SourceListPartial.cshtml", sources);
         }
 
+        #endregion
+        #region Id'ye göre kaynağı getir
+        public IActionResult GetSourceById(int id)
+        {
+            SourceAddOrUpdateDTO source = _sourceService.GetSourceById(id);
+            return Ok(Json(source));
+        }
         #endregion
 
     }

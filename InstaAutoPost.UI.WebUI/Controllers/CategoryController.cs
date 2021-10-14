@@ -42,6 +42,8 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         public JsonResult AddCategory(CategoryImageViewDTO categoryImageView)
         {
             int result = _categoryService.AddCategory(categoryImageView);
+            if (!ModelState.IsValid)
+                return Json(-1);
             return Json(result);
         }
         #endregion

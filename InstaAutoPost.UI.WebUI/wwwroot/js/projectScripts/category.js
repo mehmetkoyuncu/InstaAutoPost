@@ -77,9 +77,13 @@ function EditCategoryView(id) {
 
 //Kategori Ekle
 function AddCategory() {
-    StartLoader();
     var name = $('#upsert_category_name').val()
     var sourceId = parseInt($("#source_select_list").val());
+    if (!name || !sourceId || sourceId === -1) {
+        toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
+        return;
+    }
+    StartLoader();
     var tags = $("#upsert_category_tags").val();
     $.ajax({
         type: "POST",
@@ -87,13 +91,21 @@ function AddCategory() {
         async: false,
         data: { 'name': name, 'sourceId': sourceId, 'tags':tags },
         success: function (data) {
-            if (data > 0)
+            if (data > 0) {
                 toastr.success('Kayıt başarıyla eklendi..');
-            else
+                LoadCategories();
+                CloseAddView();
+                ClearFilter();
+            }
+            else if (data == -1) {
+                toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
+                StopLoader();
+            }
+            else {
                 toastr.error('Kayıt eklenirken hata oluştu !');
-            LoadCategories();
-            CloseAddView();
-            ClearFilter();
+                StopLoader();
+            }
+           
         },
         error: function () {
             SetRequestError();
@@ -108,6 +120,10 @@ function AddCategory() {
 function EditCategory(id) {
     var name = $('#upsert_category_name').val();
     var sourceId = parseInt($("#source_select_list").val());
+    if (!name || !sourceId || sourceId === -1) {
+        toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
+        return;
+    }
     var tags =$("#upsert_category_tags").val();
     StartLoader();;
     $.ajax({
@@ -116,13 +132,18 @@ function EditCategory(id) {
         async: false,
         data: { 'id': parseInt(id), 'name': name, 'sourceId': parseInt(sourceId), 'tags': tags },
         success: function (data) {
-            if (data > 0)
+            if (data > 0) {
                 toastr.success('Kayıt başarıyla güncellendi..');
+                LoadCategories();
+                CloseAddView();
+                ClearFilter();
+            }
+            else if (data == -1) {
+                toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
+                StopLoader();
+            }
             else
                 toastr.error('Kayıt güncellenirken hata oluştu !');
-            LoadCategories();
-            CloseAddView();
-            ClearFilter();
         },
         error: function () {
             SetRequestError();

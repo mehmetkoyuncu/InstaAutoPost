@@ -38,6 +38,11 @@ namespace InstaAutoPost.UI.Data.Repository.Concrete
             return _dbset.Where(filter);
         }
 
+        public List<TEntity> GetAll()
+        {
+            return _dbset.ToList();
+        }
+
         public void Remove(TEntity entity)
         {
             if (entity.GetType().GetProperty("IsDeleted") != null)

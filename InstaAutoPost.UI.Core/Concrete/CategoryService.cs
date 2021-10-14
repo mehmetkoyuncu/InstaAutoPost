@@ -37,9 +37,9 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             Category category = GetById(id);
             category.UpdatedAt = DateTime.Now;
-            category.Name = categoryImageView.Name;
+            category.Name = categoryImageView.Name == null ? categoryImageView.Name : categoryImageView.Name.Trim();
             category.SourceId = categoryImageView.SourceId;
-            category.Tags = categoryImageView.Tags.Replace(" ","");
+            category.Tags = categoryImageView.Tags == null ? categoryImageView.Tags : categoryImageView.Tags.Replace(" ", "");
             _uow.GetRepository<Category>().Update(category);
             return _uow.SaveChanges();
         }
@@ -93,14 +93,15 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             _uow.GetRepository<Category>().Add(new Category
             {
-                Name = categoryImageView.Name.Trim(),
+                Name = categoryImageView.Name==null?categoryImageView.Name:categoryImageView.Name.Trim(),
                 Link = null,
                 InsertedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false,
                 SourceId = categoryImageView.SourceId,
-                Tags= categoryImageView.Tags.Replace(" ", "")
+                Tags= categoryImageView.Tags==null?categoryImageView.Tags:categoryImageView.Tags.Replace(" ","")
         });
+            
             return _uow.SaveChanges();
         }
         #endregion

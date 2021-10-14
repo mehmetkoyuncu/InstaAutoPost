@@ -21,7 +21,7 @@
                                                 <span class="input-group-addon"><i class="icon nalika-like" aria-hidden="true"></i></span>
 
                                                 <select name="select" id="source_select_list" class="form-control pro-edt-select form-control-primary">
-                                                    <option value="-1">Bir kaynak seçiniz..</option>
+                                                    <option value="-1"> * Bir kaynak seçiniz..</option>
                                                     @foreach (var item in Model)
                                                     {
                                                         <option value="@item.Id">@item.Name</option>
@@ -32,7 +32,7 @@
                                             <div class="input-group mg-b-pro-edt">
 
                                                 <span class="input-group-addon"><i class="icon nalika-edit" aria-hidden="true"></i></span>
-                                                <input type="text" id="upsert_category_name" class="form-control" placeholder="Kategori Adı">
+                                                <input type="text" id="upsert_category_name" class="form-control" placeholder="* Kategori Adı">
                                             </div>
                                             <label style="color:white;">Etiketler : </label>
                                             <div class="input-group mg-b-pro-edt">

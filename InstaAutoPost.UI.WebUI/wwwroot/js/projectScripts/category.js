@@ -28,8 +28,6 @@ $(document).ready(function () {
     LoadCategories();
 });
 
-
-
 //Kategori Ekle formu getir
 function AddCategoryView() {
     var viewControl = $('#add_view');
@@ -44,7 +42,9 @@ function AddCategoryView() {
         $('#insert_update_button').attr('onclick', "AddCategory()");
         $('#insert_button').hide();
         $('#add_view').fadeIn(1000);
+        $('#form_controls label').hide();
     });
+
 }
 
 //Kategori Düzenle formu getir
@@ -64,7 +64,6 @@ function EditCategoryView(id) {
         var name = category.value.name.trim();
         var sourceId = category.value.sourceId;
         var tags = category.value.tags;
-        debugger;
         $('#upsert_category_name').val(name);
         $("#upsert_category_tags").val(tags);
         $("#source_select_list option[value=" + sourceId + "]").attr('selected', 'selected');
@@ -72,10 +71,9 @@ function EditCategoryView(id) {
         $('#insert_button').hide();
         $("html").animate({ "scrollTop": $("#add_view").scrollTop() +100 });
         $('#add_view').fadeIn(1000);
+        $('#form_controls label').show();
     });
 }
-
-
 
 //Kategori Ekle
 function AddCategory() {
@@ -92,7 +90,7 @@ function AddCategory() {
             if (data > 0)
                 toastr.success('Kayıt başarıyla eklendi..');
             else
-                toastr.error('Kategori eklenirken hata oluştu !');
+                toastr.error('Kayıt eklenirken hata oluştu !');
             LoadCategories();
             CloseAddView();
             ClearFilter();
@@ -105,7 +103,6 @@ function AddCategory() {
         }
     });
 }
-
 
 //Kategori Güncelle
 function EditCategory(id) {
@@ -122,7 +119,7 @@ function EditCategory(id) {
             if (data > 0)
                 toastr.success('Kayıt başarıyla güncellendi..');
             else
-                toastr.error('Kategori güncellenirken hata oluştu !');
+                toastr.error('Kayıt güncellenirken hata oluştu !');
             LoadCategories();
             CloseAddView();
             ClearFilter();
@@ -136,21 +133,43 @@ function EditCategory(id) {
     });
 }
 
-
 //Kategori Sil
 function RemoveCategory(id) {
-    StartLoader();
-    parseid = parseInt(id);
-    $.ajax({
-        type: "DELETE",
-        url: "Category/RemoveCategory",
-        async: false,
-        data: { 'id': parseid },
-        success: function (data) {
-            LoadCategories();
-            ClearFilter();
+    Swal.fire({
+        title: 'Bu kaydı silmek istediğinizden emin misiniz ?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sil',
+        cancelButtonText: 'İptal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            StartLoader();
+            parseid = parseInt(id);
+            $.ajax({
+                type: "DELETE",
+                url: "Category/RemoveCategory",
+                async: false,
+                data: { 'id': parseid },
+                success: function (data) {
+                    if (data > 0)
+                        toastr.success('Kayıt başarıyla silindi..');
+                    else
+                        toastr.error('Kayıt silinirken hata oluştu !');
+                    LoadCategories();
+                    ClearFilter();
+                    CloseAddView();
+                },
+                 error: function () {
+                    SetRequestError();
+                    LoadCategories();
+                    CloseAddView();
+                    ClearFilter();
+                }
+            });
         }
-    });
+    })
 }
 
 //Selectbox ile seçim yapıldığında kaynak id'sine göre listenin yenilenmesi
@@ -167,7 +186,6 @@ function SelectSource() {
         });
     }
 }
-
 
 //Sırala
 function ApplyOrder() {
@@ -186,15 +204,21 @@ function ApplyOrder() {
     }
 }
 
-
 //Arama
+var timer = null;
 function SearchCategory() {
-    var sourceId = parseInt($("#select_source").val());
-    var orderId = parseInt($('#select_order').val());
-    var searchText = $('#search_box').val()
-    var sourceId=$("#select_source").val();
-    $('#list_categories_container').load('Category/Filter', { 'sourceId': sourceId, 'orderId': orderId, 'searchText': searchText }, function () {
-    });
+    RunSearchSpinner();
+    clearTimeout(timer);
+    timer=setTimeout(
+        function () {
+            var sourceId = parseInt($("#select_source").val());
+            var orderId = parseInt($('#select_order').val());
+            var searchText = $('#search_box').val()
+            var sourceId = $("#select_source").val();
+            $('#list_categories_container').load('Category/Filter', { 'sourceId': sourceId, 'orderId': orderId, 'searchText': searchText }, function () {
+            });
+            RunSearchSpinner('fa fa-search');
+        }, 1500);
 }
 
 //Filtreyi Temizle
@@ -205,7 +229,6 @@ $("#select_source").val(-1);
     $('#search_box').val('');
     StopLoader();
 }
-
 
 //Kategori Detay Modalı Getir
 function DetailsCategoryView(id) {
@@ -223,6 +246,7 @@ function CloseCategoryModal() {
     $('.modal-backdrop').remove();
 }
 
+//Düzenleme için id'ye göre kategoriyi getir
 function GetCategoryById(id) {
     parseid = parseInt(id);
     var result = 0;

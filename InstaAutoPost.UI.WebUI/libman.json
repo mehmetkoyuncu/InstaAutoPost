@@ -13,6 +13,14 @@
     {
       "library": "bootstrap@5.0.2",
       "destination": "wwwroot/bs/bootstrap/"
+    },
+    {
+      "library": "jquery-validation-unobtrusive@3.2.12",
+      "destination": "wwwroot/js/jquery-validation-unobtrusive/"
+    },
+    {
+      "library": "jquery-validate@1.19.3",
+      "destination": "wwwroot/js/validate/jquery-validate/"
     }
   ]
 }

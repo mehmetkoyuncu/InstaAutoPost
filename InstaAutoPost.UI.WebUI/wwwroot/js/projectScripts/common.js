@@ -104,4 +104,8 @@ $(document).ready(function () {
     }
 });
 
+function RunSearchSpinner(des ='fas fa-spinner fa-pulse') {
+    $('#search_division i').removeAttr('class');
+    $('#search_division i').addClass(des);
+}
 

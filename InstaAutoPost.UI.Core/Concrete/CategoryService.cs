@@ -33,13 +33,13 @@ namespace InstaAutoPost.UI.Core.Concrete
      
         #endregion
         #region Kategoriyi düzenle
-        public int EditCategory(int id, string name, int sourceId,string tags)
+        public int EditCategory(int id, CategoryImageViewDTO categoryImageView)
         {
             Category category = GetById(id);
             category.UpdatedAt = DateTime.Now;
-            category.Name = name;
-            category.SourceId = sourceId;
-            category.Tags = tags.Replace(" ","");
+            category.Name = categoryImageView.Name;
+            category.SourceId = categoryImageView.SourceId;
+            category.Tags = categoryImageView.Tags.Replace(" ","");
             _uow.GetRepository<Category>().Update(category);
             return _uow.SaveChanges();
         }
@@ -89,17 +89,17 @@ namespace InstaAutoPost.UI.Core.Concrete
         }
         #endregion
         #region Kategori Ekle
-        public int AddCategory(string name, int sourceId,string tags)
+        public int AddCategory(CategoryImageViewDTO categoryImageView)
         {
             _uow.GetRepository<Category>().Add(new Category
             {
-                Name = name.Trim(),
+                Name = categoryImageView.Name.Trim(),
                 Link = null,
                 InsertedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false,
-                SourceId = sourceId,
-                Tags= tags.Replace(" ", "")
+                SourceId = categoryImageView.SourceId,
+                Tags= categoryImageView.Tags.Replace(" ", "")
         });
             return _uow.SaveChanges();
         }

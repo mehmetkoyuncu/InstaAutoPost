@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.Common.DTOS;
 using InstaAutoPost.UI.Core.Concrete;
@@ -31,7 +32,6 @@ namespace InstaAutoPost.UI.WebUI
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IRssRunnerService, RssRunnerService>();
             services.AddScoped<ISourceContentService, SourceContentService>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

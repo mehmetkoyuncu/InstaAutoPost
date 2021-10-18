@@ -39,17 +39,17 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         #endregion
         #region Kaynak Ekle
         [HttpPost]
-        public JsonResult AddSource(string name, string image)
+        public JsonResult AddSource(SourceAddOrUpdateDTO source)
         {
-            int result = _sourceService.AddSource(name, image, _environment.ContentRootPath);
+            int result = _sourceService.AddSource(source, _environment.ContentRootPath);
             return Json(result);
         }
         #endregion
         #region Kaynak Düzenle
         [HttpPut]
-        public IActionResult EditSource(int id, string name, string image)
+        public IActionResult EditSource(int id,SourceAddOrUpdateDTO source)
         {
-            int result = _sourceService.EditSource(id, name, image, _environment.ContentRootPath);
+            int result = _sourceService.EditSource(id, source, _environment.ContentRootPath);
             return Json(result);
         }
         #endregion

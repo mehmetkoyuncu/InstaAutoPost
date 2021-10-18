@@ -14,36 +14,42 @@
                         <div id="myTabContent" class="tab-content custom-product-edit">
                             <div class="product-tab-list tab-pane fade active in" id="description">
                                 <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="form_controls">
                                         <div class="review-content-section">
+                                            <label style="color:white;">Kaynak : </label>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon"><i class="icon nalika-like" aria-hidden="true"></i></span>
                                                 <select name="select" id="source_select_list" onchange="AddSourceSelect()" class="form-control pro-edt-select form-control-primary">
-                                                    <option value="-1">Bir kaynak seçiniz..</option>
+                                                    <option value="-1"> * Bir kaynak seçiniz..</option>
                                                     @foreach (var item in Model)
                                                     {
                                                         <option value="@item.Id">@item.Name</option>
                                                     }
                                                 </select>
                                             </div>
+                                            <label style="color:white;">Kategori : </label>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon"><i class="icon nalika-favorites" aria-hidden="true"></i></span>
                                                 <select name="select" disabled id="category_select_list" class="form-control pro-edt-select form-control-primary">
-                                                    <option value="-1">Bir kategori seçiniz..</option>
+                                                    <option value="-1"> * Bir kategori seçiniz..</option>
                                                 </select>
                                             </div>
+                                            <label style="color:white;">Başlık : </label>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon"><i class="icon nalika-edit" aria-hidden="true"></i></span>
-                                                <input type="text" id="upsert_sourceContent_title" class="form-control" placeholder="İçerik Başlığı">
+                                                <input type="text" id="upsert_sourceContent_title" class="form-control" placeholder=" * İçerik Başlığı">
                                             </div>
+                                            <label style="color:white;">Görsel Linki : </label>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon"><i class="icon nalika-picture" aria-hidden="true"></i></span>
                                                 <input type="text" id="upsert_sourceContent_imageLink" class="form-control" placeholder="İçerik Görsel Linki">
                                             </div>
+                                            <label style="color:white;">Etiketler : </label>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon"><i class="icon nalika-favorites-button" aria-hidden="true"></i></span>
                                                 <input type="text" id="upsert_sourceContent_tags" class="form-control" placeholder="Etiketler">
                                             </div>
+                                            <label style="color:white;">Açıklama : </label>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon"><i class="icon nalika-chat" aria-hidden="true"></i></span>
                                                 <textarea rows="5" cols="60" id="upsert_sourceContent_description" class="form-control" placeholder="İçerik Açıklaması"></textarea>

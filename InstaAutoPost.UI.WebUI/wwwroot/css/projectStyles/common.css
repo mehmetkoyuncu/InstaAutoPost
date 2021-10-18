@@ -1,6 +1,7 @@
-﻿.mr-2{
-    margin-right:0.5rem;
+﻿.mr-2 {
+    margin-right: 0.5rem;
 }
+
 .modal {
     text-align: center !important;
 }
@@ -41,7 +42,7 @@
     transform: translateZ(0);
     -webkit-animation-delay: -0.16s;
     animation-delay: -0.16s;
-    width:100%;
+    width: 100%;
 }
 
     .loader_search:before,
@@ -61,3 +62,6 @@
         left: 1.5em;
     }
 
+.page-selected {
+    border: 3px solid white !important;
+}

@@ -73,6 +73,8 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         public IActionResult EditCategory(int id,CategoryAddOrUpdateDTO categoryImageView)
         {
             int result = _categoryService.EditCategory(id,categoryImageView);
+            if (!ModelState.IsValid)
+                return Json(-1);
             return Json(result);
         }
         #endregion

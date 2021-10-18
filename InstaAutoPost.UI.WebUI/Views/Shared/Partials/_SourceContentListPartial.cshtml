@@ -1,8 +1,4 @@
-﻿@model List<SourceContentDTO>
-
-
-
-
+﻿@model Tuple<List<SourceContentDTO>, int>
 <div class="product-status mg-b-30" id="source_list_container">
     <div class="container-fluid">
         <div class="row">
@@ -29,16 +25,19 @@
                                     <th>Kaynak Adı</th>
                                     <th style="text-align:center;">Ayarlar</th>
                                 </tr>
-                                @foreach (var item in Model)
+                                @foreach (var item in Model.Item1)
                                 {
                                     if (item.Title.Length >= 20)
                                     {
                                         item.Title = item.Title.Substring(0, 20) + "...";
 
                                     }
-                                    if (item.Description.Length >= 20)
+                                    if (item.Description != null)
                                     {
-                                        item.Description = item.Description.Substring(0, 20) + "...";
+                                        if (item.Description.Length >= 20)
+                                        {
+                                            item.Description = item.Description.Substring(0, 20) + "...";
+                                        }
                                     }
                                     <tr>
                                         <td><img width="20px" src="~/images/@item.imageURL" alt="@item.Title"></td>
@@ -59,7 +58,7 @@
                                         <td>@item.SourceName</td>
                                         <td style="text-align:center;">
                                             <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsSourceContentView(@item.Id)" class="pd-setting-ed btn btn-warning" data-original-title="View"><i class="fas fa-eye"></i></button>
-                                            <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSourceContentView(@item.Id, '@item.Title', '@item.imageURL', '@item.Tags', '@item.Description',@item.CategoryId,@item.SourceId)" class="pd-setting-ed btn btn-success"><i class="fas fa-edit"></i></button>
+                                            <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSourceContentView(@item.Id)" class="pd-setting-ed btn btn-success"><i class="fas fa-edit"></i></button>
                                             <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSourceContent(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash"><i class="fas fa-trash-alt"></i></button>
                                         </td>
                                     </tr>
@@ -67,13 +66,23 @@
                             </tbody>
                         </table>
                         <div class="custom-pagination">
-                            <ul class="pagination">
-                                <li class="page-item"><a class="page-link" href="#">Önceki</a></li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">Sonraki</a></li>
+                            <ul class="pagination" id="page_content">
+                                <li class="page-item" onclick="Previous()"><a class="page-link" >Önceki</a></li>
+                                @{
+                                   var paging= Convert.ToInt32(Math.Ceiling(Convert.ToDouble(
+                       Model.Item2 / Convert.ToDouble(10))));
+                                }
+                                @for (int i = 1; i <= paging; i++)
+                                {
+                                    <li class="page-item"><a class="page-link" id="page-@i" onclick="Paging(@i)">@i</a></li>
+                                }
+                                <li class="page-item"><a class="page-link" onclick="After()" >Sonraki</a></li>
                             </ul>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="color:white; text-align:center">
+                                @Model.Item2 adet kayıt mevcuttur.
+                            </div>
                         </div>
                     </div>
                 </div>

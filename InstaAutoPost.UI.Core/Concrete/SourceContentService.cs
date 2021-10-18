@@ -28,6 +28,7 @@ namespace InstaAutoPost.UI.Core.Concrete
             _uow.GetRepository<SourceContent>().AddList(sourceContent);
             return _uow.SaveChanges();
         }
+        #region Kategori Id'ye göre içeriği getir
         public List<SourceContentDTO> GetSourceContent(int categoryId)
         {
             var sourcontent = _uow.GetRepository<SourceContent>()
@@ -50,6 +51,8 @@ namespace InstaAutoPost.UI.Core.Concrete
             return sourcontent;
 
         }
+        #endregion
+        #region İçerik İd'ye göre bir içerik DTO getir
         public SourceContentDTO GetSurceContentDTO(int id)
         {
             var sourcontent = _uow.GetRepository<SourceContent>()
@@ -58,17 +61,22 @@ namespace InstaAutoPost.UI.Core.Concrete
               .Include(x => x.Category.Source).FirstOrDefault();
             return Mapping.Mapper.Map<SourceContentDTO>(sourcontent);
         }
+        #endregion
+        #region Id'ye göre içeriği getir
         public SourceContent GetSourceContentById(int id)
         {
             return _uow.GetRepository<SourceContent>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
         }
-
-        public List<SourceContentDTO> GetSourceContentList()
+        #endregion
+        #region İçerik listesini getir
+        public List<SourceContentDTO> GetSourceContentList(int next=0,int quantity=10)
         {
-            List<SourceContent> sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).Include(x=>x.Category).Include(x=>x.Category.Source).OrderByDescending(x=>x.UpdatedAt).ToList();
+            List<SourceContent> sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).Include(x=>x.Category.Source).OrderByDescending(x=>x.UpdatedAt).Skip(next).Take(quantity).Include(x => x.Category).ToList();
             List<SourceContentDTO> sourceContents = Mapping.Mapper.Map<List<SourceContentDTO>>(sourceContentList);
             return sourceContents;
         }
+        #endregion
+        #region Kaynak listesini getir
         public List<SelectboxSourceDTO> GetSourcesIdAndName()
         {
             List<SelectboxSourceDTO> sources = _uow.GetRepository<Source>()
@@ -80,6 +88,8 @@ namespace InstaAutoPost.UI.Core.Concrete
                 }).ToList();
             return sources;
         }
+        #endregion
+        #region Kategori listesini getir
         public List<SelectBoxCategoryDTO> GetCategoriesIdAndName(int sourceId)
         {
             List<SelectBoxCategoryDTO> sources = _uow.GetRepository<Category>()
@@ -91,8 +101,8 @@ namespace InstaAutoPost.UI.Core.Concrete
                 }).ToList();
             return sources;
         }
-
-
+        #endregion
+        #region içeriği sil
         public int RemoveSourceContent(int id)
         {
             SourceContent sourceContent = GetSourceContentById(id);
@@ -100,32 +110,40 @@ namespace InstaAutoPost.UI.Core.Concrete
             int result = _uow.SaveChanges();
             return result;
         }
-
-        public int AddSourceContent(SourceContentDTO sourcContentDTO,string contentRootPath)
+        #endregion
+        #region İçerik ekle
+        public int AddSourceContent(SourceContentAddOrUpdateDTO sourceContentDTO,string contentRootPath)
         {
-            SourceContent sourceContent = Mapping.Mapper.Map<SourceContentDTO, SourceContent>(sourcContentDTO);
             ImageUtility imageU = new ImageUtility();
-            string imgSrc = imageU.Download(sourceContent.imageURL, sourceContent.Title, ImageFormat.Jpeg, contentRootPath);
-            sourceContent.imageURL = imgSrc;
-            sourceContent.UpdatedAt = DateTime.Now;
-            sourceContent.InsertedAt = DateTime.Now;
-            sourceContent.SendOutForPost = false;
-            sourceContent.IsDeleted = false;
-            sourceContent.ContentInsertAt = DateTime.Now;
+
+            string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath);
+            SourceContent sourceContent = new SourceContent()
+            {
+                imageURL = imgSrc,
+                UpdatedAt = DateTime.Now,
+                InsertedAt = DateTime.Now,
+                SendOutForPost = false,
+                IsDeleted = false,
+                ContentInsertAt = DateTime.Now,
+                CategoryId = sourceContentDTO.CategoryId,
+                Tags = sourceContentDTO.Tags,
+                Title = sourceContentDTO.Title,
+                Description = sourceContentDTO.Description,
+            };
             _uow.GetRepository<SourceContent>().Add(sourceContent);
             return _uow.SaveChanges();
         }
-
-        public int EditSourceContent(SourceContentDTO sourceContentDTO,string contentRootPath)
+        #endregion
+        #region İçerik düzenle
+        public int EditSourceContent(int id,SourceContentAddOrUpdateDTO sourceContentDTO,string contentRootPath)
         {
-            SourceContent selectedSourceContent = GetSourceContentById(sourceContentDTO.Id);
+            SourceContent selectedSourceContent = GetSourceContentById(id);
             if (selectedSourceContent.imageURL != sourceContentDTO.imageURL)
             {
                 ImageUtility imageU = new ImageUtility();
                 string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath);
                 selectedSourceContent.imageURL = imgSrc;
             }
-
             selectedSourceContent.CategoryId = sourceContentDTO.CategoryId;
             selectedSourceContent.Description = sourceContentDTO.Description;
             selectedSourceContent.Tags = sourceContentDTO.Tags;
@@ -134,8 +152,8 @@ namespace InstaAutoPost.UI.Core.Concrete
             _uow.GetRepository<SourceContent>().Update(selectedSourceContent);
             return _uow.SaveChanges();
         }
-
-
+        #endregion
+        #region Filtre
         public List<SourceContentDTO> Filter(int categoryId, int orderId, string searchText)
         {
             List<SourceContent> sourceContentList = null;
@@ -290,10 +308,29 @@ namespace InstaAutoPost.UI.Core.Concrete
             return sourceContents;
 
         }
-
-        List<SelectboxSourceCategoryDTO> ISourceContentService.GetCategoriesIdAndName(int sourceId)
+        #endregion
+        #region Kategori Id'ye göre içeriği getir
+        public SourceContentAddOrUpdateDTO GetSourceContentDTOById(int id)
         {
-            throw new NotImplementedException();
+            SourceContent source = _uow.GetRepository<SourceContent>().Get(x => x.Id == id && x.IsDeleted == false).Include(x=>x.Category.Source).FirstOrDefault();
+            return Mapping.Mapper.Map<SourceContent, SourceContentAddOrUpdateDTO>(source);
         }
+        #endregion
+
+        #region İçerik sayısı getir
+        public int GetSourceContentCount()
+        {
+            int contentCount = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).Count();
+            return contentCount;
+        }
+        #endregion
+        #region İçerik sayısı getir
+        public List<SourceContentDTO> GetSourceContentFilter(List<SourceContentDTO> contentList, int next = 0, int quantity = 10)
+        {
+            List<SourceContentDTO> sourceContents = contentList.Skip(next).Take(quantity).ToList();
+            return sourceContents;
+        }
+        #endregion
+
     }
 }

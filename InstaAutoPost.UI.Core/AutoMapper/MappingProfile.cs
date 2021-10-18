@@ -28,6 +28,8 @@ namespace InstaAutoPost.UI.Core.AutoMapper
             CreateMap<Source, SelectboxSourceDTO>().ReverseMap();
             CreateMap<Category, CategoryAddOrUpdateDTO>().ReverseMap();
             CreateMap<Source, SourceAddOrUpdateDTO>().ReverseMap();
+            CreateMap<SourceContentAddOrUpdateDTO, SourceContent>().ReverseMap().ForMember(sd => sd.SourceId, o => o.MapFrom(x => x.Category.SourceId));
+
 
 
         }

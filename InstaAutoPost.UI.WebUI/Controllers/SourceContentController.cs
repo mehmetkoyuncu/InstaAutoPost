@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace InstaAutoPost.UI.WebUI.Controllers
 {
@@ -22,10 +23,12 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         {
             return View();
         }
-        public PartialViewResult GetAllContent()
+        public PartialViewResult GetAllContent(int next=0,int quantity=10)
         {
-            List<SourceContentDTO> contents = _sourceContentService.GetSourceContentList();
-            return PartialView("~/Views/Shared/Partials/_SourceContentListPartial.cshtml", contents);
+            var contents = _sourceContentService.GetSourceContentList(next,quantity);
+            int totalCount = _sourceContentService.GetSourceContentCount();
+            var result=Tuple.Create<List<SourceContentDTO>, int>(contents,totalCount);
+            return PartialView("~/Views/Shared/Partials/_SourceContentListPartial.cshtml", result);
         }
 
 
@@ -37,18 +40,21 @@ namespace InstaAutoPost.UI.WebUI.Controllers
 
         public JsonResult GetCategoryIdAndName(int sourceId)
         {
-            var a = _sourceContentService.GetCategoriesIdAndName(sourceId);
             return Json(_sourceContentService.GetCategoriesIdAndName(sourceId));
         }
-        public JsonResult AddSourceContent(SourceContentDTO sourceContent)
+        public JsonResult AddSourceContent(SourceContentAddOrUpdateDTO sourceContent)
         {
             int result = _sourceContentService.AddSourceContent(sourceContent, _environment.ContentRootPath);
+            if (!ModelState.IsValid)
+                return Json(-1);
             return Json(result);
         }
         [HttpPut]
-        public JsonResult EditSourceContent(SourceContentDTO sourceContent)
+        public JsonResult EditSourceContent(int id,SourceContentAddOrUpdateDTO sourceContent)
         {
-            int result = _sourceContentService.EditSourceContent(sourceContent, _environment.ContentRootPath);
+            int result = _sourceContentService.EditSourceContent(id,sourceContent, _environment.ContentRootPath);
+            if (!ModelState.IsValid)
+                return Json(-1);
             return Json(result);
         }
         [HttpDelete]
@@ -67,10 +73,19 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             List<SelectboxSourceDTO> sources = _sourceContentService.GetSourcesIdAndName();
             return PartialView("~/Views/Shared/Partials/_SourceContentOptionsPartial.cshtml", sources);
         }
-        public IActionResult Filter(int categoryId, int orderId, string searchText)
+        public IActionResult Filter(int categoryId, int orderId, string searchText,int next= 0, int quantity = 10)
         {
             List<SourceContentDTO> contents = _sourceContentService.Filter(categoryId, orderId, searchText);
-            return PartialView("~/Views/Shared/Partials/_SourceContentListPartial.cshtml", contents);
+            List<SourceContentDTO> contentFilter = _sourceContentService.GetSourceContentFilter(contents,next,quantity);
+            var result = Tuple.Create<List<SourceContentDTO>, int>(contentFilter, contents.Count());
+            return PartialView("~/Views/Shared/Partials/_SourceContentListPartial.cshtml", result);
         }
+        #region Id'ye göre içeriği getir
+        public IActionResult GetSourceContentById(int id)
+        {
+            SourceContentAddOrUpdateDTO sourceContent = _sourceContentService.GetSourceContentDTOById(id);
+            return Ok(Json(sourceContent));
+        }
+        #endregion
     }
 }

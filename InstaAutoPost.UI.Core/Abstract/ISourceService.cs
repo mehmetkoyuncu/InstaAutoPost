@@ -10,10 +10,10 @@ namespace InstaAutoPost.UI.Core.Abstract
     public interface ISourceService
     {
         int Add(string name, string image,string url);
-        int AddSource(string name, string image,string contentRootPath);
+        int AddSource(SourceAddOrUpdateDTO sourceDTO, string contentRootPath);
         int RemoveSource (int id);
         Source GetById(int id);
-        int EditSource(int id, string name, string image,string contentRootPath);
+        int EditSource(int id, SourceAddOrUpdateDTO source, string contentRootPath);
         List<SourceDTO> GetAllSources();
         List<SourceDTO> Filter(int orderId, string searchText);
         SourceAddOrUpdateDTO GetSourceById(int id);

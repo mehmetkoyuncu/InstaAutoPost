@@ -7,6 +7,7 @@
                 <div class="row">
                     @foreach (var item in Model)
                     {
+                         var sourceName = item.Name.Length > 30 ? item.Name.Substring(0, 30) + "..." : item.Name;
                         <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12" style="margin-bottom:25px;">
                             <div class="personal-info-wrap">
                                 <div class="row">
@@ -16,7 +17,7 @@
                                     </div>
                                 </div>
                                 <div class="widget-text-box">
-                                    <h4 style="word-wrap: break-word !important;">@item.Name.ToUpper()</h4>
+                                    <h4 style="word-wrap: break-word !important;">@sourceName.ToUpper()</h4>
                                     <ul style="color:white;">
                                         @if (!String.IsNullOrEmpty(item.URL))
                                         {
@@ -30,7 +31,7 @@
                                         <div class="col-md-12">
                                             <div class="text-right like-love-list" style="margin-top:10px;margin-bottom:20px;">
                                                 <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSource(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash" style="float:right;"><i class="fas fa-trash-alt"></i></button>
-                                                <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSourceView(@item.Id, '@item.Name', '@item.Image')" class="pd-setting-ed btn btn-success" style="float:right;"><i class="fas fa-edit"></i></button>
+                                                <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSourceView(@item.Id)" class="pd-setting-ed btn btn-success" style="float:right;"><i class="fas fa-edit"></i></button>
                                             </div>
                                         </div>
                                     </div>

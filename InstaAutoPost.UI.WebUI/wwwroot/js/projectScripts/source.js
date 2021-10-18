@@ -49,7 +49,7 @@ function AddSourceView() {
 }
 
 //Kaynak Düzenle formu getir
-function EditSourceView(id, name, imageUrl) {
+function EditSourceView(id) {
     var viewControl = $('#add_view');
     if (viewControl.length > 0) {
         toastr.warning('İşlem yapmadan önce açık olan formu kapatın..');
@@ -127,14 +127,14 @@ function EditSource(id) {
         data: { 'id': parseInt(id), 'name': name, 'image': imageLink },
         success: function (data) {
             if (data > 0) {
-                toastr.success('Kayıt başarıyla eklendi..');
+                toastr.success('Kayıt başarıyla güncellendi..');
                 LoadSources();
                 CloseAddView();
                 ClearFilter();
                 StopLoader();
             }
             else {
-                toastr.error('Kayıt eklenirken hata oluştu !');
+                toastr.error('Kayıt güncellenirken hata oluştu !');
                 StopLoader();
             }
         },

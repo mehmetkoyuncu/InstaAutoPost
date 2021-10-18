@@ -11,7 +11,7 @@
                                 <div class=" col-sm-12 col-md-6 col-lg-6">
                                     <div class="col-md-4">
                                         <select style="margin:10px 0px;" onchange="SelectSource()" name="select" id="select_source" class="form-control pro-edt-select form-control-primary">
-                                            <option value="-1">Bir kaynak seçiniz..</option>
+                                            <option value="-1">Tüm Kaynaklar</option>
                                             @foreach (var item in Model)
                                             {
                                                 <option value="@item.Id">@item.Name.ToUpper()</option>
@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="col-sm-12 col-md-6 col-lg-6" style="text-align:right;">
                                     <div class="row" style="padding:0px 15px;">
-                                        <div class="col-md-offset-7" style="padding:0px 15px;">
+                                        <div class="col-md-offset-7" style="padding:0px 15px;"  id="search_division">
                                             <div class="input-group custom-go-button" style="margin:10px 0px;">
                                                 <input type="text" id="search_box" onkeyup="SearchSourceContent()" class="form-control" placeholder="İçeriklerde Ara..">
                                                 <span class="input-group-btn"><span class="btn btn-primary" style="cursor:context-menu"><i class="fa fa-search"></i></span></span>

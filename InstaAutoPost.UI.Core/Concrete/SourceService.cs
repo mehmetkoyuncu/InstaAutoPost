@@ -61,17 +61,17 @@ namespace InstaAutoPost.UI.Core.Concrete
         }
         #endregion
         #region Kaynak Ekle
-        public int AddSource(string name, string image, string contentRootPath)
+        public int AddSource(SourceAddOrUpdateDTO sourceDTO, string contentRootPath)
         {
             ImageUtility imageU = new ImageUtility();
-            string imgSrc = imageU.Download(image, name, ImageFormat.Png, contentRootPath);
+            string imgSrc = imageU.Download(sourceDTO.Image, sourceDTO.Name, ImageFormat.Png, contentRootPath);
 
             Source source = new Source()
             {
                 InsertedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
-                Name = name==null?name:name.Trim(),
-                Image = imgSrc==null?imgSrc:imgSrc.Replace(" ",""),
+                Name = sourceDTO.Name==null?sourceDTO.Name:sourceDTO.Name.Trim(),
+                Image = imgSrc,
                 IsDeleted = false
             };
             _uow.GetRepository<Source>().Add(source);
@@ -79,17 +79,17 @@ namespace InstaAutoPost.UI.Core.Concrete
         }
         #endregion
         #region Kaynağı Düzenle
-        public int EditSource(int id, string name, string image, string contentRootPath)
+        public int EditSource(int id, SourceAddOrUpdateDTO source, string contentRootPath)
         {
             string imgSrc = null;
             Source updateSource = GetById(id);
-            if (updateSource.Image != image)
+            if (updateSource.Image != source.Image)
             {
                 ImageUtility imageU = new ImageUtility();
-                imgSrc = imageU.Download(image, name, ImageFormat.Png, contentRootPath);
+                imgSrc = imageU.Download(source.Image,source.Name, ImageFormat.Png, contentRootPath);
                 updateSource.Image = imgSrc;
             }
-            updateSource.Name = name;
+            updateSource.Name = source.Name == null ? source.Name : source.Name.Trim();
             updateSource.UpdatedAt = DateTime.Now;
             _uow.GetRepository<Source>().Update(updateSource);
             return _uow.SaveChanges();
@@ -204,7 +204,7 @@ namespace InstaAutoPost.UI.Core.Concrete
             Source source = _uow.GetRepository<Source>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
             return Mapping.Mapper.Map<Source, SourceAddOrUpdateDTO>(source);
         }
-        #endregion
     }
+        #endregion
 
 }

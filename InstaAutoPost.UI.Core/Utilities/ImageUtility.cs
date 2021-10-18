@@ -21,16 +21,14 @@ namespace InstaAutoPost.UI.Core.Utilities
                 CharacterConvertGenerator generator = new CharacterConvertGenerator();
                 fileName = generator.TurkishToEnglish(fileName);
                 fileName = generator.RemovePunctuation(fileName);
-                fileName = fileName.Substring(0, 5).Trim();
+                fileName = fileName.Length>5?fileName.Substring(0, 5).Trim():fileName.Trim();
                 fileName = fileName + Guid.NewGuid().ToString();
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(imageURL);
-                Bitmap bitmap; bitmap = new Bitmap(stream);
-
+                Bitmap  bitmap = new Bitmap(stream);
                 if (bitmap != null)
                 {
-
-                    System.IO.FileStream fs = System.IO.File.Open(Path.Combine(contentRootPath + @"/wwwroot/images", fileName + sImageFormat), FileMode.Create);
+                   System.IO.FileStream fs = System.IO.File.Open(Path.Combine(contentRootPath + @"/wwwroot/images", fileName + sImageFormat), FileMode.Create);
                     bitmap.Save(fs, imageFormat);
                     fs.Close();
                 }

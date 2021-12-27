@@ -349,6 +349,18 @@ namespace InstaAutoPost.UI.Core.Concrete
             return Mapping.Mapper.Map<Category, CategoryDTO>(category);
         }
         #endregion
+        #region Kategori adı ve linki getir
+        public List<RSSCreatorDTO> GetCategoryNameAndLink()
+        {
+            List<Category> categoryList = _uow.GetRepository<Category>().Get(x => x.IsDeleted == false).ToList();
+            List<RSSCreatorDTO> rssList = categoryList.Select(x => new RSSCreatorDTO()
+            {
+                CategoryName = x.Name,
+                CategoryURL = x.Link
+            }).ToList();
+            return rssList;
+        }
+        #endregion
 
     }
 }

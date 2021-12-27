@@ -22,6 +22,8 @@ namespace InstaAutoPost.UI.Core.Abstract
         SourceContentAddOrUpdateDTO GetSourceContentDTOById(int id);
         int GetSourceContentCount();
         List<SourceContentDTO> GetSourceContentFilter(List<SourceContentDTO> contentList, int next = 0, int quantity = 10);
+        bool CreateFolder(int id,string contentRooth);
+        bool ShareMarkPost(int id);
 
     }
 }

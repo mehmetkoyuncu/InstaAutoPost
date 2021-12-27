@@ -1,5 +1,7 @@
-﻿using InstaAutoPost.UI.Core.Abstract;
+﻿using Hangfire;
+using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.Common.DTOS;
+using InstaAutoPost.UI.Core.ScheduleJobs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RestSharp;
@@ -7,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace InstaAutoPost.UI.WebUI.Controllers
@@ -21,7 +24,6 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             _logger = logger;
             _sourceService = sourceService;
         }
-        
         public IActionResult Index()
         {
             ViewBag.breadCrump = "Anasayfa";

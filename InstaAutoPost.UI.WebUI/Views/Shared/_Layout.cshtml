@@ -66,6 +66,7 @@
     <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
     <link href="~/css/projectStyles/common.css" rel="stylesheet" />
     <link href="~/js/toastr/toastr.css" rel="stylesheet" />
+    <link href="~/css/preloader/preloader-style.css" rel="stylesheet" />
     @RenderSection("Styles", false)
 </head>
 
@@ -77,8 +78,8 @@
     <div class="left-sidebar-pro">
         <nav id="sidebar" class="">
             <div class="sidebar-header">
-                <a href="index.html"><img class="main-logo" src="img/logo/logo.png" alt="" /></a>
-                <strong><img src="img/logo/logosn.png" alt="" /></strong>
+                <a href="index.html"><img class="main-logo" src="img/logo/logo.png" width="50px" alt="" /></a>
+                <strong><img src="img/logo/logo.png" alt="" width="50px" /></strong>
             </div>
             <div class="nalika-profile">
                 <div class="profile-dtl">
@@ -131,13 +132,12 @@
                             </ul>
                         </li>
                         <li>
-                            <a class="has-arrow" href="mailbox.html" aria-expanded="false"><i class="icon nalika-pie-chart icon-wrap"></i> <span class="mini-click-non">Miscellaneous</span></a>
+                            <a class="has-arrow" href="mailbox.html" aria-expanded="false"><i class="icon nalika-pie-chart icon-wrap"></i> <span class="mini-click-non">Otomatik İşlemler</span></a>
                             <ul class="submenu-angle" aria-expanded="false">
-                                <li><a title="File Manager" href="file-manager.html"><span class="mini-sub-pro">File Manager</span></a></li>
-                                <li><a title="Blog" href="blog.html"><span class="mini-sub-pro">Blog</span></a></li>
-                                <li><a title="Blog Details" href="blog-details.html"><span class="mini-sub-pro">Blog Details</span></a></li>
-                                <li><a title="404 Page" href="404.html"><span class="mini-sub-pro">404 Page</span></a></li>
-                                <li><a title="500 Page" href="500.html"><span class="mini-sub-pro">500 Page</span></a></li>
+                                <li><a asp-action="Index" asp-controller="Folder">Otomatik Klasör</a></li>
+                                <li><a href="contacts.html">Instagram Post</a></li>
+                                <li><a href="projects.html">Twitter Post</a></li>
+                                <li><a href="project-details.html">Facebook Post</a></li>
                             </ul>
                         </li>
                         <li>
@@ -201,7 +201,7 @@
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="logo-pro">
-                        <a href="index.html"><img class="main-logo" src="img/logo/logo.png" alt="" /></a>
+                        <a href="index.html"><img class="main-logo" src="img/logo/logo2.png" alt="" /></a>
                     </div>
                 </div>
             </div>
@@ -811,16 +811,12 @@
                                             </ul>
                                         </li>
                                         <li>
-                                            <a data-toggle="collapse" data-target="#others" href="#">Miscellaneous <span class="admin-project-icon nalika-icon nalika-down-arrow"></span></a>
+                                            <a data-toggle="collapse" data-target="#others" >Otomatik İşlemler <span class="admin-project-icon nalika-icon nalika-down-arrow"></span></a>
                                             <ul id="others" class="collapse dropdown-header-top">
-                                                <li><a href="file-manager.html">File Manager</a></li>
-                                                <li><a href="contacts.html">Contacts Client</a></li>
-                                                <li><a href="projects.html">Project</a></li>
-                                                <li><a href="project-details.html">Project Details</a></li>
-                                                <li><a href="blog.html">Blog</a></li>
-                                                <li><a href="blog-details.html">Blog Details</a></li>
-                                                <li><a href="404.html">404 Page</a></li>
-                                                <li><a href="500.html">500 Page</a></li>
+                                                <li><a asp-action="Index" asp-controller="Folder">İçerik İçin Otomatik Klasör Oluştur</a></li>
+                                                <li><a href="contacts.html">Instagram Otomatik Post</a></li>
+                                                <li><a href="projects.html">Twitter Otomatik Post</a></li>
+                                                <li><a href="project-details.html">Facebook Otomatik Post</a></li>
                                             </ul>
                                         </li>
                                         <li>

@@ -324,8 +324,6 @@ function DetailsSourceContentView(id) {
 //Kategori Detay Modalı Kaldır
 function CloseSourceContentModal() {
     $('#sourceContent_detail').modal('hide');
-    $('#detail_sourceContent_container').remove();
-    $('.modal-backdrop').remove();
 }
 
 
@@ -370,6 +368,64 @@ function GetSourceContentById(id) {
         }
     });
     return result;
+}
+
+
+
+function CreateFolderPost(id,element) {
+    var parseid = parseInt(id);
+    StartLoader();
+    $.ajax({
+        type: "GET",
+        url: "SourceContent/CreateFolder",
+        contentType: "application/json; charset=utf-8",
+        async: false,
+        data: { 'id': parseid },
+        success: function (data) {
+            if (data == true) {
+                $(element).css('background-color', '#5bc0de')
+                toastr.success('İlgili dosya ve klasör oluşturuldu.');
+            }
+            else {
+                toastr.error('Dosya oluşturulurken bir hata oluştu.');
+            }
+            StopLoader();
+        },
+        error: function () {
+            SetRequestError();
+            StopLoader();
+        }
+    });
+}
+
+function ShareMarkPost(id, element) {
+    var parseid = parseInt(id);
+    StartLoader();
+    $.ajax({
+        type: "GET",
+        url: "SourceContent/ShareMarkPost",
+        contentType: "application/json; charset=utf-8",
+        async: false,
+        data: { 'id': parseid },
+        success: function (data) {
+            if (data == true) {
+                $(element).css('background-color', '#5cb85c')
+                $(element).prop('disabled', true);
+                var badgeId = '#badge-' + id
+                $(badgeId).css('background-color', '#5CB85C')
+                $(badgeId).text('Paylaşıldı');
+                toastr.success('İçerik paylaşıldı olarak işaretlendi');
+            }
+            else {
+                toastr.error('İçerik paylaşıldı olarak işaretlenirken bir hata oluştu.');
+            }
+            StopLoader();
+        },
+        error: function () {
+            SetRequestError();
+            StopLoader();
+        }
+    });
 }
 
 function Paging(number) {

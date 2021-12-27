@@ -34,7 +34,7 @@ $(document).ready(function () {
 function AddRssGeneratorView() {
     var viewControl = $('#add_view');
     if (viewControl.length > 0) {
-        window.alert("Açık olan formu kapatınız");
+        toastr.warning('İşlem yapmadan önce açık olan formu kapatın..');
         return;
     }
     ClearAddView();
@@ -49,7 +49,6 @@ function AddRssGeneratorView() {
 }
 //Kaynak Ekle
 function AddRSSGenerator() {
-    StartLoader();
     var url = $('#upsert_rssGenerator_link').val();
     var name = $("#upsert_rssGenerator_name").val();
     $.ajax({
@@ -58,8 +57,17 @@ function AddRSSGenerator() {
         async: false,
         data: { 'url': url, 'name': name },
         success: function (data) {
-            CloseAddView();
-            ClearFilter();
+            if (data) {
+                var count = data.value.rssAddedCount;
+                toastr.success(count+' adet kayıt başarıyla eklendi..');
+            }
+            else {
+                toastr.error('Kayıt eklenirken hata oluştu !');
+            }
+            StopLoader();
+        },
+        error: function () {
+            SetRequestError();
         }
     });
 }

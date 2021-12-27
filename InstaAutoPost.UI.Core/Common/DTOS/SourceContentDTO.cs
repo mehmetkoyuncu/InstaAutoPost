@@ -18,6 +18,7 @@ namespace InstaAutoPost.UI.Core.Common.DTOS
         public string SourceName { get; set; }
         public int CategoryId { get; set; }
         public int  SourceId { get; set; }
+        public bool IsCreatedFolder { get; set; }
         public DateTime InsertedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }

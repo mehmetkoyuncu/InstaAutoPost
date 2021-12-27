@@ -26,11 +26,8 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         [HttpPost]
         public IActionResult RunRssGenerator(string url, string name)
         {
-            RssResultDTO result = _rssGeneratorService.RunRssGenerator(url, name, _environment);
-            if (result != null)
-                return Ok(Json(result));
-            else
-                return Ok(Json("İçerikler kaydedilemedi"));
+            RssResultDTO result = _rssGeneratorService.RunRssGenerator(url, name, _environment.ContentRootPath);
+            return Ok(Json(result));
         }
         public PartialViewResult GetRSSGeneratorPartial()
         {

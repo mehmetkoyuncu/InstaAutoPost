@@ -4,7 +4,8 @@ const typeEnum = {
     Category: "Category",
     Source: "Source",
     SourceContent: "SourceContent",
-    RssGenerator: "RssGenerator"
+    RssGenerator: "RssGenerator",
+    Folder:"Folder"
 };
 const alertType = {
     Success: "success",

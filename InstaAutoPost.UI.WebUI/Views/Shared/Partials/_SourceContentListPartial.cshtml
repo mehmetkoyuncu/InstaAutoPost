@@ -16,14 +16,15 @@
                         <table>
                             <tbody>
                                 <tr>
-                                    <th>Görsel</th>
-                                    <th>İsim</th>
+                                    <th style="padding-left:20px;">Görsel</th>
+                                    <th>Başlık</th>
                                     <th>İçerik</th>
                                     <th>Durumu</th>
                                     <th>Yüklenme Tarihi</th>
                                     <th>Kategori Adı</th>
                                     <th>Kaynak Adı</th>
                                     <th style="text-align:center;">Ayarlar</th>
+                                    <th style="text-align:center">Durum</th>
                                 </tr>
                                 @foreach (var item in Model.Item1)
                                 {
@@ -40,17 +41,17 @@
                                         }
                                     }
                                     <tr>
-                                        <td><img width="20px" src="~/images/@item.imageURL" alt="@item.Title"></td>
+                                        <td><img width="20px" src="~/images/@item.imageURL" alt="@item.Title" style="padding-left:20px;"></td>
                                         <td>@item.Title</td>
                                         <td>@item.Description</td>
                                         <td>
                                             @if (item.SendOutForPost)
                                             {
-                                                <span class="badge badge-pill badge-primary" style="background-color: #5CB85C">Paylaşıldı</span>
+                                                <span class="badge badge-pill badge-primary" id="badge-@item.Id" style="background-color: #5CB85C">Paylaşıldı</span>
                                             }
                                             else
                                             {
-                                                <span class="badge badge-pill badge-primary">Paylaşılmadı</span>
+                                                <span class="badge badge-pill badge-primary" id="badge-@item.Id">Paylaşılmadı</span>
                                             }
                                         </td>
                                         <td>@item.ContentInsertAt.ToShortDateString()</td>
@@ -58,25 +59,46 @@
                                         <td>@item.SourceName</td>
                                         <td style="text-align:center;">
                                             <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsSourceContentView(@item.Id)" class="pd-setting-ed btn btn-warning" data-original-title="View"><i class="fas fa-eye"></i></button>
-                                            <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSourceContentView(@item.Id)" class="pd-setting-ed btn btn-success"><i class="fas fa-edit"></i></button>
-                                            <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSourceContent(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash"><i class="fas fa-trash-alt"></i></button>
+                                            <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSourceContentView(@item.Id)" class="pd-setting-ed btn btn-primary"><i class="fas fa-edit"></i></button>
+
+                                            <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSourceContent(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Sil"><i class="fas fa-trash-alt"></i></button>
+                                        </td>
+                                        <td style="text-align:center;">
+                                            @if (item.IsCreatedFolder == false)
+                                            {
+                                                <button data-toggle="tooltip" data-placement="left" title="Klasör Oluştur" onclick="CreateFolderPost(@item.Id,this)" class="pd-setting-ed btn btn-info"><i class="fas fa-folder-open"></i></button>
+                                            }
+                                            else
+                                            {
+                                                <button data-toggle="tooltip" data-placement="left" title="Klasör Oluştur" onclick="CreateFolderPost(@item.Id,this)" class="pd-setting-ed btn btn-info" style="background-color: #5bc0de !important; "><i class="fas fa-folder-open"></i></button>
+                                            }
+                                            @if (item.SendOutForPost == true)
+                                            {
+                                                <button data-toggle="tooltip" data-placement="left" title="Paylaşıldı Olarak İşaretle" onclick="ShareMarkPost(@item.Id,this)" class="pd-setting-ed btn btn-success" style="background-color: #5cb85c" disabled><i class="fas fa-share-alt"></i></button>
+                                            }
+                                            else
+                                            {
+
+                                                <button data-toggle="tooltip" data-placement="left" title="Paylaşıldı Olarak İşaretle" onclick="ShareMarkPost(@item.Id,this)" class="pd-setting-ed btn btn-success" ><i class="fas fa-share-alt"></i></button>
+                                            }
+
                                         </td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
                         <div class="custom-pagination">
-                            <ul class="pagination" id="page_content">
-                                <li class="page-item" onclick="Previous()"><a class="page-link" >Önceki</a></li>
+                            <ul class="pagination" id="page_content" style="padding-left:20px;">
+                                <li class="page-item" onclick="Previous()"><a class="page-link">Önceki</a></li>
                                 @{
-                                   var paging= Convert.ToInt32(Math.Ceiling(Convert.ToDouble(
-                       Model.Item2 / Convert.ToDouble(10))));
+                                    var paging = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(
+Model.Item2 / Convert.ToDouble(10))));
                                 }
                                 @for (int i = 1; i <= paging; i++)
                                 {
                                     <li class="page-item"><a class="page-link" id="page-@i" onclick="Paging(@i)">@i</a></li>
                                 }
-                                <li class="page-item"><a class="page-link" onclick="After()" >Sonraki</a></li>
+                                <li class="page-item"><a class="page-link" onclick="After()">Sonraki</a></li>
                             </ul>
                         </div>
                         <div class="row">

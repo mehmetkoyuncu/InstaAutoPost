@@ -36,6 +36,7 @@ namespace InstaAutoPost.UI.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SourceId")
@@ -71,6 +72,7 @@ namespace InstaAutoPost.UI.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("URL")
@@ -103,6 +105,9 @@ namespace InstaAutoPost.UI.Data.Migrations
                     b.Property<DateTime>("InsertedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsCreatedFolder")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -116,6 +121,7 @@ namespace InstaAutoPost.UI.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -185,7 +191,7 @@ namespace InstaAutoPost.UI.Data.Migrations
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.SourceContentImage", b =>
                 {
                     b.HasOne("InstaAutoPost.UI.Data.Entities.Concrete.SourceContent", "SourceContent")
-                        .WithMany("Images")
+                        .WithMany()
                         .HasForeignKey("SourceContentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -201,11 +207,6 @@ namespace InstaAutoPost.UI.Data.Migrations
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Source", b =>
                 {
                     b.Navigation("Categories");
-                });
-
-            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.SourceContent", b =>
-                {
-                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

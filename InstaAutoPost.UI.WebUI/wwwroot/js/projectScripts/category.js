@@ -261,8 +261,6 @@ function DetailsCategoryView(id) {
 //Kategori Detay Modalı Kaldır
 function CloseCategoryModal() {
     $('#category_detail').modal('hide');
-    $('#detail_categories_container').remove();
-    $('.modal-backdrop').remove();
 }
 
 //Düzenleme için id'ye göre kategoriyi getir

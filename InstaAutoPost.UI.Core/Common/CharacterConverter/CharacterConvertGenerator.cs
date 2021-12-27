@@ -4,11 +4,11 @@ using System.Text;
 
 namespace InstaAutoPost.UI.Core.Common.CharacterConverter
 {
-   public class CharacterConvertGenerator
+   public static class CharacterConvertGenerator
     {
        
 
-        public string TurkishToEnglish(string text)
+        public static string TurkishToEnglish(string text)
         {
             text = text.Replace('ç', 'c')
                 .Replace('ğ', 'g')
@@ -20,7 +20,7 @@ namespace InstaAutoPost.UI.Core.Common.CharacterConverter
 
             return text;
         }
-        public string RemovePunctuation(string text)
+        public static string RemovePunctuation(string text)
         {
             text = text.Replace("!", "")
                 .Replace(" ","")

@@ -31,7 +31,16 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             return PartialView("~/Views/Shared/Partials/_SourceContentListPartial.cshtml", result);
         }
 
-
+        public JsonResult CreateFolder(int id)
+        {
+            var result = _sourceContentService.CreateFolder(id, _environment.ContentRootPath);
+            return Json(result);
+        }
+        public JsonResult ShareMarkPost(int id)
+        {
+            var result = _sourceContentService.ShareMarkPost(id);
+            return Json(result);
+        }
         public PartialViewResult GetAddSourceContentPartial()
         {
             List<SelectboxSourceDTO> sources = _sourceContentService.GetSourcesIdAndName();

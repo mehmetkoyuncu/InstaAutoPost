@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.AutoMapper;
+using InstaAutoPost.UI.Core.Common.CharacterConverter;
 using InstaAutoPost.UI.Core.Common.DTOS;
 using InstaAutoPost.UI.Core.Utilities;
 using InstaAutoPost.UI.Data.Context;
@@ -10,7 +11,9 @@ using InstaAutoPost.UI.Data.UnitOfWork.Concrete;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -18,16 +21,20 @@ namespace InstaAutoPost.UI.Core.Concrete
 {
     public class SourceContentService : ISourceContentService
     {
+        #region Constructor
         IUnitOfWork _uow;
         public SourceContentService()
         {
             _uow = new EFUnitOfWork(new RSSContextEF());
         }
+        #endregion
+        #region İçerik listesi oluştur
         public int AddSourceContent(List<SourceContent> sourceContent)
         {
             _uow.GetRepository<SourceContent>().AddList(sourceContent);
             return _uow.SaveChanges();
         }
+        #endregion
         #region Kategori Id'ye göre içeriği getir
         public List<SourceContentDTO> GetSourceContent(int categoryId)
         {
@@ -46,6 +53,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                     SourceName = x.Category.Source.Name,
                     Title = x.Title,
                     CategoryId = x.CategoryId,
+                    IsCreatedFolder=x.IsCreatedFolder
 
                 }).OrderByDescending(x => x.ContentInsertAt).ToList();
             return sourcontent;
@@ -116,7 +124,7 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             ImageUtility imageU = new ImageUtility();
 
-            string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath);
+            string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath,isContent:true,content:sourceContentDTO.Description);
             SourceContent sourceContent = new SourceContent()
             {
                 imageURL = imgSrc,
@@ -141,7 +149,7 @@ namespace InstaAutoPost.UI.Core.Concrete
             if (selectedSourceContent.imageURL != sourceContentDTO.imageURL)
             {
                 ImageUtility imageU = new ImageUtility();
-                string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath);
+                string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath,isContent:true,content:sourceContentDTO.Description);
                 selectedSourceContent.imageURL = imgSrc;
             }
             selectedSourceContent.CategoryId = sourceContentDTO.CategoryId;
@@ -299,6 +307,26 @@ namespace InstaAutoPost.UI.Core.Concrete
                     else
                         sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false && x.Title.ToLower().Contains(searchText.ToLower()) && x.CategoryId == categoryId).Include(x => x.Category.Source).OrderByDescending(x => x.ContentInsertAt).ToList();
                     break;
+                case 13:
+                    if (categoryId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).Include(x => x.Category).Include(x => x.Category.Source).OrderByDescending(x => x.IsCreatedFolder).ToList();
+                    else if (categoryId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false && x.Title.ToLower().Contains(searchText.ToLower())).Include(x => x.Category).Include(x => x.Category.Source).OrderByDescending(x => x.IsCreatedFolder).ToList();
+                    else if (categoryId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false && x.CategoryId == categoryId).Include(x => x.Category).Include(x => x.Category.Source).OrderByDescending(x => x.IsCreatedFolder).ToList();
+                    else
+                        sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false && x.Title.ToLower().Contains(searchText.ToLower()) && x.CategoryId == categoryId).Include(x => x.Category.Source).OrderByDescending(x => x.IsCreatedFolder).ToList();
+                    break;
+                case 14:
+                    if (categoryId == -1 && string.IsNullOrWhiteSpace(searchText))
+                        sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).Include(x => x.Category).Include(x => x.Category.Source).OrderBy(x => x.IsCreatedFolder).ToList();
+                    else if (categoryId == -1 && !string.IsNullOrWhiteSpace(searchText))
+                        sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false && x.Title.ToLower().Contains(searchText.ToLower())).Include(x => x.Category).Include(x => x.Category.Source).OrderBy(x => x.IsCreatedFolder).ToList();
+                    else if (categoryId > -1 && string.IsNullOrWhiteSpace(searchText))
+                        sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false && x.CategoryId == categoryId).Include(x => x.Category).Include(x => x.Category.Source).OrderBy(x => x.IsCreatedFolder).ToList();
+                    else
+                        sourceContentList = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false && x.Title.ToLower().Contains(searchText.ToLower()) && x.CategoryId == categoryId).Include(x => x.Category.Source).OrderBy(x => x.IsCreatedFolder).ToList();
+                    break;
                 default:
                     sourceContentList = null;
                     break;
@@ -316,7 +344,6 @@ namespace InstaAutoPost.UI.Core.Concrete
             return Mapping.Mapper.Map<SourceContent, SourceContentAddOrUpdateDTO>(source);
         }
         #endregion
-
         #region İçerik sayısı getir
         public int GetSourceContentCount()
         {
@@ -324,13 +351,127 @@ namespace InstaAutoPost.UI.Core.Concrete
             return contentCount;
         }
         #endregion
-        #region İçerik sayısı getir
+        #region İçeriklerin belli bir kısmını getir
         public List<SourceContentDTO> GetSourceContentFilter(List<SourceContentDTO> contentList, int next = 0, int quantity = 10)
         {
             List<SourceContentDTO> sourceContents = contentList.Skip(next).Take(quantity).ToList();
             return sourceContents;
         }
         #endregion
+        #region Tüm başlıkları getir
+        public List<string> GetAll()
+        {
+            var allContent = _uow.GetRepository<SourceContent>().GetAll().Select(x => x.Title.Trim()).ToList();
+            return allContent;
+        }
+        #endregion
+        #region Durumu paylaşılmadı olan ilk içeriği getir
+        public SourceContent GetFirstContentNotSended()
+        {
+            var content = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false&&x.SendOutForPost==false).OrderBy(x => x.InsertedAt).FirstOrDefault();
+            return content;
+        }
+        #endregion
+        #region İçeriği güncelle
+        public int UpdateSourceContent(SourceContent content)
+        {
+            var resultContent = GetSourceContentById(content.Id);
+            resultContent.imageURL = content.imageURL;
+            resultContent.UpdatedAt = DateTime.Now;
+            resultContent.Title = content.Title;
+            resultContent.Tags = content.Tags;
+            resultContent.SendOutForPost = content.SendOutForPost;
+            resultContent.ContentInsertAt = content.ContentInsertAt;
+            resultContent.IsCreatedFolder = content.IsCreatedFolder;
+            _uow.GetRepository<SourceContent>().Update(resultContent);
+            return _uow.SaveChanges();
+        }
+        #endregion
+        #region Klasör Oluştur
+        public bool CreateFolder(int id,string contentRooth)
+        {
+            try
+            {
+                CategoryService cService = new CategoryService();
 
+                //İçeriği getir
+                SourceContent sourceContent = GetSourceContentById(id);
+                //Klasör başlığı oluştur
+                string titleNew = sourceContent.Title != null&&sourceContent.Title.Length>5 ? sourceContent.Title.Substring(0, 5)+DateTime.Now.ToString() : sourceContent.Title+DateTime.Now.ToShortDateString();
+                //Klasör başlığı düzenle
+                titleNew = CharacterConvertGenerator.TurkishToEnglish(titleNew);
+                titleNew = CharacterConvertGenerator.RemovePunctuation(titleNew);
+                //Contents klasörüsü oluştur
+                var firstFolderName = "Contents_" + DateTime.Now.ToShortDateString();
+                string resultRooth = FolderUtility.CreateFolder(firstFolderName, contentRooth);
+                //Contents klasörünün altına ilgi klasörü oluştur
+               var contentRoothContents = contentRooth + @"\"+firstFolderName;
+                 resultRooth= FolderUtility.CreateFolder(titleNew, contentRoothContents);
+                //Etiketleri getir ve birleştir
+                var category = cService.GetById(sourceContent.CategoryId);
+                var categoryTags=category.Tags!=null?category.Tags.Split(",").ToList():null;
+                List<string> tags = sourceContent.Tags!=null?sourceContent.Tags.Split(",").ToList():new List<string>();
+                if(categoryTags!=null&&tags!=null)
+                tags.AddRange(categoryTags);
+                tags = tags.Select(x => x.Trim()).ToList();
+                //Txt dosyası oluştur
+                string tagsResult = "";
+                if (tags.Count>0)
+                {
+                    string charpText = "";
+                    tags = tags.Select(x => Path.Combine(charpText, " #" + x)).ToList();
+                     tagsResult = string.Join(null, tags);
+                }
+                string fileResultRooth = TxtUtility.CreateTxtDocument(resultRooth, titleNew + "Txt", sourceContent.Description, sourceContent.Title,tagsResult);
+                //Resim dosyası kopyalayıp ilgili dizine yapıştır
+                var fileName = sourceContent.imageURL;
+                var imageSource = contentRooth + @"\wwwroot\images\";
+                var imageDestination = resultRooth;
+                CopyFileUtility.CopyFile(imageSource, imageDestination,fileName);
+                //Klasörü aç
+                var psi = new System.Diagnostics.ProcessStartInfo() { FileName = resultRooth, UseShellExecute = true };
+                System.Diagnostics.Process.Start(psi);
+                sourceContent.IsCreatedFolder = true;
+                int updateControl = UpdateSourceContent(sourceContent);
+                if (updateControl <= 0)
+                    throw new Exception();
+
+
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        #endregion
+        #region Paylaşıldı Olarak İşaretle
+        public bool ShareMarkPost(int id)
+        {
+            bool control = false;
+            SourceContent content = GetSourceContentById(id);
+            content.SendOutForPost = true;
+           var result= UpdateSourceContent(content);
+            if (result > 0)
+                control = true;
+            return control;
+        }
+        #endregion
+        #region Silinmeyen içeriklerin  başlığını  getir
+        public List<string> GetNotDeletedContentsName()
+        {
+            List<string> sourceContents = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).Select(x=>x.Title).ToList();
+            return sourceContents;
+        }
+        #endregion
+        #region Silinmeyen içerikleri getir
+        public List<SourceContent> GetSourceContenListNotDeleted()
+        {
+            List<SourceContent> sourceContents = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).ToList();
+            return sourceContents;
+        }
+        #endregion
     }
 }

@@ -18,8 +18,9 @@ namespace InstaAutoPost.UI.Data.Entities.Concrete
         public int CategoryId { get; set; }
         public string SourceContentId { get; set; }
         public string Tags { get; set; }
+        public bool IsCreatedFolder { get; set; }
         public virtual Category Category { get; set; }
-        public virtual ICollection<SourceContentImage> Images { get; set; }
+        
 
     }
 }

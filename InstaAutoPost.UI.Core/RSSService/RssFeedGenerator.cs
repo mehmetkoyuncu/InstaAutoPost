@@ -5,6 +5,7 @@ using InstaAutoPost.UI.Core.Concrete;
 using InstaAutoPost.UI.Core.Utilities;
 using InstaAutoPost.UI.Data.Entities.Concrete;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -47,8 +48,11 @@ namespace InstaAutoPost.UI.Core.RSSService
                 {
                     feed = SyndicationFeed.Load(reader);
                 }
+                Log.Logger.Information($"Hata! RSS Generator başarıyla çalıştırıldı.  - Link : {_rssLink} - Adı : {_rssName}");
             }
-            catch (Exception ex) { throw new Exception("Doğru bir RSS kodu giriniz.."); } // TODO: Deal with unavailable resource.
+            catch (Exception ex) {
+                Log.Logger.Error($"Hata! Rss linki ile bilgiler yüklenemedi.  - Link : {_rssLink} - Adı : {_rssName} - {ex}");
+            }
 
             Category controlCategory = CategoryControl(categoryService);
             Source controlSource = SourceControl(sourceService, feed);
@@ -57,24 +61,27 @@ namespace InstaAutoPost.UI.Core.RSSService
             {
                 if (controlSource == null)
                 {
+                    Log.Logger.Information($"Rss Generator çalıştırılırken kaynak kontrolü yapıldı ve kaynak sistemde yoktur. Yeni kaynak eklenecek.");
                     int sourceResult = SourceAdd(sourceService, feed);
                     Source _source = null;
                     if (sourceResult > 0)
                         _source = SourceGet(sourceService, feed, _source);
                     else
-                        throw new Exception("Kaynak eklenirken hata oluştu.");
+                        Log.Logger.Error($"Hata! Kaynak eklenirken bir hata oluştu. -  {feed.Title.Text} - {sourceResult} adet kaynak eklendi.");
+                   
                     int categoryResult = CategoryAdd(categoryService, _source);
                     if (categoryResult > 0)
                         _category = CategoryGet(categoryService);
                     else
-                        throw new Exception("Kategori eklenirken hata oluştu.");
+                        Log.Logger.Error($"Hata! Kategori eklenirken bir hata oluştu. -  {feed.Title.Text} - {categoryResult} adet kategori eklendi.");
                     int sourceContentResult = SourceContentAdd(sourceContentService, feed, _category, imageService);
                     if (sourceContentResult > 0)
                     {
                         result = sourceContentResult;
+                        Log.Logger.Information($"İçerikler başarıyla eklendi. -  {result}");
                     }
                     else
-                        throw new Exception("İçerikler yüklenemedi");
+                        Log.Logger.Error($"Hata ! içerikler eklenirken hata oluştu. -  {result}");
                 }
                 else
                 {
@@ -82,29 +89,35 @@ namespace InstaAutoPost.UI.Core.RSSService
                     {
                         int categoryResult = 0;
                         if (controlSource != null)
+                        {
                             categoryResult = CategoryAdd(categoryService, controlSource);
+                            Log.Logger.Information($"Kategori başarıyla eklendi. -  {categoryResult}");
+                        }
+                            
                         else
-                            throw new Exception("Kategori yanlış kaydedilmiştir.");
+                            Log.Logger.Error($"Hata ! Kategori eklenirken hata oluştu. -  {categoryResult}");
 
 
                         if (categoryResult > 0)
                             _category = CategoryGet(categoryService);
                         else
-                            throw new Exception("Kategori eklenirken hata oluştu.");
+                            Log.Logger.Error($"Hata! Kategori getirilirken hata oluştu. -  {_category.Name}");
 
                         int sourceContentResult = SourceContentAdd(sourceContentService, feed, _category, imageService);
                         if (sourceContentResult > 0)
                         {
                             result = sourceContentResult;
+                            Log.Logger.Information($"İçerik başarıyla eklendi. -  {sourceContentResult}");
                         }
                         else
-                            throw new Exception("İçerikler yüklenemedi");
+                            Log.Logger.Error($"Hata! içerik oluşturulurken hata oluştu. -  {_category.Name}");
                     }
                     else
                     {
                         _category = CategoryGet(categoryService);
                         int sourceContentResult = SourceContentAdd(sourceContentService, feed, _category, imageService);
                         result = sourceContentResult;
+                        Log.Logger.Information($"İçerik başarıyla eklendi. -  {sourceContentResult}");
                     }
                 }
 
@@ -116,72 +129,80 @@ namespace InstaAutoPost.UI.Core.RSSService
         }
         private int SourceContentAdd(SourceContentService sourceContentService, SyndicationFeed feed, Category _category, ImagesService imagesService)
         {
-            List<SourceContent> sourceContentList = new List<SourceContent>();
-            ImageUtility imageUtility = new ImageUtility();
-            SourceContent sourceContent = null;
-            string content = null;
-            List<string> contents = sourceContentService.GetAll();
-            foreach (var element in feed.Items)
+            int sourceContentResult=default;
+            try
             {
-
-                string image = null;
-
-
-                if (element.Summary != null || element.Content != null)
+                List<SourceContent> sourceContentList = new List<SourceContent>();
+                ImageUtility imageUtility = new ImageUtility();
+                SourceContent sourceContent = null;
+                string content = null;
+                List<string> contents = sourceContentService.GetAll();
+                foreach (var element in feed.Items)
                 {
-                    content = ContentSlice(element);
-                }
 
-                if (element.Links.Any(x => x.RelationshipType != null ? x.RelationshipType.Contains("enclosure") : false))
-                {
-                    image = (element.Links.Where(x => x.RelationshipType != null ? x.RelationshipType.Contains("enclosure") : false).Select(x => x.Uri.OriginalString.Trim().ToLower()).FirstOrDefault());
-                }
-                else if (element.ElementExtensions.Any(x => x.OuterName != null ? x.OuterName.Contains("image") : false))
-                {
-                    foreach (SyndicationElementExtension extension in element.ElementExtensions)
+                    string image = null;
+
+
+                    if (element.Summary != null || element.Content != null)
                     {
-                        if (extension.OuterName == "image" || extension.OuterName == "ipimage")
+                        content = ContentSlice(element);
+                    }
+
+                    if (element.Links.Any(x => x.RelationshipType != null ? x.RelationshipType.Contains("enclosure") : false))
+                    {
+                        image = (element.Links.Where(x => x.RelationshipType != null ? x.RelationshipType.Contains("enclosure") : false).Select(x => x.Uri.OriginalString.Trim().ToLower()).FirstOrDefault());
+                    }
+                    else if (element.ElementExtensions.Any(x => x.OuterName != null ? x.OuterName.Contains("image") : false))
+                    {
+                        foreach (SyndicationElementExtension extension in element.ElementExtensions)
                         {
-                            XElement ele = extension.GetObject<XElement>();
-                            image = ele.Value.Trim();
+                            if (extension.OuterName == "image" || extension.OuterName == "ipimage")
+                            {
+                                XElement ele = extension.GetObject<XElement>();
+                                image = ele.Value.Trim();
+                            }
                         }
                     }
-                }
-                else if (element.Content != null)
-                {
-                    image = SliceImage(image, ((TextSyndicationContent)element.Content).Text.Trim().ToString());
-                }
-                else
-                    image = SliceImage(image, content);
-                var controlTitle = sourceContentList.Where(x => x.Title.Trim() == element.Title.Text.Trim()).FirstOrDefault();
-                var contentNameList = sourceContentService.GetNotDeletedContentsName();
-                var databaseControl = contentNameList.Where(x => x.Trim() == element.Title.Text.Trim()).FirstOrDefault();
-
-                if (controlTitle == null && databaseControl == null)
-                {
-                    var imageData = imageUtility.Download(image, (element.Title.Text), ImageFormat.Jpeg,_environment);
-                    sourceContent = new SourceContent()
+                    else if (element.Content != null)
                     {
-                        ContentInsertAt = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now,
-                        InsertedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now,
-                        CategoryId = _category.Id,
-                        Description = content,
-                        SourceContentId = element.Id,
-                        IsDeleted = false,
-                        SendOutForPost = false,
-                        imageURL = imageData,
-                        Title = element.Title.Text.Trim()
-                    };
-                    sourceContentList.Add(sourceContent);
+                        image = SliceImage(image, ((TextSyndicationContent)element.Content).Text.Trim().ToString());
+                    }
+                    else
+                        image = SliceImage(image, content);
+                    var controlTitle = sourceContentList.Where(x => x.Title.Trim() == element.Title.Text.Trim()).FirstOrDefault();
+                    var contentNameList = sourceContentService.GetNotDeletedContentsName();
+                    var databaseControl = contentNameList.Where(x => x.Trim() == element.Title.Text.Trim()).FirstOrDefault();
+
+                    if (controlTitle == null && databaseControl == null)
+                    {
+                        var imageData = imageUtility.Download(image, (element.Title.Text), ImageFormat.Jpeg, _environment);
+                        sourceContent = new SourceContent()
+                        {
+                            ContentInsertAt = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now,
+                            InsertedAt = DateTime.Now,
+                            UpdatedAt = DateTime.Now,
+                            CategoryId = _category.Id,
+                            Description = content,
+                            SourceContentId = element.Id,
+                            IsDeleted = false,
+                            SendOutForPost = false,
+                            imageURL = imageData,
+                            Title = element.Title.Text.Trim()
+                        };
+                        sourceContentList.Add(sourceContent);
+                        Log.Logger.Information($"İçerik başarıyla indirildi. - {sourceContent.Title}");
+                    }
+
+
                 }
-
-
+                sourceContentResult = sourceContentService.AddSourceContent(sourceContentList);
+               
             }
-
-
-
-            int sourceContentResult = sourceContentService.AddSourceContent(sourceContentList);
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! içerik indirilemedi. - {sourceContentResult} - {exMessage}");
+            }
+            
             return sourceContentResult;
         }
 
@@ -224,7 +245,7 @@ namespace InstaAutoPost.UI.Core.RSSService
         {
             Category _category = categoryService.GetByRSSURL(_rssLink);
             if (_category == null)
-                throw new Exception("Kategori eklendi fakat getirilirken hata oluştu");
+                Log.Logger.Error($"Hata! kategori indirildi fakat getirilirken hata oluştu. - {_category.Name}");
             return _category;
         }
         private int CategoryAdd(CategoryService categoryService, Source _source)
@@ -244,31 +265,43 @@ namespace InstaAutoPost.UI.Core.RSSService
                 _source = sourceService.GetByURL(feed.Id, feed.Title.Text);
             }
             if (_source == null)
-                throw new Exception("Kaynak eklendi fakat getirilirken hata oluştu");
+                Log.Logger.Error($"Hata! Kaynak getirilirken bir hata oluştu. -  {feed.Title.Text} - {_source.Name}");
             return _source;
         }
         private int SourceAdd(SourceService sourceService, SyndicationFeed feed)
         {
             ImageUtility imageUtility = new ImageUtility();
             int sourceResult = 0;
-            if (feed.ImageUrl != null)
+            try
             {
+                if (feed.ImageUrl != null)
+                {
 
-                string imageSrc = null;
+                    string imageSrc = null;
 
-                imageSrc = imageUtility.Download(feed.ImageUrl.OriginalString, feed.Title.Text, ImageFormat.Png,_environment);
+                    imageSrc = imageUtility.Download(feed.ImageUrl.OriginalString, feed.Title.Text, ImageFormat.Png, _environment);
 
-                sourceResult = sourceService.Add(feed.Title.Text.Trim(), imageSrc, feed.Links[0].Uri.OriginalString);
+                    sourceResult = sourceService.Add(feed.Title.Text.Trim(), imageSrc, feed.Links[0].Uri.OriginalString);
+                    Log.Logger.Information($"Görseli bulunan kaynak başarıyla eklendi. -  {feed.Title.Text}");
+                }
+                else if (feed.Links.Count != 0)
+                {
+                    sourceResult = sourceService.Add(feed.Title.Text.Trim(), null, feed.Links[0].Uri.OriginalString);
+                    Log.Logger.Information($"Görseli bulunmayan kaynak başarıyla eklendi. -  {feed.Title.Text}");
+
+                }
+                else
+                {
+                    sourceResult = sourceService.Add(feed.Title.Text.Trim(), null, feed.Id);
+                    Log.Logger.Information($"Görseli bulunmayan kaynak başarıyla eklendi. -  {feed.Title.Text}");
+                }
+
+             
             }
-            else if (feed.Links.Count != 0)
+            catch (Exception exMessage)
             {
-                sourceResult = sourceService.Add(feed.Title.Text.Trim(), null, feed.Links[0].Uri.OriginalString);
+                Log.Logger.Information($"Hata! Kaynak eklenirken bir hata oluştu. -  {feed.Title.Text} - {exMessage}");
             }
-            else
-            {
-                sourceResult = sourceService.Add(feed.Title.Text.Trim(), null, feed.Id);
-            }
-
             return sourceResult;
         }
 

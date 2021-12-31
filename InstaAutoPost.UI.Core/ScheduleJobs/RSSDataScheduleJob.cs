@@ -18,9 +18,12 @@ namespace InstaAutoPost.UI.Core.ScheduleJobs
         public static void PullRSSContent(string environment)
         {
             var rssList = new RSSListUtility().CreateRssList();
-            foreach (var item in rssList)
+            if (rssList.Count > 0)
             {
-                var rssItem = new RssRunnerService().RunRssGenerator(item.CategoryURL, item.CategoryName, environment);
+                foreach (var item in rssList)
+                {
+                    var rssItem = new RssRunnerService().RunRssGenerator(item.CategoryURL, item.CategoryName, environment);
+                }
             }
         }
     }

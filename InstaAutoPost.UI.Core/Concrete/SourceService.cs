@@ -9,6 +9,8 @@ using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
 using InstaAutoPost.UI.Data.UnitOfWork.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -27,20 +29,34 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region Url ile birlikte kaynak ekle
         public int Add(string name, string image, string url)
         {
-            Source source = new Source()
+            try
             {
-                InsertedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                Name = name,
-                Image = image,
-                URL = url,
-                IsDeleted = false
-            };
-            _uow.GetRepository<Source>().Add(source);
-            return _uow.SaveChanges();
+                int result = default;
+                Source source = new Source()
+                {
+                    InsertedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    Name = name,
+                    Image = image,
+                    URL = url,
+                    IsDeleted = false
+                };
+                _uow.GetRepository<Source>().Add(source);
+                result= _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"Kaynak eklendi.  - {name}");
+                else
+                    Log.Logger.Error($"Hata! Kaynak eklenirken hata oluştu.  - {name}");
+                return result;
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! Kaynak eklenirken hata oluştu.  -{name} {exMessage}");
+                throw;
+            }
+          
         }
         #endregion
-
         #region Tüm kaynakrı getir
         public List<SourceDTO> GetAllSources()
         {
@@ -49,11 +65,12 @@ namespace InstaAutoPost.UI.Core.Concrete
             return sourceDTOS;
         }
         #endregion
-
+        #region Idye göre kaynak getir
         public Source GetById(int id)
         {
             return _uow.GetRepository<Source>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
         }
+        #endregion
         #region URL'e göre Kaynağı getir
         public Source GetByURL(string url, string name)
         {
@@ -63,44 +80,76 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region Kaynak Ekle
         public int AddSource(SourceAddOrUpdateDTO sourceDTO, string contentRootPath)
         {
-            ImageUtility imageU = new ImageUtility();
-            string imgSrc = imageU.Download(sourceDTO.Image, sourceDTO.Name, ImageFormat.Png, contentRootPath);
-
-            Source source = new Source()
+            try
             {
-                InsertedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                Name = sourceDTO.Name==null?sourceDTO.Name:sourceDTO.Name.Trim(),
-                Image = imgSrc,
-                IsDeleted = false
-            };
-            _uow.GetRepository<Source>().Add(source);
-            return _uow.SaveChanges();
+                int result = default;
+                ImageUtility imageU = new ImageUtility();
+                string imgSrc = imageU.Download(sourceDTO.Image, sourceDTO.Name, ImageFormat.Png, contentRootPath);
+
+                Source source = new Source()
+                {
+                    InsertedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    Name = sourceDTO.Name == null ? sourceDTO.Name : sourceDTO.Name.Trim(),
+                    Image = imgSrc,
+                    IsDeleted = false
+                };
+                _uow.GetRepository<Source>().Add(source);
+                result= _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"Kaynak eklendi.  - {sourceDTO.Name}");
+                else
+                    Log.Logger.Error($"Hata! Kaynak eklenirken hata oluştu.  - {sourceDTO.Name}");
+                return result;
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! Kaynak eklenirken hata oluştu.  -{sourceDTO.Name} {exMessage}");
+                throw;
+            }
+        
+           
         }
         #endregion
         #region Kaynağı Düzenle
         public int EditSource(int id, SourceAddOrUpdateDTO source, string contentRootPath)
         {
-            string imgSrc = null;
-            Source updateSource = GetById(id);
-            if (updateSource.Image != source.Image)
+            try
             {
-                ImageUtility imageU = new ImageUtility();
-                imgSrc = imageU.Download(source.Image,source.Name, ImageFormat.Png, contentRootPath);
-                updateSource.Image = imgSrc;
+                int result = default;
+                string imgSrc = null;
+                Source updateSource = GetById(id);
+                if (updateSource.Image != source.Image)
+                {
+                    ImageUtility imageU = new ImageUtility();
+                    imgSrc = imageU.Download(source.Image, source.Name, ImageFormat.Png, contentRootPath);
+                    updateSource.Image = imgSrc;
+                }
+                updateSource.Name = source.Name == null ? source.Name : source.Name.Trim();
+                updateSource.UpdatedAt = DateTime.Now;
+                _uow.GetRepository<Source>().Update(updateSource);
+                result= _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"Kaynak güncellendi.  - {source.Name}");
+                else
+                    Log.Logger.Error($"Hata! Kaynak güncellenirken hata oluştu.  - {source.Name}");
+                return result;
             }
-            updateSource.Name = source.Name == null ? source.Name : source.Name.Trim();
-            updateSource.UpdatedAt = DateTime.Now;
-            _uow.GetRepository<Source>().Update(updateSource);
-            return _uow.SaveChanges();
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! Kaynak eklenirken hata oluştu.  -{source.Name} {exMessage}");
+                throw;
+            }
+           
         }
         #endregion
         #region Kaynağı Sil
         public int RemoveSource(int id)
         {
-            int result = 0;
             try
             {
+
+                int result = default;
                 Source source = GetById(id);
                 source.UpdatedAt = DateTime.Now;
                 _uow.GetRepository<Source>().Remove(source);
@@ -112,14 +161,19 @@ namespace InstaAutoPost.UI.Core.Concrete
                     foreach (var sourceContent in sourceContentList)
                         _uow.GetRepository<SourceContent>().Remove(sourceContent);
                 }
-
                 result = _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"Kaynak silindi.  - {source.Name}");
+                else
+                    Log.Logger.Error($"Hata! Kaynak silinirken hata oluştu.  - {source.Name}");
+                return result;
             }
-            catch (Exception)
+            catch (Exception exMessage)
             {
-                result = 0;
+                Log.Logger.Error($"Hata! Kaynak silinirken hata oluştu. - {exMessage}");
+                throw;
             }
-            return result;
+          
 
         }
         #endregion
@@ -197,7 +251,6 @@ namespace InstaAutoPost.UI.Core.Concrete
             return sourceDTOS;
         }
         #endregion
-
         #region Id'ye göre Kaynağı Getir
         public SourceAddOrUpdateDTO GetSourceById(int id)
         {

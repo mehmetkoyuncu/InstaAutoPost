@@ -9,6 +9,7 @@ using InstaAutoPost.UI.Data.Entities.Concrete;
 using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
 using InstaAutoPost.UI.Data.UnitOfWork.Concrete;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,8 +32,22 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region İçerik listesi oluştur
         public int AddSourceContent(List<SourceContent> sourceContent)
         {
-            _uow.GetRepository<SourceContent>().AddList(sourceContent);
-            return _uow.SaveChanges();
+            try
+            {
+                int result = default;
+                _uow.GetRepository<SourceContent>().AddList(sourceContent);
+                result= _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"İçerik eklendi(İçerik Listesi).  - {result}");
+                else
+                    Log.Logger.Error($"Hata! İçerik eklenirken hata oluştu(İçerik Listesi).  - {result}");
+                return result;
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! İçerik eklenirken hata oluştu(İçerik Listesi).  - {exMessage}");
+                throw;
+            }
         }
         #endregion
         #region Kategori Id'ye göre içeriği getir
@@ -113,52 +128,94 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region içeriği sil
         public int RemoveSourceContent(int id)
         {
-            SourceContent sourceContent = GetSourceContentById(id);
-            _uow.GetRepository<SourceContent>().Remove(sourceContent);
-            int result = _uow.SaveChanges();
-            return result;
+          
+            try
+            {
+                int result = default;
+                SourceContent sourceContent = GetSourceContentById(id);
+                _uow.GetRepository<SourceContent>().Remove(sourceContent);
+                result = _uow.SaveChanges();
+                if(result>0)
+                    Log.Logger.Information($"İçerik silindi.  - {sourceContent.Title}");
+                else
+                    Log.Logger.Error($"Hata! İçerik silinirken hata oluştu.  - {sourceContent.Title}");
+                return result;
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! İçerik silinirken hata oluştu.  - {exMessage}");
+                throw;
+            }
         }
         #endregion
         #region İçerik ekle
         public int AddSourceContent(SourceContentAddOrUpdateDTO sourceContentDTO,string contentRootPath)
         {
-            ImageUtility imageU = new ImageUtility();
-
-            string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath,isContent:true,content:sourceContentDTO.Description);
-            SourceContent sourceContent = new SourceContent()
+            try
             {
-                imageURL = imgSrc,
-                UpdatedAt = DateTime.Now,
-                InsertedAt = DateTime.Now,
-                SendOutForPost = false,
-                IsDeleted = false,
-                ContentInsertAt = DateTime.Now,
-                CategoryId = sourceContentDTO.CategoryId,
-                Tags = sourceContentDTO.Tags,
-                Title = sourceContentDTO.Title,
-                Description = sourceContentDTO.Description,
-            };
-            _uow.GetRepository<SourceContent>().Add(sourceContent);
-            return _uow.SaveChanges();
+                int result = default;
+                ImageUtility imageU = new ImageUtility();
+                string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath, isContent: true, content: sourceContentDTO.Description);
+                SourceContent sourceContent = new SourceContent()
+                {
+                    imageURL = imgSrc,
+                    UpdatedAt = DateTime.Now,
+                    InsertedAt = DateTime.Now,
+                    SendOutForPost = false,
+                    IsDeleted = false,
+                    ContentInsertAt = DateTime.Now,
+                    CategoryId = sourceContentDTO.CategoryId,
+                    Tags = sourceContentDTO.Tags,
+                    Title = sourceContentDTO.Title,
+                    Description = sourceContentDTO.Description,
+                };
+                _uow.GetRepository<SourceContent>().Add(sourceContent);
+                result = _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"İçerik eklendi.  - {sourceContent.Title}");
+                else
+                    Log.Logger.Error($"Hata! İçerik eklenirken hata oluştu.  - {sourceContent.Title}");
+                return result;
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! İçerik eklenirken hata oluştu.  - {exMessage}");
+                throw;
+            }
         }
         #endregion
         #region İçerik düzenle
         public int EditSourceContent(int id,SourceContentAddOrUpdateDTO sourceContentDTO,string contentRootPath)
         {
-            SourceContent selectedSourceContent = GetSourceContentById(id);
-            if (selectedSourceContent.imageURL != sourceContentDTO.imageURL)
+            try
             {
-                ImageUtility imageU = new ImageUtility();
-                string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath,isContent:true,content:sourceContentDTO.Description);
-                selectedSourceContent.imageURL = imgSrc;
+                int result = default;
+                SourceContent selectedSourceContent = GetSourceContentById(id);
+                if (selectedSourceContent.imageURL != sourceContentDTO.imageURL)
+                {
+                    ImageUtility imageU = new ImageUtility();
+                    string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath, isContent: true, content: sourceContentDTO.Description);
+                    selectedSourceContent.imageURL = imgSrc;
+                }
+                selectedSourceContent.CategoryId = sourceContentDTO.CategoryId;
+                selectedSourceContent.Description = sourceContentDTO.Description;
+                selectedSourceContent.Tags = sourceContentDTO.Tags;
+                selectedSourceContent.Title = sourceContentDTO.Title;
+                selectedSourceContent.UpdatedAt = DateTime.Now;
+                _uow.GetRepository<SourceContent>().Update(selectedSourceContent);
+                result= _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"İçerik güncellendi(Edit).  - {sourceContentDTO.Title}");
+                else
+                    Log.Logger.Error($"Hata! İçerik güncellenirken hata oluştu(Edit).  - {sourceContentDTO.Title}");
+                return result;
             }
-            selectedSourceContent.CategoryId = sourceContentDTO.CategoryId;
-            selectedSourceContent.Description = sourceContentDTO.Description;
-            selectedSourceContent.Tags = sourceContentDTO.Tags;
-            selectedSourceContent.Title = sourceContentDTO.Title;
-            selectedSourceContent.UpdatedAt = DateTime.Now;
-            _uow.GetRepository<SourceContent>().Update(selectedSourceContent);
-            return _uow.SaveChanges();
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! İçerik güncellenirken hata oluştu(Edit).  - {sourceContentDTO.Title} - {exMessage}");
+                throw;
+            }
+         
         }
         #endregion
         #region Filtre
@@ -375,16 +432,32 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region İçeriği güncelle
         public int UpdateSourceContent(SourceContent content)
         {
-            var resultContent = GetSourceContentById(content.Id);
-            resultContent.imageURL = content.imageURL;
-            resultContent.UpdatedAt = DateTime.Now;
-            resultContent.Title = content.Title;
-            resultContent.Tags = content.Tags;
-            resultContent.SendOutForPost = content.SendOutForPost;
-            resultContent.ContentInsertAt = content.ContentInsertAt;
-            resultContent.IsCreatedFolder = content.IsCreatedFolder;
-            _uow.GetRepository<SourceContent>().Update(resultContent);
-            return _uow.SaveChanges();
+            try
+            {
+                int result = default;
+                var resultContent = GetSourceContentById(content.Id);
+                resultContent.imageURL = content.imageURL;
+                resultContent.UpdatedAt = DateTime.Now;
+                resultContent.Title = content.Title;
+                resultContent.Tags = content.Tags;
+                resultContent.SendOutForPost = content.SendOutForPost;
+                resultContent.ContentInsertAt = content.ContentInsertAt;
+                resultContent.IsCreatedFolder = content.IsCreatedFolder;
+                _uow.GetRepository<SourceContent>().Update(resultContent);
+                result= _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"İçerik güncellendi(Update).  - {content.Title}");
+                else
+                    Log.Logger.Error($"Hata! İçerik güncellenirken hata oluştu(Update).  - {content.Title}");
+                return result;
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! İçerik güncellenirken hata oluştu(Edit).  - {content.Title} - {exMessage}");
+                throw;
+            }
+
+           
         }
         #endregion
         #region Klasör Oluştur
@@ -433,16 +506,11 @@ namespace InstaAutoPost.UI.Core.Concrete
                 System.Diagnostics.Process.Start(psi);
                 sourceContent.IsCreatedFolder = true;
                 int updateControl = UpdateSourceContent(sourceContent);
-                if (updateControl <= 0)
-                    throw new Exception();
-
-
-
-
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception exMessage)
             {
+                Log.Logger.Error($"Klasör veya dosya oluşturulurken hata oluştu.  - {exMessage}");
                 return false;
             }
         }
@@ -450,13 +518,26 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region Paylaşıldı Olarak İşaretle
         public bool ShareMarkPost(int id)
         {
-            bool control = false;
-            SourceContent content = GetSourceContentById(id);
-            content.SendOutForPost = true;
-           var result= UpdateSourceContent(content);
-            if (result > 0)
-                control = true;
-            return control;
+            try
+            {
+                bool control = false;
+                SourceContent content = GetSourceContentById(id);
+                content.SendOutForPost = true;
+                var result = UpdateSourceContent(content);
+                if (result > 0)
+                    control = true;
+                if (result > 0)
+                    Log.Logger.Information($"İçerik paylaşıldı olarak işaretlendi.  - {content.Title}");
+                else
+                    Log.Logger.Error($"Hata! İçerik paylaşıldı olarak işaretlenirken hata oluştu.  - {content.Title}");
+                return control;
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"İçerik paylaşıldı olarak işaretlenirken hata oluştu.  - {exMessage}");
+                throw;
+            }
+           
         }
         #endregion
         #region Silinmeyen içeriklerin  başlığını  getir

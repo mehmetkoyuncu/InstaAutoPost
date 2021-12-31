@@ -95,7 +95,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         #region Id'ye Göre Kategori Getir
         public IActionResult GetCategoryById(int id)
         {
-           CategoryAddOrUpdateDTO category= _categoryService.GetCategoryById(id);
+           CategoryAddOrUpdateDTO category= _categoryService.GetCategoryAddOrUpdateById(id);
             return Ok(Json(category));
         }
         #endregion

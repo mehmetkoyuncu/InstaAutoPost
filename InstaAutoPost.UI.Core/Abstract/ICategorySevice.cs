@@ -20,7 +20,7 @@ namespace InstaAutoPost.UI.Core.Abstract
         int EditCategory(int id,CategoryAddOrUpdateDTO categoryImageView);
         int AddCategory(CategoryAddOrUpdateDTO categoryImageView);
         List<CategoryDTO> Filter(int sourceId, int orderId, string searchText);
-        CategoryAddOrUpdateDTO GetCategoryById(int id);
+        CategoryAddOrUpdateDTO GetCategoryAddOrUpdateById(int id);
 
 
 

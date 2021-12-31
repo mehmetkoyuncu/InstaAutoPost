@@ -1,0 +1,3 @@
+Mail ve sistem listesi geliştirmeleri yapıldı. Framework hataları ile ilgili toplantı yapılıp hatalar incelendi.
+
+

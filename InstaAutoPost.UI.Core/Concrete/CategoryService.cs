@@ -8,6 +8,7 @@ using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
 using InstaAutoPost.UI.Data.UnitOfWork.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,39 +26,58 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region Id'ye göre kategoriyi getir
         public Category GetById(int id)
         {
-            return _uow.GetRepository<Category>()
+           
+         Category category=  _uow.GetRepository<Category>()
                 .Get(x => x.Id == id && x.IsDeleted == false)
                 .Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false))
                 .FirstOrDefault();
+            return category;
+
         }
 
         #endregion
-        #region Kategoriyi düzenle
+        #region Kategoriyi güncelle
         public int EditCategory(int id, CategoryAddOrUpdateDTO categoryImageView)
         {
-            Category category = GetById(id);
-            category.UpdatedAt = DateTime.Now;
-            category.Name = categoryImageView.Name == null ? categoryImageView.Name : categoryImageView.Name.Trim();
-            category.SourceId = categoryImageView.SourceId;
-            category.Tags = categoryImageView.Tags == null ? categoryImageView.Tags : categoryImageView.Tags.Replace(" ", "");
-            _uow.GetRepository<Category>().Update(category);
-            return _uow.SaveChanges();
+            try
+            {
+                Category category = GetById(id);
+                category.UpdatedAt = DateTime.Now;
+                category.Name = categoryImageView.Name == null ? categoryImageView.Name : categoryImageView.Name.Trim();
+                category.SourceId = categoryImageView.SourceId;
+                category.Tags = categoryImageView.Tags == null ? categoryImageView.Tags : categoryImageView.Tags.Replace(" ", "");
+                _uow.GetRepository<Category>().Update(category);
+                int result = _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"Kategori güncellendi.  - {category.Name}");
+                else
+                    Log.Logger.Error($"Hata! Kategori güncellenirken hata oluştu.  - {category.Name}");
+
+                return result;
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! Kategori güncellenirken hata oluştu.  - {categoryImageView.Name} - {exMessage }");
+                throw;
+            }
         }
         #endregion
-        #region Id'ye göre Kategori Getir
-        public CategoryAddOrUpdateDTO GetCategoryById(int id)
+        #region Id'ye göre Kategori Getir(AddOrUpdate)
+        public CategoryAddOrUpdateDTO GetCategoryAddOrUpdateById(int id)
         {
             Category category = _uow.GetRepository<Category>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
-            return Mapping.Mapper.Map<Category, CategoryAddOrUpdateDTO>(category);
+            CategoryAddOrUpdateDTO categoryDTO= Mapping.Mapper.Map<Category, CategoryAddOrUpdateDTO>(category);
+            return categoryDTO;
         }
         #endregion
         #region Kategori Sil
         public int RemoveCategory(int id)
         {
-            int result = 0;
             try
             {
-                Category category = GetById(id);
+                int result = 0;
+                Category category = null;
+                category = GetById(id);
                 category.UpdatedAt = DateTime.Now;
                 _uow.GetRepository<Category>().Remove(category);
                 List<SourceContent> sourceContentList = _uow.GetRepository<SourceContent>()
@@ -66,48 +86,80 @@ namespace InstaAutoPost.UI.Core.Concrete
                 foreach (var item in sourceContentList)
                     _uow.GetRepository<SourceContent>().Remove(item);
                 result = _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"Kategori silindi.  - {category.Name}");
+                else
+                    Log.Logger.Error($"Hata! Kategori silinirken hata oluştu.  - {category.Name}");
+                return result;
 
             }
-            catch (Exception)
+            catch (Exception exMessage)
             {
-                result = 0;
+                Log.Logger.Error($"Hata! Kategori silinirken hata oluştu.  - {exMessage}");
+                throw;
             }
-            return result;
+           
         }
         #endregion
         #region Kategori Ekle (Link)
         public int AddCategory(string name, string url, int sourceId)
         {
-            _uow.GetRepository<Category>().Add(new Category
+            try
             {
-                Name = name.Trim(),
-                Link = url.Trim(),
-                InsertedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                IsDeleted = false,
-                SourceId = sourceId,
-            });
-            return _uow.SaveChanges();
+                _uow.GetRepository<Category>().Add(new Category
+                {
+                    Name = name.Trim(),
+                    Link = url.Trim(),
+                    InsertedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    IsDeleted = false,
+                    SourceId = sourceId,
+                });
+                var result = _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"Kategori eklendi(Link).  - {name}");
+                else
+                    Log.Logger.Error($"Hata! Kategori eklenirken hata oluştu(Link).  - {name}");
+                return result;
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! Kategori eklenirken  hata oluştu(Link).  - {name} -{exMessage}");
+                throw;
+            }
+           
         }
         #endregion
         #region Kategori Ekle
         public int AddCategory(CategoryAddOrUpdateDTO categoryImageView)
         {
-            _uow.GetRepository<Category>().Add(new Category
+            try
             {
-                Name = categoryImageView.Name == null ? categoryImageView.Name : categoryImageView.Name.Trim(),
-                Link = null,
-                InsertedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                IsDeleted = false,
-                SourceId = categoryImageView.SourceId,
-                Tags = categoryImageView.Tags == null ? categoryImageView.Tags : categoryImageView.Tags.Replace(" ", "")
-            });
-
-            return _uow.SaveChanges();
+                _uow.GetRepository<Category>().Add(new Category
+                {
+                    Name = categoryImageView.Name == null ? categoryImageView.Name : categoryImageView.Name.Trim(),
+                    Link = null,
+                    InsertedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    IsDeleted = false,
+                    SourceId = categoryImageView.SourceId,
+                    Tags = categoryImageView.Tags == null ? categoryImageView.Tags : categoryImageView.Tags.Replace(" ", "")
+                });
+                var result = _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"Kategori eklendi(CategoryAddOrUpdateDTO).  - {categoryImageView.Name}");
+                else
+                    Log.Logger.Error($"Hata! Kategori eklenirken hata oluştu(CategoryAddOrUpdateDTO).  - {categoryImageView.Name}");
+                return result;
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! Kategori eklenirken  hata oluştu(CategoryAddOrUpdateDTO).  - {categoryImageView.Name} -{exMessage}");
+                throw;
+            }
         }
         #endregion
-        #region Tüm Kategorileri Getir
+        #region Tüm Kategorileri Listele
         public List<CategoryDTO> GetAllCategories()
         {
             List<Category> categories = _uow.GetRepository<Category>()
@@ -327,18 +379,18 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region Kategori içeriği yüzde ayarları
         private List<CategoryDTO> SetPercentAndCount(List<CategoryDTO> categoryDTOs)
         {
-            foreach (var item in categoryDTOs)
-            {
-                int sourceContentCount = item.SourceContentsDTO.Count;
-                if (sourceContentCount != 0)
+                foreach (var item in categoryDTOs)
                 {
-                    int sendedSource = item.SourceContentsDTO.Where(x => x.SendOutForPost == true).Count();
-                    int sendedPercent = Convert.ToInt32(Math.Ceiling(Convert.ToDouble((100 * sendedSource) / sourceContentCount)));
-                    item.SendedPostPercent = sendedPercent;
+                    int sourceContentCount = item.SourceContentsDTO.Count;
+                    if (sourceContentCount != 0)
+                    {
+                        int sendedSource = item.SourceContentsDTO.Where(x => x.SendOutForPost == true).Count();
+                        int sendedPercent = Convert.ToInt32(Math.Ceiling(Convert.ToDouble((100 * sendedSource) / sourceContentCount)));
+                        item.SendedPostPercent = sendedPercent;
+                    }
+                    else
+                        item.SendedPostPercent = 0;
                 }
-                else
-                    item.SendedPostPercent = 0;
-            }
             return categoryDTOs;
         }
         #endregion

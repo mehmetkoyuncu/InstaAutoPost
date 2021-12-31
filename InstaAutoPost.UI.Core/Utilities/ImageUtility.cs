@@ -10,6 +10,7 @@ using System.Text;
 using SixLabors.ImageSharp.Processing;
 using System.Drawing.Drawing2D;
 using InstaAutoPost.UI.Core.Common.Constants;
+using Serilog;
 
 namespace InstaAutoPost.UI.Core.Utilities
 {
@@ -19,7 +20,6 @@ namespace InstaAutoPost.UI.Core.Utilities
         {
             string imageSrc;
             try
-
             {
                 string orijinalFileName = fileName;
                 string sImageFormat = "." + ((imageFormat.ToString()).ToLower());
@@ -43,36 +43,18 @@ namespace InstaAutoPost.UI.Core.Utilities
                     {
                         fs = System.IO.File.Open(Path.Combine(contentRootPath + @"/wwwroot/" + rooth, fileName + sImageFormat), FileMode.Create);
                     }
-
                     bitmap.Save(fs, imageFormat);
-
                     fs.Close();
+                    Log.Logger.Information($"Görsel başarıyla indirildi. - {fileName}");
                     if (fs != null && isContent == true)
                     {
-
-                        //Şablon Arkaplan
                         Bitmap backImage = new Bitmap(1080, 1080);
-                        //Resim boyutlandır
-                       
-                        //using (Graphics graphics = Graphics.FromImage(backImage))
-                        //{
-                            ApplyTemplate(DesignConstants.Wanted, backImage, contentRootPath,bitmap,orijinalFileName,content);
+                            ApplyTemplate(DesignConstants.PurpleRainbow, backImage, contentRootPath,bitmap,orijinalFileName,content);
 
-                        //graphics.DrawImage(imageL, 250, 230);
-                        //Image design = Image.FromFile(contentRootPath + @"/wwwroot/img/image-design/6.png");
-                        //Bitmap backDesign = new Bitmap(design, new Size(500, 500));
-                        //graphics.DrawImage(backDesign, 0, 0);
-                       
-                        //}
                         fullFs = System.IO.File.Open(Path.Combine(contentRootPath + @"/wwwroot/images", fileName + "_full" + sImageFormat), FileMode.Create);
-                        var fonts = new List<FontFamily>();
-                        foreach (FontFamily font_family in fonts)
-                        {
-                            fonts.Add(font_family);
-                        }
                         backImage.Save(fullFs, imageFormat);
                         fullFs.Close();
-
+                        Log.Logger.Information($"Görsel orjinali başarıyla indirildi. - {fileName}");
                     }
                 }
 
@@ -83,14 +65,17 @@ namespace InstaAutoPost.UI.Core.Utilities
                     imageSrc = fileName + "_full" + sImageFormat;
                 else
                     imageSrc = fileName + "_full" + sImageFormat;
+                return imageSrc;
 
             }
-            catch (Exception ex)
+            catch (Exception exMessage)
             {
+                Log.Logger.Error($"Hata! Görsel indirilemedi. - {fileName} - {exMessage}");
                 imageSrc = null;
+                return imageSrc;
             }
 
-            return imageSrc;
+          
         }
         private static System.Drawing.Image ResizeImage(System.Drawing.Image imgToResize, Size size)
         {
@@ -148,103 +133,119 @@ namespace InstaAutoPost.UI.Core.Utilities
 
         public static Image ApplyTemplate(string template, Image backImage,string contentRootPath,Bitmap bitmap,string title="",string content="")
         {
-            Image image = null;
-            Image croppedImage = null;
-            Image design = Image.FromFile(contentRootPath + @"/wwwroot/img/image-design/"+ template);
-            Image logo= Image.FromFile(contentRootPath + @"/wwwroot/img/logo/logo.png");
-            Image facebookLogo = Image.FromFile(contentRootPath + @"/wwwroot/img/logo/facebook.png");
-            Image twitterLogo = Image.FromFile(contentRootPath + @"/wwwroot/img/logo/twitter.png");
-            Image instagramLogo = Image.FromFile(contentRootPath + @"/wwwroot/img/logo/instagram.png");
-            Bitmap templateDesign = new Bitmap(design, new Size(1080, 1080));
-            StringFormat verticalFormat = new StringFormat();
-            verticalFormat.FormatFlags = StringFormatFlags.DirectionVertical;
-            StringFormat centerFormat = new StringFormat();
-            centerFormat.Alignment = StringAlignment.Center;
-            centerFormat.LineAlignment = StringAlignment.Center;
-            StringFormat alignCenterFormat = new StringFormat();
-            alignCenterFormat.LineAlignment = StringAlignment.Center;
-            using (Graphics graphics = Graphics.FromImage(backImage))
+            try
             {
-                switch (template)
+                Image image = null;
+                Image croppedImage = null;
+                Image design = Image.FromFile(contentRootPath + @"/wwwroot/img/image-design/" + template);
+                Image logo = Image.FromFile(contentRootPath + @"/wwwroot/img/logo/logo.png");
+                Image facebookLogo = Image.FromFile(contentRootPath + @"/wwwroot/img/logo/facebook.png");
+                Image twitterLogo = Image.FromFile(contentRootPath + @"/wwwroot/img/logo/twitter.png");
+                Image instagramLogo = Image.FromFile(contentRootPath + @"/wwwroot/img/logo/instagram.png");
+                Bitmap templateDesign = new Bitmap(design, new Size(1080, 1080));
+                StringFormat verticalFormat = new StringFormat();
+                verticalFormat.FormatFlags = StringFormatFlags.DirectionVertical;
+                StringFormat centerFormat = new StringFormat();
+                centerFormat.Alignment = StringAlignment.Center;
+                centerFormat.LineAlignment = StringAlignment.Center;
+                StringFormat alignCenterFormat = new StringFormat();
+                alignCenterFormat.LineAlignment = StringAlignment.Center;
+                using (Graphics graphics = Graphics.FromImage(backImage))
                 {
+                    switch (template)
+                    {
 
-                    case DesignConstants.PurpleRainbow:
-                        image = ResizeImage(bitmap as Image, new Size(1000, 750));
-                        croppedImage = CropImage(image, new Size(1000, 750));
-                        graphics.DrawImage(templateDesign, 0, 0);
-                        graphics.DrawImage(croppedImage, 40, 40);
-                        graphics.DrawImage(logo, 880, 50,150,150);
-                        using (Font arialFont = new Font("Arial", 25))
-                        {
-                            int maxWidth = 1000;
-                            int maxHeight = 250;
-                            graphics.FillRectangle(Brushes.SlateGray, 50, 720, 400, 60);
-                            graphics.DrawImage(instagramLogo, 57, 730, 40, 40);
-                            graphics.DrawImage(twitterLogo, 100, 730, 40, 40);
-                            graphics.DrawImage(facebookLogo, 143, 730, 40, 40);
-                            graphics.DrawString("@bertarafgundem", arialFont, Brushes.White, new PointF(185, 730));
-                            graphics.DrawString(title, new Font("Arial",30), Brushes.White, new Rectangle(30, 800,maxWidth,maxHeight),centerFormat);
-                        }
-                        break;
-                    case DesignConstants.Wanted:
-                        image = ResizeImage(bitmap as Image, new Size(924, 762));
-                        croppedImage = CropImage(image, new Size(924, 762));
-                        graphics.DrawImage(templateDesign, 0, 0);
-                        graphics.DrawImage(croppedImage, 78, 100);
-                        graphics.DrawImage(logo, 840, 120, 150, 150);
-                        using (Font arialFont = new Font("Arial", 25))
-                        {
-                            int maxWidth = 955;
-                            int maxHeight = 200;
-                            graphics.FillRectangle(Brushes.SlateGray, 100,790, 410, 60);
-                            graphics.DrawImage(instagramLogo, 107, 800, 40, 40);
-                            graphics.DrawImage(twitterLogo, 150, 800, 40, 40);
-                            graphics.DrawImage(facebookLogo, 193, 800, 40, 40);
-                            graphics.DrawString("@bertarafgundem", arialFont, Brushes.White, new PointF(235, 800));
-                            graphics.DrawString(title, new Font("Arial", 25), Brushes.White, new Rectangle(60, 880, maxWidth, maxHeight), centerFormat);
-                        }
-                        break;
-                    case DesignConstants.Default:
-                          image = ResizeImage(bitmap as Image, new Size(1000, 750));
-                        croppedImage = CropImage(image, new Size(1000, 750));
-                        graphics.DrawImage(templateDesign, 0, 0);
-                        graphics.DrawImage(croppedImage, 40, 40);
-                        graphics.DrawImage(logo, 880, 50,150,150);
-                        using (Font arialFont = new Font("Arial", 25))
-                        {
-                            int maxWidth = 1000;
-                            int maxHeight = 250;
-                            graphics.FillRectangle(Brushes.SlateGray, 50, 720, 400, 60);
-                            graphics.DrawImage(instagramLogo, 57, 730, 40, 40);
-                            graphics.DrawImage(twitterLogo, 100, 730, 40, 40);
-                            graphics.DrawImage(facebookLogo, 143, 730, 40, 40);
-                            graphics.DrawString("@bertarafgundem", arialFont, Brushes.White, new PointF(185, 730));
-                            graphics.DrawString(title, new Font("Arial",30), Brushes.White, new Rectangle(30, 800,maxWidth,maxHeight),centerFormat);
-                        }
-                        break;
-                     
-                    case DesignConstants.Design8:
-                        Rectangle blackBackgroundImageSize = new Rectangle(0, 0, 1080, 1080);
-                        graphics.FillRectangle(Brushes.Black, blackBackgroundImageSize);
-                        image = ResizeImage(bitmap as Image, new Size(850, 700));
-                        croppedImage = CropImage(image, new Size(850, 700));
-                        graphics.DrawImage(croppedImage, 115, 115);
-                        graphics.DrawImage(templateDesign, 0, 0);
+                        case DesignConstants.PurpleRainbow:
+                            image = ResizeImage(bitmap as Image, new Size(1000, 750));
+                            croppedImage = CropImage(image, new Size(1000, 750));
+                            graphics.DrawImage(templateDesign, 0, 0);
+                            graphics.DrawImage(croppedImage, 40, 40);
+                            graphics.DrawImage(logo, 880, 50, 150, 150);
+                            using (Font arialFont = new Font("Arial", 25))
+                            {
+                                int maxWidth = 1000;
+                                int maxHeight = 250;
+                                graphics.FillRectangle(Brushes.SlateGray, 50, 720, 410, 60);
+                                graphics.DrawImage(instagramLogo, 57, 730, 40, 40);
+                                graphics.DrawImage(twitterLogo, 100, 730, 40, 40);
+                                graphics.DrawImage(facebookLogo, 143, 730, 40, 40);
+                                graphics.DrawString("@bertarafgundem", arialFont, Brushes.White, new PointF(185, 730));
+                                graphics.DrawString(title, new Font("Arial", 30), Brushes.White, new Rectangle(30, 800, maxWidth, maxHeight), centerFormat);
+                            }
+                            break;
+                        case DesignConstants.Wanted:
+                            image = ResizeImage(bitmap as Image, new Size(924, 762));
+                            croppedImage = CropImage(image, new Size(924, 762));
+                            graphics.DrawImage(templateDesign, 0, 0);
+                            graphics.DrawImage(croppedImage, 78, 100);
+                            graphics.DrawImage(logo, 840, 120, 150, 150);
+                            using (Font arialFont = new Font("Arial", 25))
+                            {
+                                int maxWidth = 955;
+                                int maxHeight = 200;
+                                graphics.FillRectangle(Brushes.SlateGray, 100, 790, 410, 60);
+                                graphics.DrawImage(instagramLogo, 107, 800, 40, 40);
+                                graphics.DrawImage(twitterLogo, 150, 800, 40, 40);
+                                graphics.DrawImage(facebookLogo, 193, 800, 40, 40);
+                                graphics.DrawString("@bertarafgundem", arialFont, Brushes.White, new PointF(235, 800));
+                                graphics.DrawString(title, new Font("Arial", 25), Brushes.White, new Rectangle(60, 880, maxWidth, maxHeight), centerFormat);
+                            }
+                            break;
+                        case DesignConstants.Default:
+                            image = ResizeImage(bitmap as Image, new Size(970, 600));
+                            croppedImage = CropImage(image, new Size(970, 600));
+                            graphics.DrawImage(templateDesign, 0, 0);
+                            graphics.DrawImage(croppedImage, 60, 200);
+                            graphics.DrawImage(logo, 880, 200, 150, 150);
+                            using (Font arialFont = new Font("Arial", 25))
+                            {
+                                int maxWidth = 980;
+                                int maxHeight = 180;
+                                graphics.FillRectangle(Brushes.SlateGray, 80, 720, 410, 60);
+                                graphics.DrawImage(instagramLogo, 87, 730, 40, 40);
+                                graphics.DrawImage(twitterLogo, 130, 730, 40, 40);
+                                graphics.DrawImage(facebookLogo, 173, 730, 40, 40);
+                                graphics.DrawString("@bertarafgundem", arialFont, Brushes.White, new PointF(216, 730));
+                                graphics.DrawString(title, new Font("Arial", 25), Brushes.Black, new Rectangle(60, 10, maxWidth, maxHeight), alignCenterFormat);
+                                maxWidth = 900;
+                                maxHeight = 165;
+                                graphics.DrawString(content, new Font("Arial", 15), Brushes.White, new Rectangle(120, 850, maxWidth, maxHeight), alignCenterFormat);
+                            }
+                            break;
 
-                        using (Font arialFont = new Font("Arial", 20))
-                        {
-                            int maxWidth = 870;
-                            int maxHeight = 100;
-                            int maxHeigtTitle = 250;
-                            graphics.DrawString("WWW.GOOGLE.COM", arialFont, Brushes.Black, new PointF(9, 350), verticalFormat);
-                            graphics.DrawString("Logo Buraya", arialFont, Brushes.White, new PointF(930, 30));
-                            graphics.DrawString(content, new Font("Arial", 15), Brushes.White, new Rectangle(135, 887, maxWidth, maxHeight), alignCenterFormat);
-                            graphics.DrawString(title, new Font("Arial", 35), Brushes.Black, new Rectangle(80, 30, maxWidth, maxHeigtTitle), alignCenterFormat);
-                        }
-                        break;
+                        //Black Dessert
+                        case DesignConstants.BlackDessert:
+                            image = ResizeImage(bitmap as Image, new Size(1080, 1080));
+                            croppedImage = CropImage(image, new Size(1080, 1080));
+                            graphics.DrawImage(croppedImage, 0, 0);
+                            graphics.DrawImage(templateDesign, 0, 0);
+
+                            graphics.DrawImage(logo, 880, 50, 150, 150);
+                            using (Font arialFont = new Font("Arial", 25))
+                            {
+                                int maxWidth = 1000;
+                                int maxHeight = 250;
+                                graphics.FillRectangle(Brushes.SlateGray, 50, 720, 410, 60);
+                                graphics.DrawImage(instagramLogo, 57, 730, 40, 40);
+                                graphics.DrawImage(twitterLogo, 100, 730, 40, 40);
+                                graphics.DrawImage(facebookLogo, 143, 730, 40, 40);
+                                graphics.DrawString("@bertarafgundem", arialFont, Brushes.White, new PointF(185, 730));
+                                graphics.DrawString(title, new Font("Arial", 30), Brushes.White, new Rectangle(30, 800, maxWidth, maxHeight), centerFormat);
+                            }
+                            break;
+                    }
+
                 }
+                Log.Logger.Information($"Görsel için template uygulandı. - {template} - {contentRootPath}");
+                return backImage;
             }
-            return backImage;
+            catch (Exception expMessage)
+            {
+                Log.Logger.Error($"Hata! Görsel için template uygulanırken hata oluştu. - {template} - {contentRootPath} - {expMessage}");
+                return bitmap as Image;
+            }
+            
+        
         }
 
     }

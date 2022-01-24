@@ -11,5 +11,6 @@ namespace InstaAutoPost.UI.Core.Common.Constants
         public const string SourceContentInsertAt = "{{{SourceContentInsertAt}}}";
         public const string SourceName = "{{{SourceName}}}";
         public const string CategoryName = "{{{CategoryName}}}";
+        public const string ContentId = "{{{ContentId}}}";
     }
 }

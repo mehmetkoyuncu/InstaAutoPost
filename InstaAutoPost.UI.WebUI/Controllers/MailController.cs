@@ -23,9 +23,10 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         {
             return PartialView("~/Views/Shared/Partials/_MailMenuPartial.cshtml");
         }
-        public IActionResult GetMailSendBox()
+        public IActionResult GetSentMails()
         {
-            return PartialView("~/Views/Shared/Partials/_MailInboxPartial.cshtml");
+            var mailList = _mailService.GetSentEmailList();
+            return PartialView("~/Views/Shared/Partials/_SentMailInboxPartial.cshtml",mailList);
         }
         public IActionResult GetAccountSetting()
         {

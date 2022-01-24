@@ -1,0 +1,77 @@
+﻿@model List<SentMailDTO>
+<div class="hpanel mg-b-15">
+    <div class="panel-heading hbuilt mailbox-hd">
+        <div class="text-center p-xs font-normal">
+            <div class="input-group">
+                <input type="text" class="form-control input-sm" placeholder="Search email in your inbox..."> <span class="input-group-btn">
+                    <button type="button" class="btn btn-sm btn-default">
+                        Search
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mg-b-15">
+                <div class="btn-group">
+                    <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i>Yenile</button>
+                    <button class="btn btn-default btn-sm"><i class="fa fa-eye"></i></button>
+                    <button class="btn btn-default btn-sm"><i class="fa fa-exclamation"></i></button>
+                    <button class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
+                    <button class="btn btn-default btn-sm"><i class="fa fa-check"></i></button>
+                    <button class="btn btn-default btn-sm"><i class="fa fa-tag"></i></button>
+                </div>
+            </div>
+            <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mailbox-pagination mg-b-15">
+                <div class="btn-group">
+                    <button class="btn btn-default btn-sm"><i class="fa fa-arrow-left"></i></button>
+                    <button class="btn btn-default btn-sm"><i class="fa fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-mailbox">
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                            string to = "";
+                            string subject = "";
+                            if (item.To.Length >= 30 && !string.IsNullOrEmpty(item.To))
+                                to = item.To.Substring(0, 30) + "...";
+                            else
+                                to = item.To;
+                            if (item.Subject.Length >= 70 && !string.IsNullOrEmpty(item.Subject))
+                                subject = item.Subject.Substring(0, 70) + "...";
+                            else
+                                subject = item.Subject; 
+                    <tr>
+                        <td class="">
+                            <div class="checkbox">
+                                <label></label>
+                            </div>
+                        </td>
+                        @if (item.IsSuccess == true)
+                        {
+                    <td><span>@to</span> <span class="label label-info">Gönderildi</span></td> }
+                                    else
+                                    {
+                    <td><span>@to</span> <span class="label label-danger">Başarısız</span></td>}
+
+                        <td>@subject</td>
+                        <td></td>
+                        <td class="text-right mail-date">@item.UpdatedAt.ToShortDateString()</td>
+                        <td class="">
+                            <div class="checkbox">
+                                <label></label>
+                            </div>
+                        </td>
+                    </tr>}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <i class="fa fa-eye"> </i> @Model.Count adet kayıt mevcuttur.
+    </div>
+</div>

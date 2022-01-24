@@ -10,17 +10,12 @@
         }
     });
 };
-function LoadMailInbox() {
-    $('#mailContent').load('Mail/GetMailSendBox', function () {
-    });
-}
-
 $(document).ready(function () {
     StartLoader();
     ChangeInsertButton(typeEnum.Mail, "Mail");
     ChangeBreadComb("Mail", "Maillerinizi okuyabilir, bir mail şablonu oluşturabilir, mailin konusunu ve içeriğini oluşturabilir ve yeni bir mail gönderebilirsiniz.","mail.jpg");
     ChangeReportButton(typeEnum.Mail)
-    LoadMailMenu(LoadMailInbox);
+    LoadMailMenu(LoadSentMails);
     $('#insert_button span').text("Yeni Mail");
     StopLoader();
 });
@@ -167,5 +162,12 @@ function SendMailDefault() {
             SetRequestError();
             StopLoader();
         }
+    });
+}
+
+function LoadSentMails() {
+    StartLoader();
+    $('#mailContent').load('Mail/GetSentMails', function () {
+        StopLoader();
     });
 }

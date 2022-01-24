@@ -17,7 +17,7 @@ namespace InstaAutoPost.UI.Core.ScheduleJobs
         [Obsolete]
         public static void RunJob(string environment)
         {
-            RecurringJob.AddOrUpdate(() => CreateFolderScheduleJob.CreateFolder(environment), "*/30 * * * *");
+            RecurringJob.AddOrUpdate(() => CreateFolderScheduleJob.CreateFolder(environment), "*/20 * * * *");
         }
         public static void CreateFolder(string environment)
         {

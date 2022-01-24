@@ -32,6 +32,7 @@ namespace InstaAutoPost.UI.Core.AutoMapper
             CreateMap<InstaAutoPost.UI.Data.Entities.Concrete.Email, MailDTO>().ReverseMap();
             CreateMap<EmailAccountOptions, MailAuthenticate>().ReverseMap();
             CreateMap<EmailOptions, MailOptionsDTO>().ReverseMap();
+            CreateMap<Email, SentMailDTO>().ReverseMap();
 
 
 

@@ -15,6 +15,7 @@ namespace InstaAutoPost.UI.Core.Abstract
         int CreateMailOptions(MailOptionsDTO options);
         MailOptionsDTO GetByMailOptionDTO();
         int SendMailDefault(MailOptionsDTO mailOptionsDTO);
+        List<SentMailDTO> GetSentEmailList();
 
     }
 }

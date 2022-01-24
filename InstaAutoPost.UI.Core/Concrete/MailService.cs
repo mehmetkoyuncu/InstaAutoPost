@@ -102,11 +102,6 @@ namespace InstaAutoPost.UI.Core.Concrete
              authenticate = Mapping.Mapper.Map<EmailAccountOptions, MailAuthenticate>(account);
             return authenticate;
         }
-        public EmailAccountOptions GetByEmailAccountByMailAddress(string mailAddress)
-        {
-            var authenticate = _uow.GetRepository<EmailAccountOptions>().Get(x => x.IsDeleted == false && x.AccountMailAddress == mailAddress).FirstOrDefault();
-            return authenticate;
-        }
         public int SendMailDefault(MailOptionsDTO mailOptionsDTO)
         {
             int result = 0;
@@ -201,20 +196,20 @@ namespace InstaAutoPost.UI.Core.Concrete
                     if (options.MailDefaultHTMLContent != null)
                         htmlContent = ReplaceConfigure(options.MailDefaultHTMLContent, sourceContentDTO);
                     mimeMessage.From.Add(MailboxAddress.Parse(sender.AccountMailAddress));
-                    mimeMessage.Subject = ReplaceConfigure(options.MailDefaultSubject,sourceContentDTO);
+                    mimeMessage.Subject = ReplaceConfigure(options.MailDefaultSubject, sourceContentDTO);
                     mimeMessage.To.Add(MailboxAddress.Parse(options.MailDefaultTo));
                     BodyBuilder bodyBuilder = new BodyBuilder();
                     if (!string.IsNullOrEmpty(htmlContent))
                         bodyBuilder.HtmlBody = htmlContent;
                     if (!String.IsNullOrEmpty(sourceContentDTO.imageURL))
                         bodyBuilder.Attachments.Add($"{contentRooth}/wwwroot/images/{sourceContentDTO.imageURL}");
-                        mimeMessage.Body = bodyBuilder.ToMessageBody();
-                        string configure = ConfigureSMTP(sender.AccountMailAddress);
-                        if (configure != null)
-                        {
-                            using var smtp = new SmtpClient();
-                            smtp.Connect(configure, 587, SecureSocketOptions.StartTls);
-                            smtp.Authenticate(sender.AccountMailAddress, sender.AccountMailPassword);
+                    mimeMessage.Body = bodyBuilder.ToMessageBody();
+                    string configure = ConfigureSMTP(sender.AccountMailAddress);
+                    if (configure != null)
+                    {
+                        using var smtp = new SmtpClient();
+                        smtp.Connect(configure, 587, SecureSocketOptions.StartTls);
+                        smtp.Authenticate(sender.AccountMailAddress, sender.AccountMailPassword);
                         smtp.Send(mimeMessage);
                         smtp.Disconnect(true);
                         result = 1;
@@ -223,7 +218,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                             To = options.MailDefaultTo,
                             HtmlBody = htmlContent,
                             From = sender.AccountMailAddress,
-                            Subject = options.MailDefaultSubject,
+                            Subject = mimeMessage.Subject,
                             IsSuccess = true
                         };
                         Log.Logger.Information($"Mail Gönderildi. Gönderen : {sender.AccountMailAddress} - Alıcı : {options.MailDefaultTo} ");
@@ -262,84 +257,9 @@ namespace InstaAutoPost.UI.Core.Concrete
                 }
                 AddMail(mailDTO);
             }
-
-
-
-
-            //try
-            //{
-            //    sender = GetByMailAuthenticateByMailAddress();
-            //    MimeMessage mimeMessage = new MimeMessage();
-            //    if (sender != null)
-            //    {
-            //        mimeMessage.From.Add(MailboxAddress.Parse(sender.AccountMailAddress));
-            //        mimeMessage.Subject = options.MailDefaultSubject;
-            //        mimeMessage.To.Add(MailboxAddress.Parse(options.MailDefaultTo));
-            //        BodyBuilder bodyBuilder = new BodyBuilder();
-            //        if (!string.IsNullOrEmpty(options.MailDefaultHTMLContent))
-            //            bodyBuilder.HtmlBody = options.MailDefaultHTMLContent;
-            //        mimeMessage.Body = bodyBuilder.ToMessageBody();
-            //        string configure = ConfigureSMTP(sender.AccountMailAddress);
-            //        if (configure != null)
-            //        {
-            //            using var smtp = new SmtpClient();
-            //            smtp.Connect(configure, 587, SecureSocketOptions.StartTls);
-            //            smtp.Authenticate(sender.AccountMailAddress, sender.AccountMailPassword);
-            //            smtp.Send(mimeMessage);
-            //            smtp.Disconnect(true);
-            //            result = 1;
-            //            mailDTO = new MailDTO()
-            //            {
-            //                To = options.MailDefaultTo,
-            //                HtmlBody = mailOptionsDTO.MailDefaultHTMLContent,
-            //                From = sender.AccountMailAddress,
-            //                Subject = mailOptionsDTO.MailDefaultSubject,
-            //                IsSuccess = true
-            //            };
-            //            Log.Logger.Information($"Mail Gönderildi. Gönderen : {sender.AccountMailAddress} - Alıcı : {mailOptionsDTO.MailDefaultTo} ");
-            //        }
-            //        else
-            //        {
-            //            mailDTO = new MailDTO()
-            //            {
-            //                To = mailOptionsDTO.MailDefaultTo,
-            //                HtmlBody = mailOptionsDTO.MailDefaultHTMLContent,
-            //                From = sender.AccountMailAddress,
-            //                Subject = mailOptionsDTO.MailDefaultSubject,
-            //                IsSuccess = false,
-            //                ErrorText = "Mail konfigürasyon ayarlarında bir hata oluştu"
-            //            };
-            //            Log.Logger.Error("Mail konfigürasyon ayarlarında hata oluştu");
-            //        }
-            //        AddMail(mailDTO);
-            //    }
-            //    else
-            //    {
-            //        throw new Exception("Mail göndermeden önce kullanıcı ayarlarından bir mail adresi giriniz.");
-            //    }
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    mailDTO = new MailDTO()
-            //    {
-            //        IsSuccess = false,
-            //        ErrorText = ex.Message,
-            //        HtmlBody = mailOptionsDTO.MailDefaultHTMLContent,
-            //        Subject = mailOptionsDTO.MailDefaultSubject,
-            //        To = mailOptionsDTO.MailDefaultTo
-            //    };
-            //    if (sender != null)
-            //        mailDTO.From = sender.AccountMailAddress;
-            //    if (ex.GetType() == typeof(AuthenticationException))
-            //    {
-            //        mailDTO.ErrorText = "Mail giriş bilgileri hatalıdır. Kullanıcı ayarlarından kontrol ediniz.";
-            //    }
-            //    AddMail(mailDTO);
-            //}
             return result;
         }
-        public int SendMailPullRSS(RssResultDTO rssResult,Source source,Category category, string contentRooth)
+        public int SendMailPullRSS(RssResultDTO rssResult, Source source, Category category, string contentRooth)
         {
             int result = 0;
             MailDTO mailDTO = null;
@@ -416,38 +336,6 @@ namespace InstaAutoPost.UI.Core.Concrete
 
             return result;
         }
-        public void SendMessage(string FromMail = "m.koyuncu53@hotmail.com", string FromPassword = "7973153.mK", string rootPath = null, string fileName = null)
-        {
-            try
-            {
-                MimeMessage _mimeMessage = new MimeMessage();
-                FromMail = "m.koyuncu53@hotmail.com";
-                FromPassword = "7973153.mK";
-                _mimeMessage.From.Add(MailboxAddress.Parse(FromMail));
-                _mimeMessage.To.Add(MailboxAddress.Parse("esraesma9707@hotmail.com"));
-                _mimeMessage.Subject = "sipo";
-                BodyBuilder bodyBuilder = new BodyBuilder();
-                bodyBuilder.TextBody = "Siposun";
-                _mimeMessage.Body = bodyBuilder.ToMessageBody();
-                using var smtp = new SmtpClient();
-                smtp.Connect(ConfigureSMTP(FromMail), 587, SecureSocketOptions.StartTls);
-                smtp.Authenticate(FromMail, FromPassword);
-                smtp.Send(_mimeMessage);
-                smtp.Disconnect(true);
-                //Log.Logger.Information($"Mail başarıyla gönderildi - { _mimeMessage.Subject}");
-                //mailDTO.IsSuccess = true;
-                //AddMail(mailDTO);
-                Log.Logger.Information($"Mail başarıyla kaydedildi. - { _mimeMessage.Subject}");
-            }
-            catch (Exception exMessage)
-            {
-                //mailDTO.IsSuccess = false;
-                //mailDTO.ErrorText = exMessage.Message;
-                //Log.Logger.Error($"Hata ! Mail gönderilemedi - {exMessage.Message}");
-                //AddMail(mailDTO);
-                //_uow.SaveChanges();
-            }
-        }
         public string ConfigureSMTP(string fromMail)
         {
             string configureText = default;
@@ -483,7 +371,6 @@ namespace InstaAutoPost.UI.Core.Concrete
             else
                 Log.Logger.Information($"Mail başarıyla kaydedildi - {mail.Subject}");
         }
-
         public void SendMessage(MailDTO mailDTO, string rootPath = null, string fileName = null)
         {
             throw new NotImplementedException();
@@ -495,7 +382,13 @@ namespace InstaAutoPost.UI.Core.Concrete
             text = text.Replace(MailConfigureConstants.SourceContentInsertAt.ToString(), sourceContentDTO.ContentInsertAt.ToShortDateString());
             text = text.Replace(MailConfigureConstants.SourceContentTitle, sourceContentDTO.Title);
             text = text.Replace(MailConfigureConstants.SourceName, sourceContentDTO.SourceName);
+            text = text.Replace(MailConfigureConstants.ContentId, sourceContentDTO.Id.ToString());
             return text;
+        }
+        public List<SentMailDTO> GetSentEmailList()
+        {
+            var mailList = _uow.GetRepository<Email>().Get(x => x.IsDeleted == false).OrderByDescending(x=>x.UpdatedAt).ToList();
+            return Mapping.Mapper.Map<List<SentMailDTO>>(mailList);
         }
 
     }

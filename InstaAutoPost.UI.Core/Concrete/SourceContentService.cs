@@ -479,7 +479,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                 string resultRooth = FolderUtility.CreateFolder(firstFolderName, contentRooth);
                 //Contents klasörünün altına ilgi klasörü oluştur
                var contentRoothContents = contentRooth + @"\"+firstFolderName;
-                 resultRooth= FolderUtility.CreateFolder(titleNew, contentRoothContents);
+                 resultRooth= FolderUtility.CreateFolder(sourceContent.Id.ToString()+"_"+titleNew, contentRoothContents);
                 //Etiketleri getir ve birleştir
                 var category = cService.GetById(sourceContent.CategoryId);
                 var categoryTags=category.Tags!=null?category.Tags.Split(",").ToList():null;

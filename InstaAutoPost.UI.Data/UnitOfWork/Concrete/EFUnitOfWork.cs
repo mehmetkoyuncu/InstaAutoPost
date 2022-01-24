@@ -40,7 +40,7 @@ namespace InstaAutoPost.UI.Data.UnitOfWork.Concrete
             {
                 return _context.SaveChanges();
             }
-            catch
+            catch(Exception ex)
             {
                 return 0;
             }

@@ -1,5 +1,6 @@
 ﻿using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.Common.DTOS;
+using InstaAutoPost.UI.Core.Concrete;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -20,6 +21,15 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         }
         public IActionResult Index()
         {
+            var a = new MailService();
+            a.SendMailAutoForSourceContent(new SourceContentDTO() { 
+            ContentInsertAt=DateTime.Now,
+            CategoryName="Kategori Test",
+            Description="İçerik Açıklama Test",
+            SourceName="Kaynak Test",
+            Title="İçerik Başlık Test",
+            imageURL= "2022M054a3c94-88dc-4267-9b11-6f1646bce3eb_full.jpeg"
+            },_environment.ContentRootPath);
             return View();
         }
 

@@ -29,6 +29,9 @@ namespace InstaAutoPost.UI.Core.AutoMapper
             CreateMap<Category, CategoryAddOrUpdateDTO>().ReverseMap();
             CreateMap<Source, SourceAddOrUpdateDTO>().ReverseMap();
             CreateMap<SourceContentAddOrUpdateDTO, SourceContent>().ReverseMap().ForMember(sd => sd.SourceId, o => o.MapFrom(x => x.Category.SourceId));
+            CreateMap<InstaAutoPost.UI.Data.Entities.Concrete.Email, MailDTO>().ReverseMap();
+            CreateMap<EmailAccountOptions, MailAuthenticate>().ReverseMap();
+            CreateMap<EmailOptions, MailOptionsDTO>().ReverseMap();
 
 
 

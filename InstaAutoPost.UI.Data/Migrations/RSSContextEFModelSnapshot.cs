@@ -55,6 +55,111 @@ namespace InstaAutoPost.UI.Data.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Email", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ErrorText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("From")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HtmlBody")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("InsertedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("SendDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("To")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Email");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.EmailAccountOptions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AccountMailAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccountMailPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("InsertedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailAccountOptions");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.EmailOptions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("InsertedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MailDefaultContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MailDefaultHTMLContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MailDefaultSubject")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MailDefaultTo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailOptions");
+                });
+
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Source", b =>
                 {
                     b.Property<int>("Id")

@@ -26,6 +26,11 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             _uow = new EFUnitOfWork(new RSSContextEF());
         }
+        public Source GetSourceByCategoryLink(string categoryLink)
+        {
+            var source = _uow.GetRepository<Source>().Get(x => x.IsDeleted == false).Include(x => x.Categories.Where(x => x.IsDeleted == false && x.Link == categoryLink)).FirstOrDefault();
+            return source;
+        }
         #region Url ile birlikte kaynak ekle
         public int Add(string name, string image, string url)
         {
@@ -257,7 +262,6 @@ namespace InstaAutoPost.UI.Core.Concrete
             Source source = _uow.GetRepository<Source>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
             return Mapping.Mapper.Map<Source, SourceAddOrUpdateDTO>(source);
         }
-    }
         #endregion
-
+    }
 }

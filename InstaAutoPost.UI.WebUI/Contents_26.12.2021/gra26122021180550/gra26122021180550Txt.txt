@@ -1,3 +1,0 @@
-  graphics.DrawImage(croppedImage, 58, 290);
-
-

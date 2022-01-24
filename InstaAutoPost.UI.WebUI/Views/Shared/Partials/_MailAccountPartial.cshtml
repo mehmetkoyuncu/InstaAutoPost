@@ -1,0 +1,54 @@
+﻿@model MailAuthenticate
+<div class="hpanel mg-b-15">
+    <div class="panel-heading hbuilt mailbox-hd">
+        <h3><i class="fas fa-user-circle" style="margin-right:3px;"></i> Hesap Ayarları</h3>
+    </div>
+    @if (Model != null)
+    {
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="margin-top:10px;">
+                    <input id="account_mail" type="email" class="form-control" placeholder="*Email" value=" @Model.AccountMailAddress">
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="margin-top:10px;">
+                    <input id="account_password" type="password" class="form-control" placeholder="*Şifre" value="@Model.AccountMailPassword">
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top:10px;">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding: 0px !important;">
+                        <label>
+                            Düzenle
+                            <input id="edit_check" onchange="EnableCheck();" class="radio-checked" style="padding: 0px !important;" type="checkbox">
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="margin-top:10px;">
+                <input id="account_mail" type="email" class="form-control" placeholder="*Email" >
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="margin-top:10px;">
+                <input id="account_password" type="password" class="form-control" placeholder="*Şifre">
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top:10px;">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding: 0px !important;">
+                    <label>
+                        Düzenle
+                        <input id="edit_check" onchange="EnableCheck();" class="radio-checked" style="padding: 0px !important;" type="checkbox">
+                    </label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    }
+
+    <div class="panel-footer text-right">
+        <button class="btn btn-sm btn-primary login-submit-cs" id="mail_account_savebutton" onclick="CreateAuthenticate()" type="button">Kaydet</button>
+    </div>
+</div>

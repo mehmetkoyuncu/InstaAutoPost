@@ -1,0 +1,70 @@
+﻿@model MailOptionsDTO
+
+<div class="hpanel mg-b-15">
+    <div class="panel-heading hbuilt mailbox-hd" id="panel_head">
+    </div>
+    @if (Model != null)
+    {
+<div class="panel-body">
+    <div class="p-xs">
+        <form method="get" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-1 control-label text-left">Kime:</label>
+                <div class="col-sm-11">
+                    <input type="email" id="mail_to" class="form-control input-sm" placeholder="*Email" value="@Model.MailDefaultTo">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label text-left">Konu:</label>
+                <div class="col-sm-11">
+                    <input type="text" id="mail_subject" class="form-control input-sm" placeholder="*Konu" value="@Model.MailDefaultSubject">
+                </div>
+            </div>
+        </form>
+        <div class="form-group col-sm-12 col-md-12 col-lg-12" style="margin-bottom:5px;margin-top:30px;">
+            <label>Mail İçeriği:</label>
+        </div>
+        <div class="form-group col-sm-12 col-md-12 col-lg-12">
+            <div class="form-group">
+                <textarea id="summerNote" class="form-control">
+@Model.MailDefaultHTMLContent
+</textarea>
+            </div>
+        </div>
+    </div>
+</div> }
+else
+{
+<div class="panel-body">
+    <div class="p-xs">
+        <form method="get" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-1 control-label text-left">Kime:</label>
+                <div class="col-sm-11">
+                    <input type="email" id="mail_to" class="form-control input-sm" placeholder="*Email" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label text-left">Konu:</label>
+                <div class="col-sm-11">
+                    <input type="text" id="mail_subject" class="form-control input-sm" placeholder="*Konu">
+                </div>
+            </div>
+        </form>
+        <div class="form-group col-sm-12 col-md-12 col-lg-12" style="margin-bottom:5px;margin-top:30px;">
+            <label>Mail İçeriği:</label>
+        </div>
+        <div class="form-group col-sm-12 col-md-12 col-lg-12">
+            <div class="form-group">
+                <textarea id="summerNote" class="form-control">
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+</textarea>
+            </div>
+        </div>
+    </div>
+</div>}
+<div class="panel-footer text-right">
+    <button class="btn btn-sm btn-primary login-submit-cs" id="mail_options_savebutton" onclick="CreateMailOptions()" type="button">Kaydet</button>
+    <button class="btn btn-sm btn-primary login-submit-cs" id="mail_options_sendbutton" onclick="SendMailDefault()" type="button">Gönder</button>
+</div>
+</div>

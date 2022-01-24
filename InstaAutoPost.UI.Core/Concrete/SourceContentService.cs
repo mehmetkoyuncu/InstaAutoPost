@@ -550,7 +550,7 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region Silinmeyen içerikleri getir
         public List<SourceContent> GetSourceContenListNotDeleted()
         {
-            List<SourceContent> sourceContents = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).ToList();
+            List<SourceContent> sourceContents = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).Include(x=>x.Category).Include(x=>x.Category.Source).ToList();
             return sourceContents;
         }
         #endregion

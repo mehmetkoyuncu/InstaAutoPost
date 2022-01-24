@@ -1,0 +1,46 @@
+﻿<div class="author-area-pro" id="mail_list_container">
+
+    <div class="mailbox-area mg-tb-15">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3 col-md-3 col-sm-3 col-xs-12" style="padding:20px;">
+                    <div class="hpanel responsive-mg-b-30">
+                        <div class="panel-body" id="mail_panel">
+                            <ul class="mailbox-list">
+                                <li class="active" id="list_inbox">
+                                    <a href="#">
+                                        <span class="pull-right">12</span>
+                                        <i class="fa fa-envelope"></i> Gelen Kutusu
+                                    </a>
+                                </li>
+                                <li id="list_sendbox">
+                                    <a href="#"><i class="fa fa-paper-plane"></i> Gönderilen Mailler</a>
+                                </li>
+                            </ul>
+                            <hr>
+                            <ul class="mailbox-list">
+                                <li id="list_newmail">
+                                    <a onclick="AddMailView()">
+                                        <i class="fas fa-plus-square" style="margin-right:3px;"></i>
+                                    Yeni Mail</a>
+                                </li>
+                            </ul>
+                            <hr>
+                            <ul class="mailbox-list">
+                                <li id="list_accountsetting">
+                                    <a onclick="LoadAccountSetting()"><i class="fas fa-user-circle" style="margin-right:3px;"></i>Hesap Ayarları</a>
+                                </li>
+                                <li id="list_mailsetting">
+                                    <a onclick="LoadMailOptions()"><i class="fas fa-cogs" style="margin-right:3px;"></i>Mail Ayarları</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9 col-md-9 col-sm-9 col-xs-12 mr-3" id="mailContent" style="padding:20px;">
+                 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

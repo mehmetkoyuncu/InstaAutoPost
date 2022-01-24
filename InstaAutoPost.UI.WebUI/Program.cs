@@ -21,7 +21,7 @@ namespace InstaAutoPost.UI.WebUI
         .AddJsonFile("appsettings.json")
         .Build();
             Log.Logger = new LoggerConfiguration().WriteTo.Debug(Serilog.Events.LogEventLevel.Information)
-                .WriteTo.File("logs.txt",rollingInterval: RollingInterval.Day)
+                .WriteTo.File("Logs/logs.txt",rollingInterval: RollingInterval.Day)
                 .CreateLogger();
             Log.Logger.Information("InstaAutoPostApp started.");
             CreateHostBuilder(args).Build().Run();

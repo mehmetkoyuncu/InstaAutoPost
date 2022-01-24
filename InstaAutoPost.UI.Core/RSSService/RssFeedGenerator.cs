@@ -50,7 +50,8 @@ namespace InstaAutoPost.UI.Core.RSSService
                 }
                 Log.Logger.Information($"Hata! RSS Generator başarıyla çalıştırıldı.  - Link : {_rssLink} - Adı : {_rssName}");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Log.Logger.Error($"Hata! Rss linki ile bilgiler yüklenemedi.  - Link : {_rssLink} - Adı : {_rssName} - {ex}");
             }
 
@@ -68,7 +69,7 @@ namespace InstaAutoPost.UI.Core.RSSService
                         _source = SourceGet(sourceService, feed, _source);
                     else
                         Log.Logger.Error($"Hata! Kaynak eklenirken bir hata oluştu. -  {feed.Title.Text} - {sourceResult} adet kaynak eklendi.");
-                   
+
                     int categoryResult = CategoryAdd(categoryService, _source);
                     if (categoryResult > 0)
                         _category = CategoryGet(categoryService);
@@ -93,7 +94,7 @@ namespace InstaAutoPost.UI.Core.RSSService
                             categoryResult = CategoryAdd(categoryService, controlSource);
                             Log.Logger.Information($"Kategori başarıyla eklendi. -  {categoryResult}");
                         }
-                            
+
                         else
                             Log.Logger.Error($"Hata ! Kategori eklenirken hata oluştu. -  {categoryResult}");
 
@@ -175,7 +176,7 @@ namespace InstaAutoPost.UI.Core.RSSService
 
                     if (controlTitle == null && databaseControl == null)
                     {
-                        var imageData = imageUtility.Download(image, (element.Title.Text), ImageFormat.Jpeg, _environment);
+                        var imageData = imageUtility.Download(image, (element.Title.Text), ImageFormat.Jpeg, _environment,isContent:true);
                         sourceContent = new SourceContent()
                         {
                             ContentInsertAt = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now,

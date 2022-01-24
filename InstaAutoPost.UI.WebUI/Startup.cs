@@ -38,6 +38,7 @@ namespace InstaAutoPost.UI.WebUI
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IRssRunnerService, RssRunnerService>();
             services.AddScoped<ISourceContentService, SourceContentService>();
+            services.AddScoped<IMailService, MailService>();
             services.AddLogging();
         }
 

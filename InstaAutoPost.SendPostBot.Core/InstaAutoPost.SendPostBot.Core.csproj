@@ -11,4 +11,8 @@
     <PackageReference Include="TextCopy" Version="4.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\InstaAutoPost.UI.Data\InstaAutoPost.UI.Data.csproj" />
+  </ItemGroup>
+
 </Project>

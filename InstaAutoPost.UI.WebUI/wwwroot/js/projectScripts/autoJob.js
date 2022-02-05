@@ -1,8 +1,8 @@
 ﻿$(document).ready(function () {
     StartLoader();
-    ChangeInsertButton(typeEnum.Folder, "Zamanlayıcı");
-    ChangeBreadComb("İçerik İçin Otomatik Klasör Oluştur ve Zamanla", "İçeriklerden sıralayarak(eskiden yeniye) belirlenen zaman periyodunda otomatik olarak kullanıcının belirlediği dizinde klasör oluşturur ve içerik için bir resim ve text dosyası oluşturur. İşlemin ardından giriş yapan kullanıcıya mail gönderilir. ", "folder.png");
-    ChangeReportButton(typeEnum.Folder)
+    ChangeInsertButton(typeEnum.AutoJob, "Zamanlayıcı Ayarları");
+    ChangeBreadComb("İçerik için otomatik çalıştırılan işlemlerin zamanını ve ayarlarını buradan güncelleyebilirsiniz.", "folder.png");
+    ChangeReportButton(typeEnum.AutoJob)
     AddFolderView();
 });
 

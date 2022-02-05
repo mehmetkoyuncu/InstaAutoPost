@@ -1,4 +1,5 @@
 ﻿
+using InstaAutoPost.UI.Data.Entities.Concrete;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-
+using TextCopy;
 
 namespace InstaAutoPost.SendPostBot.Core.Selenium
 {
@@ -35,16 +36,14 @@ namespace InstaAutoPost.SendPostBot.Core.Selenium
             passwordWeb.SendKeys(password);
             usernameWeb.SendKeys(Keys.Enter);
         }
-        public void SendPost()
+        public void SendPost(SourceContent content,string environment)
         {
+            var contentRooth = environment + @"\wwwroot\images\" + content.imageURL;
             Thread.Sleep(10000);
             var buttons = _driver.FindElements(By.XPath("//button[@type='button']"));
             buttons.Last().Click();
             Thread.Sleep(2000);
-            var sendPostButton = _driver.FindElement(By.XPath("//button[contains(text(),'Select from computer')]"));
-            sendPostButton.SendKeys(@"C:\images\fener.jpg");
-            sendPostButton.Click();
-            _driver.FindElement(By.XPath("//button[contains(text(),'Select from computer')]")).SendKeys(@"C:\MyFiles\Test.jpg");
+            _driver.FindElement(By.XPath("//form[@role='presentation']//input")).SendKeys(contentRooth);
 
            
         }

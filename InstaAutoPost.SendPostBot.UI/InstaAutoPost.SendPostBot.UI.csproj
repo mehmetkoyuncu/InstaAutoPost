@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\InstaAutoPost.SendPostBot.Core\InstaAutoPost.SendPostBot.Core.csproj" />
+    <ProjectReference Include="..\InstaAutoPost.UI.Data\InstaAutoPost.UI.Data.csproj" />
   </ItemGroup>
 
 </Project>

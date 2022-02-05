@@ -6,15 +6,11 @@ using System.Threading.Tasks;
 
 namespace InstaAutoPost.UI.WebUI.Controllers
 {
-    public class FolderController : Controller
+    public class AutoJobOptions : Controller
     {
         public IActionResult Index()
         {
             return View();
-        }
-        public PartialViewResult GetFolderPartial()
-        {
-            return PartialView("~/Views/Shared/Partials/_FolderAddPartial.cshtml");
         }
     }
 }

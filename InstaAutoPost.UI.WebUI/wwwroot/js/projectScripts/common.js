@@ -5,8 +5,8 @@ const typeEnum = {
     Source: "Source",
     SourceContent: "SourceContent",
     RssGenerator: "RssGenerator",
-    Folder: "Folder",
-    Mail:"Mail"
+    Mail: "Mail",
+    AutoJob:"AutoJob"
 };
 const alertType = {
     Success: "success",

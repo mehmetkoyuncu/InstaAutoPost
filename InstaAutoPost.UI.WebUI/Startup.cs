@@ -59,8 +59,8 @@ namespace InstaAutoPost.UI.WebUI
             app.UseHangfireDashboard();
             app.UseHangfireServer();
 
-            RSSDataScheduleJob.RunJob(env.ContentRootPath);
-            CreateFolderScheduleJob.RunJob(env.ContentRootPath);
+            //RSSDataScheduleJob.RunJob(env.ContentRootPath);
+            //CreateFolderScheduleJob.RunJob(env.ContentRootPath);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

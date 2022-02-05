@@ -130,7 +130,7 @@ namespace InstaAutoPost.UI.Core.RSSService
         }
         private int SourceContentAdd(SourceContentService sourceContentService, SyndicationFeed feed, Category _category, ImagesService imagesService)
         {
-            int sourceContentResult=default;
+            int sourceContentResult = default;
             try
             {
                 List<SourceContent> sourceContentList = new List<SourceContent>();
@@ -176,7 +176,7 @@ namespace InstaAutoPost.UI.Core.RSSService
 
                     if (controlTitle == null && databaseControl == null)
                     {
-                        var imageData = imageUtility.Download(image, (element.Title.Text), ImageFormat.Jpeg, _environment,isContent:true);
+                        var imageData = imageUtility.Download(image, (element.Title.Text), ImageFormat.Jpeg, _environment, isContent: true);
                         sourceContent = new SourceContent()
                         {
                             ContentInsertAt = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now,
@@ -197,13 +197,13 @@ namespace InstaAutoPost.UI.Core.RSSService
 
                 }
                 sourceContentResult = sourceContentService.AddSourceContent(sourceContentList);
-               
+
             }
             catch (Exception exMessage)
             {
                 Log.Logger.Error($"Hata! içerik indirilemedi. - {sourceContentResult} - {exMessage}");
             }
-            
+
             return sourceContentResult;
         }
 
@@ -297,7 +297,7 @@ namespace InstaAutoPost.UI.Core.RSSService
                     Log.Logger.Information($"Görseli bulunmayan kaynak başarıyla eklendi. -  {feed.Title.Text}");
                 }
 
-             
+
             }
             catch (Exception exMessage)
             {

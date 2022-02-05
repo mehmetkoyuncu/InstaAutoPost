@@ -230,7 +230,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                             To = options.MailDefaultTo,
                             HtmlBody = htmlContent,
                             From = sender.AccountMailAddress,
-                            Subject = options.MailDefaultSubject,
+                            Subject = mimeMessage.Subject,
                             IsSuccess = false,
                             ErrorText = "Mail konfigürasyon ayarlarında bir hata oluştu"
                         };
@@ -390,6 +390,5 @@ namespace InstaAutoPost.UI.Core.Concrete
             var mailList = _uow.GetRepository<Email>().Get(x => x.IsDeleted == false).OrderByDescending(x=>x.UpdatedAt).ToList();
             return Mapping.Mapper.Map<List<SentMailDTO>>(mailList);
         }
-
     }
 }

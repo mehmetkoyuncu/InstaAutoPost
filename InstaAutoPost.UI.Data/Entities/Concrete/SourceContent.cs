@@ -20,7 +20,7 @@ namespace InstaAutoPost.UI.Data.Entities.Concrete
         public string Tags { get; set; }
         public bool IsCreatedFolder { get; set; }
         public virtual Category Category { get; set; }
-        
+
 
     }
 }

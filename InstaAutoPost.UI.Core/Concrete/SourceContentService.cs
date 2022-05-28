@@ -3,6 +3,7 @@ using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.AutoMapper;
 using InstaAutoPost.UI.Core.Common.CharacterConverter;
 using InstaAutoPost.UI.Core.Common.DTOS;
+using InstaAutoPost.UI.Core.ScheduleJobs;
 using InstaAutoPost.UI.Core.Utilities;
 using InstaAutoPost.UI.Data.Context;
 using InstaAutoPost.UI.Data.Entities.Concrete;
@@ -13,6 +14,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -191,12 +193,13 @@ namespace InstaAutoPost.UI.Core.Concrete
             {
                 int result = default;
                 SourceContent selectedSourceContent = GetSourceContentById(id);
-                if (selectedSourceContent.imageURL != sourceContentDTO.imageURL)
-                {
-                    ImageUtility imageU = new ImageUtility();
-                    string imgSrc = imageU.Download(sourceContentDTO.imageURL, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath, isContent: true, content: sourceContentDTO.Description);
-                    selectedSourceContent.imageURL = imgSrc;
-                }
+                string removefileRoot= contentRootPath + @"/wwwroot/images/"+sourceContentDTO.imageURL;
+                if (!String.IsNullOrEmpty(removefileRoot))
+                    RemoveFileUtility.RemoveFile(removefileRoot);
+                string originalFileRoot= contentRootPath + @"/wwwroot/images/" + sourceContentDTO.imageURL.Replace("_full","");
+                ImageUtility imageU = new ImageUtility();
+                string imgSrc = imageU.EditImage(originalFileRoot, sourceContentDTO.Title, ImageFormat.Jpeg, contentRootPath, content: sourceContentDTO.Description);
+                selectedSourceContent.imageURL = imgSrc;
                 selectedSourceContent.CategoryId = sourceContentDTO.CategoryId;
                 selectedSourceContent.Description = sourceContentDTO.Description;
                 selectedSourceContent.Tags = sourceContentDTO.Tags;
@@ -516,20 +519,14 @@ namespace InstaAutoPost.UI.Core.Concrete
         }
         #endregion
         #region Paylaşıldı Olarak İşaretle
-        public bool ShareMarkPost(int id)
+        public bool ShareMarkPost(int id,string contentRoot)
         {
             try
             {
-                bool control = false;
                 SourceContent content = GetSourceContentById(id);
-                content.SendOutForPost = true;
-                var result = UpdateSourceContent(content);
-                if (result > 0)
-                    control = true;
-                if (result > 0)
+                PublishPostScheduleJob.PublishPost(contentRoot,content);
                     Log.Logger.Information($"İçerik paylaşıldı olarak işaretlendi.  - {content.Title}");
-                else
-                    Log.Logger.Error($"Hata! İçerik paylaşıldı olarak işaretlenirken hata oluştu.  - {content.Title}");
+                bool control = true;
                 return control;
             }
             catch (Exception exMessage)
@@ -552,6 +549,54 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             List<SourceContent> sourceContents = _uow.GetRepository<SourceContent>().Get(x => x.IsDeleted == false).Include(x=>x.Category).Include(x=>x.Category.Source).ToList();
             return sourceContents;
+        }
+        #endregion
+        #region Paylaşılan içerikleri getir
+        public int RemoveAllPublishedContent(string environment)
+        {
+            var contents = GetAllPublishedSourceContent();
+            foreach (var item in contents)
+            {
+                RemoveFileUtility.RemoveFile((Path.Combine(environment + "\\wwwroot\\images", item.imageURL)));
+                var index = item.imageURL.IndexOf("_full");
+                if (index > -1)
+                {
+                    var subsText = item.imageURL.Replace("_full", "");
+                    RemoveFileUtility.RemoveFile((Path.Combine(environment + "\\wwwroot\\images", subsText)));
+                }
+            }
+            _uow.GetRepository<SourceContent>().RemoveRange(GetAllPublishedSourceContent());
+
+            var result = _uow.SaveChanges();
+            return result;
+        }
+        public List<SourceContent> GetAllPublishedSourceContent()
+        {
+            List<SourceContent> contentList = _uow.GetRepository<SourceContent>().Get(x=>x.SendOutForPost==true||x.IsDeleted==true).ToList();
+            return contentList;
+        }
+        public int RemoveAllCreatedFolderContent(string environment)
+        {
+            var contents = GetAllCreatedFolderSourceContent();
+            foreach (var item in contents)
+            {
+                RemoveFileUtility.RemoveFile((Path.Combine(environment+"\\wwwroot\\images", item.imageURL)));
+                var index=item.imageURL.IndexOf("_full");
+                if (index > -1)
+                {
+                    var subsText = item.imageURL.Replace("_full","");
+                    RemoveFileUtility.RemoveFile((Path.Combine(environment + "\\wwwroot\\images", subsText)));
+                }
+            }
+            _uow.GetRepository<SourceContent>().RemoveRange(GetAllCreatedFolderSourceContent());
+           
+            var result = _uow.SaveChanges();
+            return result;
+        }
+        public List<SourceContent> GetAllCreatedFolderSourceContent()
+        {
+            List<SourceContent> contentList = _uow.GetRepository<SourceContent>().Get(x => x.IsCreatedFolder == true||x.IsDeleted==true).ToList();
+            return contentList;
         }
         #endregion
     }

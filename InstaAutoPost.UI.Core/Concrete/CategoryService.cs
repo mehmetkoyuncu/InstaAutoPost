@@ -26,11 +26,11 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region Id'ye göre kategoriyi getir
         public Category GetById(int id)
         {
-           
-         Category category=  _uow.GetRepository<Category>()
-                .Get(x => x.Id == id && x.IsDeleted == false)
-                .Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false))
-                .FirstOrDefault();
+
+            Category category = _uow.GetRepository<Category>()
+                   .Get(x => x.Id == id && x.IsDeleted == false)
+                   .Include(x => x.Source).Include(x => x.SourceContents.Where(x => x.IsDeleted == false))
+                   .FirstOrDefault();
             return category;
 
         }
@@ -42,8 +42,10 @@ namespace InstaAutoPost.UI.Core.Concrete
             try
             {
                 Category category = GetById(id);
+                var categoryType = _uow.GetRepository<CategoryType>().Get(x => x.Id == categoryImageView.CategoryTypeId).FirstOrDefault();
                 category.UpdatedAt = DateTime.Now;
-                category.Name = categoryImageView.Name == null ? categoryImageView.Name : categoryImageView.Name.Trim();
+                category.Name = categoryType.Name == null ? categoryType.Name : categoryType.Name.Trim();
+                category.CategoryTypeId = categoryImageView.CategoryTypeId;
                 category.SourceId = categoryImageView.SourceId;
                 category.Tags = categoryImageView.Tags == null ? categoryImageView.Tags : categoryImageView.Tags.Replace(" ", "");
                 _uow.GetRepository<Category>().Update(category);
@@ -66,7 +68,7 @@ namespace InstaAutoPost.UI.Core.Concrete
         public CategoryAddOrUpdateDTO GetCategoryAddOrUpdateById(int id)
         {
             Category category = _uow.GetRepository<Category>().Get(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
-            CategoryAddOrUpdateDTO categoryDTO= Mapping.Mapper.Map<Category, CategoryAddOrUpdateDTO>(category);
+            CategoryAddOrUpdateDTO categoryDTO = Mapping.Mapper.Map<Category, CategoryAddOrUpdateDTO>(category);
             return categoryDTO;
         }
         #endregion
@@ -98,7 +100,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                 Log.Logger.Error($"Hata! Kategori silinirken hata oluştu.  - {exMessage}");
                 throw;
             }
-           
+
         }
         #endregion
         #region Kategori Ekle (Link)
@@ -106,15 +108,35 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             try
             {
-                _uow.GetRepository<Category>().Add(new Category
+                int res = default;
+                var typeC = _uow.GetRepository<CategoryType>().Get(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
+                if (typeC == null)
                 {
-                    Name = name.Trim(),
-                    Link = url.Trim(),
-                    InsertedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                    IsDeleted = false,
-                    SourceId = sourceId,
-                });
+                    CategoryType type = new CategoryType()
+                    {
+                        Name = name,
+                        IsDeleted = false,
+                        InsertedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+                    _uow.GetRepository<CategoryType>().Add(type);
+                    res = _uow.SaveChanges();
+                }
+              
+                    var categoryType = _uow.GetRepository<CategoryType>().Get(x => x.Name == name).FirstOrDefault();
+                    if (categoryType!=null)
+                    {
+                        _uow.GetRepository<Category>().Add(new Category
+                        {
+                            Name = name.Trim(),
+                            Link = url.Trim(),
+                            InsertedAt = DateTime.Now,
+                            UpdatedAt = DateTime.Now,
+                            IsDeleted = false,
+                            SourceId = sourceId,
+                            CategoryTypeId=categoryType.Id
+                        });
+                    }
                 var result = _uow.SaveChanges();
                 if (result > 0)
                     Log.Logger.Information($"Kategori eklendi(Link).  - {name}");
@@ -127,7 +149,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                 Log.Logger.Error($"Hata! Kategori eklenirken  hata oluştu(Link).  - {name} -{exMessage}");
                 throw;
             }
-           
+
         }
         #endregion
         #region Kategori Ekle
@@ -135,9 +157,11 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             try
             {
+                var categoryType = _uow.GetRepository<CategoryType>().Get(x => x.Id == categoryImageView.CategoryTypeId).FirstOrDefault();
                 _uow.GetRepository<Category>().Add(new Category
                 {
-                    Name = categoryImageView.Name == null ? categoryImageView.Name : categoryImageView.Name.Trim(),
+                    Name = categoryType.Name == null ? categoryType.Name : categoryType.Name.Trim(),
+                    CategoryTypeId = categoryImageView.CategoryTypeId,
                     Link = null,
                     InsertedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
@@ -379,18 +403,18 @@ namespace InstaAutoPost.UI.Core.Concrete
         #region Kategori içeriği yüzde ayarları
         private List<CategoryDTO> SetPercentAndCount(List<CategoryDTO> categoryDTOs)
         {
-                foreach (var item in categoryDTOs)
+            foreach (var item in categoryDTOs)
+            {
+                int sourceContentCount = item.SourceContentsDTO.Count;
+                if (sourceContentCount != 0)
                 {
-                    int sourceContentCount = item.SourceContentsDTO.Count;
-                    if (sourceContentCount != 0)
-                    {
-                        int sendedSource = item.SourceContentsDTO.Where(x => x.SendOutForPost == true).Count();
-                        int sendedPercent = Convert.ToInt32(Math.Ceiling(Convert.ToDouble((100 * sendedSource) / sourceContentCount)));
-                        item.SendedPostPercent = sendedPercent;
-                    }
-                    else
-                        item.SendedPostPercent = 0;
+                    int sendedSource = item.SourceContentsDTO.Where(x => x.SendOutForPost == true).Count();
+                    int sendedPercent = Convert.ToInt32(Math.Ceiling(Convert.ToDouble((100 * sendedSource) / sourceContentCount)));
+                    item.SendedPostPercent = sendedPercent;
                 }
+                else
+                    item.SendedPostPercent = 0;
+            }
             return categoryDTOs;
         }
         #endregion
@@ -408,7 +432,8 @@ namespace InstaAutoPost.UI.Core.Concrete
             List<RSSCreatorDTO> rssList = categoryList.Select(x => new RSSCreatorDTO()
             {
                 CategoryName = x.Name,
-                CategoryURL = x.Link
+                CategoryURL = x.Link,
+                CategoryTypeId=x.CategoryTypeId
             }).ToList();
             return rssList;
         }

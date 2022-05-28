@@ -2,6 +2,7 @@
 using InstaAutoPost.UI.Data.Entities.Concrete;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,11 @@ namespace InstaAutoPost.SendPostBot.Core.Selenium
         public InstagramSelenium()
         {
 
-            
-            ChromeOptions options = new ChromeOptions();
+
+            EdgeOptions options = new EdgeOptions();
             options.AddAdditionalCapability("useAutomationExtension", false);
             options.AddExcludedArgument("enable-automation");
-            _driver = new ChromeDriver(options);
+            _driver = new EdgeDriver(options);
         }
         public void GoToMainPage()
         {

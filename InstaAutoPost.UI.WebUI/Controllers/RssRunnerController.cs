@@ -13,25 +13,28 @@ namespace InstaAutoPost.UI.WebUI.Controllers
     {
         IRssRunnerService _rssGeneratorService;
         IHostEnvironment _environment;
+        ICategoryTypeService _categoryTypeService;
 
         public IActionResult Index()
         {
             return View();
         }
-        public RssRunnerController(IRssRunnerService service, IHostEnvironment environment)
+        public RssRunnerController(IRssRunnerService service, IHostEnvironment environment, ICategoryTypeService categoryTypeService)
         {
             _rssGeneratorService = service;
             _environment = environment;
+            _categoryTypeService = categoryTypeService;
         }
         [HttpPost]
-        public IActionResult RunRssGenerator(string url, string name)
+        public IActionResult RunRssGenerator(string url, int categoryTypeId)
         {
-            RssResultDTO result = _rssGeneratorService.RunRssGenerator(url, name, _environment.ContentRootPath);
+            RssResultDTO result = _rssGeneratorService.RunRssGenerator(url, categoryTypeId, _environment.ContentRootPath);
             return Ok(Json(result));
         }
         public PartialViewResult GetRSSGeneratorPartial()
         {
-            return PartialView("~/Views/Shared/Partials/_RSSGeneratorAddPartial.cshtml");
+            var types = _categoryTypeService.GetAllCategoryType();
+            return PartialView("~/Views/Shared/Partials/_RSSGeneratorAddPartial.cshtml",types);
         }
     }
 }

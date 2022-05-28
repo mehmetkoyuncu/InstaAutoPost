@@ -12,10 +12,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstaAutoPost.UI.Data", "InstaAutoPost.UI.Data\InstaAutoPost.UI.Data.csproj", "{24D1594E-A17E-42E8-9B68-303F52719BE4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InstagramPostSelenium", "InstagramPostSelenium", "{A87E3E47-C3D1-402A-B14E-6B422DB46420}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Desktop\msedgedriver.exe = ..\..\..\Desktop\msedgedriver.exe
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.SendPostBot.UI", "InstaAutoPost.SendPostBot.UI\InstaAutoPost.SendPostBot.UI.csproj", "{A7546910-E03C-451D-ABD7-09CCBFAC4331}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstaAutoPost.SendPostBot.UI", "InstaAutoPost.SendPostBot.UI\InstaAutoPost.SendPostBot.UI.csproj", "{A7546910-E03C-451D-ABD7-09CCBFAC4331}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaAutoPost.SendPostBot.Core", "InstaAutoPost.SendPostBot.Core\InstaAutoPost.SendPostBot.Core.csproj", "{093EDF1C-89CB-40F6-82C4-0AA7527323B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstaAutoPost.SendPostBot.Core", "InstaAutoPost.SendPostBot.Core\InstaAutoPost.SendPostBot.Core.csproj", "{093EDF1C-89CB-40F6-82C4-0AA7527323B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -194,9 +194,9 @@ namespace InstaAutoPost.UI.Core.Concrete
                 if (options != null && sender != null)
                 {
                     if (options.MailDefaultHTMLContent != null)
-                        htmlContent = ReplaceConfigure(options.MailDefaultHTMLContent, sourceContentDTO);
+                        htmlContent = ReplaceConfigure(options.MailDefaultHTMLContent, sourceContentDTO: sourceContentDTO);
                     mimeMessage.From.Add(MailboxAddress.Parse(sender.AccountMailAddress));
-                    mimeMessage.Subject = ReplaceConfigure(options.MailDefaultSubject, sourceContentDTO);
+                    mimeMessage.Subject = ReplaceConfigure(options.MailDefaultSubject, sourceContentDTO: sourceContentDTO);
                     mimeMessage.To.Add(MailboxAddress.Parse(options.MailDefaultTo));
                     BodyBuilder bodyBuilder = new BodyBuilder();
                     if (!string.IsNullOrEmpty(htmlContent))
@@ -259,83 +259,6 @@ namespace InstaAutoPost.UI.Core.Concrete
             }
             return result;
         }
-        public int SendMailPullRSS(RssResultDTO rssResult, Source source, Category category, string contentRooth)
-        {
-            int result = 0;
-            MailDTO mailDTO = null;
-            MailAuthenticate sender = null;
-            MailOptionsDTO options = GetByMailOptionDTO();
-            try
-            {
-                string htmlContent = "";
-                sender = GetByMailAuthenticateByMailAddress();
-                MimeMessage mimeMessage = new MimeMessage();
-                if (options != null && sender != null)
-                {
-                    htmlContent = $"<h3>{category.Name} kategorisine ait {rssResult.RssAddedCount} adet içerik eklendi.</h3><p><b>Kaynak Adı</b> : {source.Name}</p><p><b>Kategori Adı</b> : {category.Name}</p><p><b>Eklenen İçerik Sayısı Adı</b> : {rssResult.RssAddedCount}</p>";
-                    mimeMessage.From.Add(MailboxAddress.Parse(sender.AccountMailAddress));
-                    mimeMessage.Subject = $"{category.Name} kategorisine ait {rssResult.RssAddedCount} adet içerik eklendi.";
-                    mimeMessage.To.Add(MailboxAddress.Parse(options.MailDefaultTo));
-                    BodyBuilder bodyBuilder = new BodyBuilder();
-                    if (!string.IsNullOrEmpty(htmlContent))
-                        bodyBuilder.HtmlBody = htmlContent;
-                    mimeMessage.Body = bodyBuilder.ToMessageBody();
-                    string configure = ConfigureSMTP(sender.AccountMailAddress);
-                    if (configure != null)
-                    {
-                        using var smtp = new SmtpClient();
-                        smtp.Connect(configure, 587, SecureSocketOptions.StartTls);
-                        smtp.Authenticate(sender.AccountMailAddress, sender.AccountMailPassword);
-                        smtp.Send(mimeMessage);
-                        smtp.Disconnect(true);
-                        result = 1;
-                        mailDTO = new MailDTO()
-                        {
-                            To = options.MailDefaultTo,
-                            HtmlBody = htmlContent,
-                            From = sender.AccountMailAddress,
-                            Subject = options.MailDefaultSubject,
-                            IsSuccess = true
-                        };
-                        Log.Logger.Information($"Mail Gönderildi. Gönderen : {sender.AccountMailAddress} - Alıcı : {options.MailDefaultTo} ");
-                    }
-                    else
-                    {
-                        mailDTO = new MailDTO()
-                        {
-                            To = options.MailDefaultTo,
-                            HtmlBody = htmlContent,
-                            From = sender.AccountMailAddress,
-                            Subject = options.MailDefaultSubject,
-                            IsSuccess = false,
-                            ErrorText = "Mail konfigürasyon ayarlarında bir hata oluştu"
-                        };
-                        Log.Logger.Error("Mail konfigürasyon ayarlarında hata oluştu");
-                    }
-                    AddMail(mailDTO);
-                }
-            }
-            catch (Exception ex)
-            {
-                mailDTO = new MailDTO()
-                {
-                    IsSuccess = false,
-                    ErrorText = ex.Message,
-                    HtmlBody = options.MailDefaultHTMLContent,
-                    Subject = options.MailDefaultSubject,
-                    To = options.MailDefaultTo
-                };
-                if (sender != null)
-                    mailDTO.From = sender.AccountMailAddress;
-                if (ex.GetType() == typeof(AuthenticationException))
-                {
-                    mailDTO.ErrorText = "Mail giriş bilgileri hatalıdır. Kullanıcı ayarlarından kontrol ediniz.";
-                }
-                AddMail(mailDTO);
-            }
-
-            return result;
-        }
         public string ConfigureSMTP(string fromMail)
         {
             string configureText = default;
@@ -375,20 +298,112 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             throw new NotImplementedException();
         }
-        public string ReplaceConfigure(string text, SourceContentDTO sourceContentDTO = null)
+        public string ReplaceConfigure(string text,string changeText=null ,SourceContentDTO sourceContentDTO = null,Category category=null,Source source=null,RssResultDTO resultDTO=null,string removedContent=null)
         {
-            text = text.Replace(MailConfigureConstants.CategoryName, sourceContentDTO.CategoryName);
-            text = text.Replace(MailConfigureConstants.SourceContentDescription, sourceContentDTO.Description);
-            text = text.Replace(MailConfigureConstants.SourceContentInsertAt.ToString(), sourceContentDTO.ContentInsertAt.ToShortDateString());
-            text = text.Replace(MailConfigureConstants.SourceContentTitle, sourceContentDTO.Title);
-            text = text.Replace(MailConfigureConstants.SourceName, sourceContentDTO.SourceName);
-            text = text.Replace(MailConfigureConstants.ContentId, sourceContentDTO.Id.ToString());
+            if (sourceContentDTO != null)
+            {
+                text = text.Replace(MailConfigureConstants.CategoryName, sourceContentDTO.CategoryName);
+                text = text.Replace(MailConfigureConstants.SourceContentDescription, sourceContentDTO.Description);
+                text = text.Replace(MailConfigureConstants.SourceContentInsertAt.ToString(), sourceContentDTO.ContentInsertAt.ToShortDateString());
+                text = text.Replace(MailConfigureConstants.SourceContentTitle, sourceContentDTO.Title);
+                text = text.Replace(MailConfigureConstants.SourceName, sourceContentDTO.SourceName);
+            }
+            if (category != null)
+                text = text.Replace(MailConfigureConstants.CategoryName, category.Name);
+            if(source!=null)
+                text = text.Replace(MailConfigureConstants.SourceName, source.Name);
+            if(resultDTO!=null)
+                text = text.Replace(MailConfigureConstants.RSSAddedCount, resultDTO.RssAddedCount.ToString());
+            text = text.Replace(MailConfigureConstants.AutoJobName,changeText);
+            text = text.Replace(MailConfigureConstants.RemovedContent, removedContent);
             return text;
         }
         public List<SentMailDTO> GetSentEmailList()
         {
             var mailList = _uow.GetRepository<Email>().Get(x => x.IsDeleted == false).OrderByDescending(x=>x.UpdatedAt).ToList();
             return Mapping.Mapper.Map<List<SentMailDTO>>(mailList);
+        }
+        public int RemoveAllMail()
+        {
+            _uow.GetRepository<Email>().RemoveRange(GetAllEmail());
+            var result = _uow.SaveChanges();
+            return result;
+        }
+        public List<Email> GetAllEmail()
+        {
+            List<Email> emailList=_uow.GetRepository<Email>().GetAll();
+            return emailList;
+        }
+        public void SendMailAutoJob(string content,string subject)
+        {
+            MailDTO mailDTO = null;
+            MailAuthenticate sender = null;
+            MailOptionsDTO options = GetByMailOptionDTO();
+            try
+            {
+                sender = GetByMailAuthenticateByMailAddress();
+                MimeMessage mimeMessage = new MimeMessage();
+                if (options != null && sender != null)
+                {
+                    mimeMessage.From.Add(MailboxAddress.Parse(sender.AccountMailAddress));
+                    mimeMessage.Subject = subject;
+                    mimeMessage.To.Add(MailboxAddress.Parse(options.MailDefaultTo));
+                    BodyBuilder bodyBuilder = new BodyBuilder();
+                    if (!string.IsNullOrEmpty(content))
+                        bodyBuilder.HtmlBody = content;
+                    mimeMessage.Body = bodyBuilder.ToMessageBody();
+                    string configure = ConfigureSMTP(sender.AccountMailAddress);
+                    if (configure != null)
+                    {
+                        using var smtp = new SmtpClient();
+                        smtp.Connect(configure, 587, SecureSocketOptions.StartTls);
+                        smtp.Authenticate(sender.AccountMailAddress, sender.AccountMailPassword);
+                        smtp.Send(mimeMessage);
+                        smtp.Disconnect(true);
+                        mailDTO = new MailDTO()
+                        {
+                            To = options.MailDefaultTo,
+                            HtmlBody = content,
+                            From = sender.AccountMailAddress,
+                            Subject = subject,
+                            IsSuccess = true
+                        };
+                        Log.Logger.Information($"Mail Gönderildi. Gönderen : {sender.AccountMailAddress} - Alıcı : {options.MailDefaultTo} ");
+                    }
+                    else
+                    {
+                        mailDTO = new MailDTO()
+                        {
+                            To = options.MailDefaultTo,
+                            HtmlBody = content,
+                            From = sender.AccountMailAddress,
+                            Subject = subject,
+                            IsSuccess = false,
+                            ErrorText = "Mail konfigürasyon ayarlarında bir hata oluştu"
+                        };
+                        Log.Logger.Error("Mail konfigürasyon ayarlarında hata oluştu");
+                    }
+                    AddMail(mailDTO);
+                }
+            }
+            catch (Exception ex)
+            {
+                mailDTO = new MailDTO()
+                {
+                    IsSuccess = false,
+                    ErrorText = ex.Message,
+                    HtmlBody = options.MailDefaultHTMLContent,
+                    Subject = options.MailDefaultSubject,
+                    To = options.MailDefaultTo
+                };
+                if (sender != null)
+                    mailDTO.From = sender.AccountMailAddress;
+                if (ex.GetType() == typeof(AuthenticationException))
+                {
+                    mailDTO.ErrorText = "Mail giriş bilgileri hatalıdır. Kullanıcı ayarlarından kontrol ediniz.";
+                }
+                AddMail(mailDTO);
+            }
         }
     }
 }

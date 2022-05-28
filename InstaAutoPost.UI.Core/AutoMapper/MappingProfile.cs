@@ -33,9 +33,11 @@ namespace InstaAutoPost.UI.Core.AutoMapper
             CreateMap<EmailAccountOptions, MailAuthenticate>().ReverseMap();
             CreateMap<EmailOptions, MailOptionsDTO>().ReverseMap();
             CreateMap<Email, SentMailDTO>().ReverseMap();
-
-
-
+            CreateMap<AutoJob, AutoJobDTO>().ReverseMap();
+            CreateMap<CategoryType, CategoryTypeDTO>().ReverseMap();
+            CreateMap<SocialMediaAccounts, SocialMediaDTO>().ReverseMap();
+            CreateMap<SocialMediaAccountsCategoryType, SocialMediaAccountsCategoryTypeDTO>().ReverseMap();
+            CreateMap<Post, PostDTO>().ReverseMap();
         }
     }
 }

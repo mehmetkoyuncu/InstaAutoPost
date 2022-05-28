@@ -40,7 +40,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         }
         public JsonResult ShareMarkPost(int id)
         {
-            var result = _sourceContentService.ShareMarkPost(id);
+            var result = _sourceContentService.ShareMarkPost(id, _environment.ContentRootPath);
             return Json(result);
         }
         public PartialViewResult GetAddSourceContentPartial()

@@ -1,0 +1,66 @@
+﻿
+<div class="single-product-tab-area mg-b-30" style="margin-bottom:0px;">
+    <!-- Single pro tab review Start-->
+    <div class="single-pro-review-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="review-tab-pro-inner">
+                        <ul id="myTab3" class="tab-review-design">
+                            <li class="active"><a href="#description"><i class="icon nalika-edit" aria-hidden="true"></i> Ekle / Düzenle</a></li>
+                            <li style="float:right"><button type="button" onclick="CloseAddView()" class="btn btn-danger"><i class="fa fa-times adminpro-danger-error" aria-hidden="true"></i> Kapat</button></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content custom-product-edit">
+                            <div class="product-tab-list tab-pane fade active in" id="description">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="form_controls">
+                                        <div class="review-content-section">
+                                            <label style="color:white;">Sosya Medya Adı : </label>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-edit" aria-hidden="true"></i></span>
+                                                <input type="text" id="upsert_socialMedia_name" class="form-control" placeholder="* Sosya Medya Adı :">
+                                            </div>
+                                            <label style="color:white;">Kullanıcı Adı / Email : </label>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-favorites-button" aria-hidden="true"></i></span>
+                                                <input type="text" id="upsert_socialMedia_userName" class="form-control" placeholder="* Kullanıcı Adı / Email :">
+                                            </div>
+                                            <label style="color:white;">Şifre : </label>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-favorites" aria-hidden="true"></i></span>
+                                                <input type="password" id="upsert_socialMedia_password" class="form-control" placeholder="* Şifre :">
+                                            </div>
+                                            <label style="color:white;">Sosyal Medya Ikon : </label>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-like" aria-hidden="true"></i></span>
+                                                <select name="select" id="socialMediaIcon_select_list" class="form-control pro-edt-select form-control-primary">
+                                                    <option value="-1"> * Kullanılcak ikonu seçiniz..</option>
+                                                    <option value="facebook.png">Facebook</option>
+                                                    <option value="twitter.png">Twitter</option>
+                                                    <option value="instagram.png">Instagram</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="text-center custom-pro-edt-ds">
+                                            <button id="insert_update_button" type="button" class="btn btn-ctl-bt waves-effect waves-light m-r-10">
+                                                Ekle
+                                            </button>
+                                            <button type="button" onclick="ClearAddView()" class="btn btn-ctl-bt waves-effect waves-light">
+                                                Temizle
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

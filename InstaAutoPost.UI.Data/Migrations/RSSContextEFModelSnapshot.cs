@@ -19,12 +19,57 @@ namespace InstaAutoPost.UI.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.AutoJob", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Cron")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CronDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("InsertedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsWork")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JobDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobTimeType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AutoJob");
+                });
+
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CategoryTypeId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("InsertedAt")
                         .HasColumnType("datetime2");
@@ -50,9 +95,35 @@ namespace InstaAutoPost.UI.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryTypeId");
+
                     b.HasIndex("SourceId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.CategoryType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("InsertedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CategoryType");
                 });
 
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Email", b =>
@@ -158,6 +229,105 @@ namespace InstaAutoPost.UI.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EmailOptions");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Post", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ContentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("InsertedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSpecialPost")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SocialMediaAccountsCategoryTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SocialMediaAccountsCategoryTypeId");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.SocialMediaAccounts", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AccountNameOrMail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("InsertedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SocialMediaAccounts");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.SocialMediaAccountsCategoryType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CategoryTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("InsertedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SocialMediaAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryTypeId");
+
+                    b.HasIndex("SocialMediaAccountId");
+
+                    b.ToTable("SocialMediaAccountsCategoryType");
                 });
 
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Source", b =>
@@ -273,13 +443,51 @@ namespace InstaAutoPost.UI.Data.Migrations
 
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Category", b =>
                 {
+                    b.HasOne("InstaAutoPost.UI.Data.Entities.Concrete.CategoryType", "CategoryType")
+                        .WithMany("Category")
+                        .HasForeignKey("CategoryTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("InstaAutoPost.UI.Data.Entities.Concrete.Source", "Source")
                         .WithMany("Categories")
                         .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("CategoryType");
+
                     b.Navigation("Source");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Post", b =>
+                {
+                    b.HasOne("InstaAutoPost.UI.Data.Entities.Concrete.SocialMediaAccountsCategoryType", "SocialMediaAccountsCategoryType")
+                        .WithMany("Posts")
+                        .HasForeignKey("SocialMediaAccountsCategoryTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SocialMediaAccountsCategoryType");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.SocialMediaAccountsCategoryType", b =>
+                {
+                    b.HasOne("InstaAutoPost.UI.Data.Entities.Concrete.CategoryType", "CategoryType")
+                        .WithMany("SocialMediaAccountsCategoryTypes")
+                        .HasForeignKey("CategoryTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InstaAutoPost.UI.Data.Entities.Concrete.SocialMediaAccounts", "SocialMediaAccounts")
+                        .WithMany("SocialMediaAccountsCategoryType")
+                        .HasForeignKey("SocialMediaAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CategoryType");
+
+                    b.Navigation("SocialMediaAccounts");
                 });
 
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.SourceContent", b =>
@@ -307,6 +515,23 @@ namespace InstaAutoPost.UI.Data.Migrations
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Category", b =>
                 {
                     b.Navigation("SourceContents");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.CategoryType", b =>
+                {
+                    b.Navigation("Category");
+
+                    b.Navigation("SocialMediaAccountsCategoryTypes");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.SocialMediaAccounts", b =>
+                {
+                    b.Navigation("SocialMediaAccountsCategoryType");
+                });
+
+            modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.SocialMediaAccountsCategoryType", b =>
+                {
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Source", b =>

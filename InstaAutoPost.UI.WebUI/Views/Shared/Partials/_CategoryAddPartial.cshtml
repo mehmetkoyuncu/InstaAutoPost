@@ -1,5 +1,4 @@
-﻿@model List<SelectboxSourceDTO>
-
+﻿@model Tuple<List<SelectboxSourceDTO>, List<CategoryTypeDTO>>
 <div class="single-product-tab-area mg-b-30" style="margin-bottom:0px;">
     <!-- Single pro tab review Start-->
     <div class="single-pro-review-area">
@@ -22,7 +21,7 @@
 
                                                 <select name="select" id="source_select_list" class="form-control pro-edt-select form-control-primary">
                                                     <option value="-1"> * Bir kaynak seçiniz..</option>
-                                                    @foreach (var item in Model)
+                                                    @foreach (var item in Model.Item1)
                                                     {
                                                         <option value="@item.Id">@item.Name</option>
                                                     }
@@ -30,9 +29,15 @@
                                             </div>
                                             <label style="color:white;">Kategori Adı : </label>
                                             <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon"><i class="icon nalika-like" aria-hidden="true"></i></span>
 
-                                                <span class="input-group-addon"><i class="icon nalika-edit" aria-hidden="true"></i></span>
-                                                <input type="text" id="upsert_category_name" class="form-control" placeholder="* Kategori Adı">
+                                                <select name="select" id="categoryType_select_list" class="form-control pro-edt-select form-control-primary">
+                                                    <option value="-1"> * Bir kategori seçiniz..</option>
+                                                    @foreach (var item in Model.Item2)
+                                                    {
+                                                        <option value="@item.Id">@item.Name</option>
+                                                    }
+                                                </select>
                                             </div>
                                             <label style="color:white;">Etiketler : </label>
                                             <div class="input-group mg-b-pro-edt">

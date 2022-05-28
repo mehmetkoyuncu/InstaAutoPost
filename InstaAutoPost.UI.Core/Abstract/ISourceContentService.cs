@@ -23,7 +23,7 @@ namespace InstaAutoPost.UI.Core.Abstract
         int GetSourceContentCount();
         List<SourceContentDTO> GetSourceContentFilter(List<SourceContentDTO> contentList, int next = 0, int quantity = 10);
         bool CreateFolder(int id,string contentRooth);
-        bool ShareMarkPost(int id);
+        bool ShareMarkPost(int id,string contentRoot);
 
     }
 }

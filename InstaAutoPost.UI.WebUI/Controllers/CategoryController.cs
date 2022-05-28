@@ -12,11 +12,12 @@ namespace InstaAutoPost.UI.WebUI.Controllers
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
+        ICategoryTypeService _categoryTypeService;
 
-        public CategoryController(ICategoryService categoryService)
+        public CategoryController(ICategoryService categoryService,ICategoryTypeService categoryTypeService)
         {
             _categoryService = categoryService;
-
+            _categoryTypeService = categoryTypeService;
         }
         public IActionResult Index()
         {
@@ -34,7 +35,9 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         public PartialViewResult GetAddCategoryPartial()
         {
             var sourceList = _categoryService.GetSourcesIdandName();
-            return PartialView("~/Views/Shared/Partials/_CategoryAddPartial.cshtml", sourceList);
+            var categoryTypes = _categoryTypeService.GetAllCategoryType();
+            var result=new Tuple<List<SelectboxSourceDTO>, List<CategoryTypeDTO>>(sourceList, categoryTypes);
+            return PartialView("~/Views/Shared/Partials/_CategoryAddPartial.cshtml", result);
         }
         #endregion
         #region Kategori Ekle
@@ -42,8 +45,6 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         public JsonResult AddCategory(CategoryAddOrUpdateDTO categoryImageView)
         {
             int result = _categoryService.AddCategory(categoryImageView);
-            if (!ModelState.IsValid)
-                return Json(-1);
             return Json(result);
         }
         #endregion
@@ -73,8 +74,6 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         public IActionResult EditCategory(int id,CategoryAddOrUpdateDTO categoryImageView)
         {
             int result = _categoryService.EditCategory(id,categoryImageView);
-            if (!ModelState.IsValid)
-                return Json(-1);
             return Json(result);
         }
         #endregion

@@ -8,6 +8,6 @@ namespace InstaAutoPost.UI.Core.Abstract
 {
     public interface IRssRunnerService
     {
-        RssResultDTO RunRssGenerator(string url, string name, string environment);
+        RssResultDTO RunRssGenerator(string url, int categoryTypeId, string environment);
     }
 }

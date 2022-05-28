@@ -15,9 +15,9 @@ namespace InstaAutoPost.UI.Core.ScheduleJobs
     public static class CreateFolderScheduleJob
     {
         [Obsolete]
-        public static void RunJob(string environment)
+        public static void RunJob(string environment,string cron)
         {
-            RecurringJob.AddOrUpdate(() => CreateFolderScheduleJob.CreateFolder(environment), "*/20 * * * *");
+            RecurringJob.AddOrUpdate(() => CreateFolder(environment), cron);
         }
         public static void CreateFolder(string environment)
         {
@@ -25,16 +25,14 @@ namespace InstaAutoPost.UI.Core.ScheduleJobs
             List<SourceContent> contentList = contentService.GetSourceContenListNotDeleted();
             SourceContent content = contentList.Where(x=>x.IsCreatedFolder==false&&x.SendOutForPost==false).OrderBy(x => x.ContentInsertAt).ToList().FirstOrDefault();
             MailService mailService = new MailService();
-            var instagramBot = new SeleniumMain().Publish(content,environment);
             SourceContentDTO sourceContentDTO = Mapping.Mapper.Map<SourceContentDTO>(content);
             if (content!=null)
             {
                 bool result = contentService.CreateFolder(content.Id, environment);
                 content.IsCreatedFolder = true;
                 int updateResult = contentService.UpdateSourceContent(content);
+                mailService.SendMailAutoForSourceContent(sourceContentDTO, environment);
             }
-            mailService.SendMailAutoForSourceContent(sourceContentDTO, environment);
-
         }
     }
 }

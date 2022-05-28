@@ -1,0 +1,86 @@
+﻿@model List<AutoJobDTO>
+@if (Model.Count > 0)
+{
+
+    <div class="widget-program-box mg-tb-30" id="autoJob_list_container">
+        <div class="container-fluid">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    var isWorkClass = item.IsWork == true ? "checked" : "";
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" style="margin-bottom:20px;">
+                        <div class="hpanel responsive-mg-b-30">
+                            <div class="panel-body">
+                                <div class="text-center content-box">
+                                    <div class="form-check float-md-end text-right">
+                                        <input class="form-check-input" type="checkbox" value="" id="chckJobDate-@item.Id" @isWorkClass>
+                                    </div>
+                                    <h2 class="m-b-xs">@item.JobTitle </h2>
+                                    <div class="m icon-box">
+                                        @if (item.IsWork)
+                                        {
+                                            <i class="fas fa-recycle text-success"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-exclamation-triangle text-danger"></i>
+                                        }
+
+                                    </div>
+                                    <p class="small mg-t-box">
+                                        @item.JobDescription
+                                    </p>
+                                    <div class="col-md-12" style="margin-bottom:20px">
+                                        @if (!String.IsNullOrEmpty(item.CronDescription))
+                                        {
+                                            <span class="label label-success">@item.CronDescription</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-danger">Durduruldu</span>
+                                        }
+                                    </div>
+                                    <div class="col-md-12" style="margin-bottom:20px">
+                                        <select class="form-select form-select-sm mt-3" id="selectJobDate-@item.Id">
+                                            @if (item.JobTimeType == "ShortTime")
+                                            {
+                                                <option value="-1">Seçiniz..</option>
+                                                <option value="*/15 * * * *">15 Dakikada 1 Kez</option>
+                                                <option value="*/30 * * * *">Yarım Saatte 1 Kez</option>
+                                                <option value="0 * * * *">1 Saatte 1 Kez</option>
+                                                <option value="0 */2 * * *">2 Saatte 1 Kez</option>
+                                                <option value="0 */3 * * *">3 Saatte 1 Kez</option>
+                                                <option value="0 */6 * * *">6 Saatte 1 Kez</option>
+                                                <option value="0 */12 * * *">12 Saatte 1 Kez</option>
+                                                <option value="0 20 * * *">Günde 1 Kez</option>
+                                                <option value="0 0 * * 0">Haftada 1 Kez</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="-1">Seçiniz..</option>
+                                                <option value="0 20 * * *">Günde 1 Kez</option>
+                                                <option value="0 0 * * 0">Haftada 1 Kez</option>
+                                                <option value="0 0 1 * *">Ayda 1 Kez</option>
+                                                <option value="0 0 1 */3 *">3 Ayda 1 Kez</option>
+                                                <option value="0 0 1 */6 *">6 Ayda 1 Kez</option>
+                                                <option value="0 0 1 1 *">Yılda 1 Kez</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <button class="btn btn-primary btn-sm" onclick="UpdateJob(@item.Id)">Güncelle</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p style="margin-left:30px;color:white;">Zamanlayıcı kaydı bulunmamaktadır.</p>
+}
+

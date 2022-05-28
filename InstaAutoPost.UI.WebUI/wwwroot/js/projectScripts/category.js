@@ -63,10 +63,12 @@ function EditCategoryView(id) {
         var category = GetCategoryById(id);
         var name = category.value.name.trim();
         var sourceId = category.value.sourceId;
+        var categoryTypeId = category.value.categoryTypeId;
         var tags = category.value.tags;
         $('#upsert_category_name').val(name);
         $("#upsert_category_tags").val(tags);
         $("#source_select_list option[value=" + sourceId + "]").attr('selected', 'selected');
+        $("#categoryType_select_list option[value=" + categoryTypeId + "]").attr('selected', 'selected');
         $('#insert_update_button').text('Düzenle');
         $('#insert_button').hide();
         $("html").animate({ "scrollTop": $("#add_view").scrollTop() + 100 });
@@ -77,9 +79,9 @@ function EditCategoryView(id) {
 
 //Kategori Ekle
 function AddCategory() {
-    var name = $('#upsert_category_name').val()
     var sourceId = parseInt($("#source_select_list").val());
-    if (!name || !sourceId || sourceId === -1) {
+    var categoryTypeId = parseInt($("#categoryType_select_list").val());
+    if (!sourceId || !categoryTypeId || sourceId == -1 || categoryTypeId == -1) {
         toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
         return;
     }
@@ -89,7 +91,7 @@ function AddCategory() {
         type: "POST",
         url: "Category/AddCategory",
         async: false,
-        data: { 'name': name, 'sourceId': sourceId, 'tags': tags },
+        data: { 'name': name, 'sourceId': sourceId, 'tags': tags, 'categoryTypeId': categoryTypeId },
         success: function (data) {
             if (data > 0) {
                 toastr.success('Kayıt başarıyla eklendi..');
@@ -120,7 +122,8 @@ function AddCategory() {
 function EditCategory(id) {
     var name = $('#upsert_category_name').val();
     var sourceId = parseInt($("#source_select_list").val());
-    if (!name || !sourceId || sourceId === -1) {
+    var categoryTypeId = parseInt($("#categoryType_select_list").val());
+    if (!sourceId || !categoryTypeId || sourceId == -1 || categoryTypeId==-1) {
         toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
         return;
     }
@@ -130,7 +133,7 @@ function EditCategory(id) {
         type: "PUT",
         url: "Category/EditCategory",
         async: false,
-        data: { 'id': parseInt(id), 'name': name, 'sourceId': parseInt(sourceId), 'tags': tags },
+        data: { 'id': parseInt(id), 'name': name, 'sourceId': parseInt(sourceId), 'tags': tags, 'categoryTypeId': categoryTypeId },
         success: function (data) {
             if (data > 0) {
                 toastr.success('Kayıt başarıyla güncellendi..');

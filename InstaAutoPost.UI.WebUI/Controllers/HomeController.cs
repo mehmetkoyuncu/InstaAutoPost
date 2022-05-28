@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using Hangfire.Storage;
 using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.Common.DTOS;
 using InstaAutoPost.UI.Core.ScheduleJobs;

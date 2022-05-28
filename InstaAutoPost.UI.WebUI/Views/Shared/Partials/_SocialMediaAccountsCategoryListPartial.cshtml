@@ -1,0 +1,62 @@
+﻿@model List<SocialMediaAccountsCategoryTypeDTO>
+    @{ if (Model.Count > 0)
+    {
+
+    <div class="analysis-progrebar-area mg-b-30" id="socialMediaAccountCategory_list_container" style="margin-top:25px;">
+        <div class="container-fluid">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+
+                <div class=" col-md-6 col-lg-3 col-xl-3" style="margin-bottom:20px;">
+                    <div class="analysis-progrebar @*reso-mg-b-30*@">
+                        <div class="analysis-progrebar-content">
+                            <h2>
+                                @{ string name = "";}
+
+                                @if (!String.IsNullOrEmpty(item.CategoryType.Name))
+                                {
+                                if (item.CategoryType.Name.Length >= 40)
+                                {
+                                name = @item.CategoryType.Name.Substring(0, 40) + "...";
+                                }
+                                else
+                                {
+                                name = @item.CategoryType.Name;
+                                }
+                                }
+
+
+                                @name.ToUpper()
+                                <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSocialMediaAccountCategory(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash" style="float:right;"><i class="fas fa-trash-alt"></i></button>
+                                <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSocialMediaAccountCategoryView(@item.Id)" class="pd-setting-ed btn btn-success" style="float:right;"><i class="fas fa-edit"></i></button>
+
+                            </h2>
+                            <h5>
+                                @item.SocialMediaAccounts.Name
+                            </h5>
+
+                            <div class="m-t-sm small">
+                                <p>Hesap Adı : @item.SocialMediaAccounts.Name</p>
+                                <p>Hesap Kullanıcı Adı : @item.SocialMediaAccounts.AccountNameOrMail</p>
+                            </div>
+                            <div class="m-t-sm small" style="text-align:right">
+                                <div id="socialMediaAccountCategory_image_content">
+                                    <img src="~/img/socialMedia/@(item.SocialMediaAccounts.Icon)" width="50px" style="margin-top:10px" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    }
+    else
+    {
+    <p style="margin-left:30px;color:white;">Sosyal Medya - Kategori İlişkisi kaydı bulunmamaktadır.</p>
+    }
+    }
+
+

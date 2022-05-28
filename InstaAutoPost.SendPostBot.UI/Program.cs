@@ -9,10 +9,9 @@ namespace InstaAutoPost.SendPostBot.UI
 {
     public class SeleniumMain
     {
-        public bool Publish(SourceContent content,string environment)
+        public bool Publish(SourceContent content, string environment)
         {
             bool control = false;
-            string[] nullableStringArray=null;
             try
             {
                 InstagramSelenium instagram = new InstagramSelenium();
@@ -24,14 +23,13 @@ namespace InstaAutoPost.SendPostBot.UI
                 instagram.Login(userName, password);
                 Thread.Sleep(2000);
                 Console.WriteLine("İnstagrama başarı bir şekilde giriş yapıldı.");
-                instagram.SendPost(content,environment);
+                instagram.SendPost(content, environment);
                 Console.WriteLine("Post başarılı bir şekilde gönderildi.");
                 Console.ReadKey();
                 control = true;
             }
             catch (Exception ex)
             {
-
                 control = false;
             }
             return control;

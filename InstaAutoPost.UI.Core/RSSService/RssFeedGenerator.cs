@@ -176,7 +176,7 @@ namespace InstaAutoPost.UI.Core.RSSService
 
                     if (controlTitle == null && databaseControl == null)
                     {
-                        var imageData = imageUtility.Download(image, (element.Title.Text), ImageFormat.Jpeg, _environment, isContent: true);
+                        var imageData = imageUtility.Download(image, (element.Title.Text), ImageFormat.Jpeg, _environment, isContent: true,content:content);
                         sourceContent = new SourceContent()
                         {
                             ContentInsertAt = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now,

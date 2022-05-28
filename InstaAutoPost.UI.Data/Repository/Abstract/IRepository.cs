@@ -16,5 +16,7 @@ namespace InstaAutoPost.UI.Data.Repository.Abstract
         IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> filter);
         void AddList(List<TEntity> entityList);
         List<TEntity> GetAll();
+        void RemoveRange(List<TEntity> entity);
+        void HardDelete(TEntity entity);
     }
 }

@@ -1,0 +1,60 @@
+﻿@model List<SocialMediaDTO>
+@{ if (Model.Count > 0)
+    {
+
+        <div class="analysis-progrebar-area mg-b-30" id="socialMedia_list_container" style="margin-top:25px;">
+            <div class="container-fluid">
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+
+                        <div class=" col-md-6 col-lg-3 col-xl-3" style="margin-bottom:20px;">
+                            <div class="analysis-progrebar @*reso-mg-b-30*@">
+                                <div class="analysis-progrebar-content">
+                                    <h5>
+                                        @{ string name = "";}
+
+                                        @if (!String.IsNullOrEmpty(item.Name))
+                                        {
+                                            if (item.Name.Length >= 20)
+                                            {
+                                                name = @item.Name.Substring(0, 20) + "...";
+                                            }
+                                            else
+                                            {
+                                                name = @item.Name;
+                                            }
+                                        }
+
+                                       
+                                        @name
+                                        <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSocialMedia(@item.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Trash" style="float:right;"><i class="fas fa-trash-alt"></i></button>
+                                        <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSocialMediaView(@item.Id)" class="pd-setting-ed btn btn-success" style="float:right;"><i class="fas fa-edit"></i></button>
+
+                                    </h5>
+
+                                    <div class="m-t-sm small">
+                                        <p>Mail/Kullanıcı Adı : @item.AccountNameOrMail</p>
+                                        <p>Şifre : **********</p>
+                                    </div>
+                                    <div class="m-t-sm small" style="text-align:right">
+                                        <div id="source_image_content">
+
+                                            <img src="~/img/socialMedia/@(item.Icon)" width="50px" style="margin-top:10px" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p style="margin-left:30px;color:white;">Sosyal Medya Hesabı kaydı bulunmamaktadır.</p>
+    }
+}
+
+

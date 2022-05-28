@@ -4,6 +4,7 @@ using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.Common.DTOS;
 using InstaAutoPost.UI.Core.Concrete;
 using InstaAutoPost.UI.Core.ScheduleJobs;
+using InstaAutoPost.UI.Core.ScheduleJobs.Main;
 using InstaAutoPost.UI.WebUI.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,6 +40,10 @@ namespace InstaAutoPost.UI.WebUI
             services.AddScoped<IRssRunnerService, RssRunnerService>();
             services.AddScoped<ISourceContentService, SourceContentService>();
             services.AddScoped<IMailService, MailService>();
+            services.AddScoped<IAutoJobService, AutoJobService>();
+            services.AddScoped<ICategoryTypeService, CategoryTypeService>();
+            services.AddScoped<ISocialMediaService, SocialMediaService>();
+            services.AddScoped<ISocialMediaAccountsCategoryTypeService, SocialMediaAccountsCategoryTypeService>();
             services.AddLogging();
         }
 
@@ -58,9 +63,8 @@ namespace InstaAutoPost.UI.WebUI
             }
             app.UseHangfireDashboard();
             app.UseHangfireServer();
-
-            //RSSDataScheduleJob.RunJob(env.ContentRootPath);
-            //CreateFolderScheduleJob.RunJob(env.ContentRootPath);
+            new ScheduleJobRunner().RemoveAll();
+            new ScheduleJobRunner().RunJobs(env.ContentRootPath);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

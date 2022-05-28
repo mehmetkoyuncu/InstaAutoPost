@@ -6,7 +6,10 @@ const typeEnum = {
     SourceContent: "SourceContent",
     RssGenerator: "RssGenerator",
     Mail: "Mail",
-    AutoJob:"AutoJob"
+    AutoJob: "AutoJob",
+    CategoryType: "CategoryType",
+    SocialMedia: "SocialMedia",
+    SocialMediaAccountCategory:"SocialMediaAccountCategory"
 };
 const alertType = {
     Success: "success",

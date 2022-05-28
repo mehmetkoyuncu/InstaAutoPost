@@ -20,5 +20,7 @@ namespace InstaAutoPost.UI.Data.Entities.Concrete
         public virtual Source Source { get; set; }
         public string Tags { get; set; }
         public virtual ICollection<SourceContent> SourceContents { get; set; }
+        public virtual CategoryType CategoryType { get; set; }
+        public int CategoryTypeId { get; set; }
     }
 }

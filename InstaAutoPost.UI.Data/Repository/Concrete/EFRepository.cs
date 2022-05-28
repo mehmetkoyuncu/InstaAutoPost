@@ -67,5 +67,13 @@ namespace InstaAutoPost.UI.Data.Repository.Concrete
             _dbset.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
         }
+        public void RemoveRange(List<TEntity> entity)
+        {
+            _dbset.RemoveRange(entity);
+        }
+        public void HardDelete(TEntity entity)
+        {
+            _dbset.Remove(entity);
+        }
     }
 }

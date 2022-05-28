@@ -50,12 +50,17 @@ function AddRssGeneratorView() {
 //Kaynak Ekle
 function AddRSSGenerator() {
     var url = $('#upsert_rssGenerator_link').val();
-    var name = $("#upsert_rssGenerator_name").val();
+    var categoryTypeId = parseInt($("#categoryType_select_list").val());
+    if (!url || !categoryTypeId || categoryTypeId == -1)
+    {
+        toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
+        return;
+    }
     $.ajax({
         type: "POST",
         url: "RssRunner/RunRssGenerator",
         async: false,
-        data: { 'url': url, 'name': name },
+        data: { 'url': url, 'categoryTypeId': categoryTypeId },
         success: function (data) {
             if (data) {
                 var count = data.value.rssAddedCount;

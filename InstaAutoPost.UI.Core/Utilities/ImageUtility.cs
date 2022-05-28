@@ -64,7 +64,7 @@ namespace InstaAutoPost.UI.Core.Utilities
                 if (fs != null && isContent == true)
                     imageSrc = fileName + "_full" + sImageFormat;
                 else
-                    imageSrc = fileName + "_full" + sImageFormat;
+                    imageSrc = fileName + sImageFormat;
                 return imageSrc;
 
             }
@@ -74,9 +74,55 @@ namespace InstaAutoPost.UI.Core.Utilities
                 imageSrc = null;
                 return imageSrc;
             }
-
-          
         }
+
+        public string EditImage(string imageContentRoot, string fileName, ImageFormat imageFormat, string contentRootPath, string content= "")
+        {
+            string imageSrc;
+            try
+            {
+                string orijinalFileName = fileName;
+                string sImageFormat = "." + ((imageFormat.ToString()).ToLower());
+                fileName = CharacterConvertGenerator.TurkishToEnglish(fileName);
+                fileName = CharacterConvertGenerator.RemovePunctuation(fileName);
+                fileName = fileName.Length > 5 ? fileName.Substring(0, 5).Trim() : fileName.Trim();
+                fileName = fileName + Guid.NewGuid().ToString();
+                Bitmap bitmap = new Bitmap(imageContentRoot);
+                System.IO.FileStream fs = null;
+                System.IO.FileStream fullFs = null;
+                if (bitmap != null)
+                {
+                    fs = System.IO.File.Open(Path.Combine(contentRootPath + @"/wwwroot/images", fileName + sImageFormat), FileMode.Create);
+                    bitmap.Save(fs, imageFormat);
+                    fs.Close();
+                    Log.Logger.Information($"Görsel başarıyla indirildi. - {fileName}");
+                    if (fs != null)
+                    {
+                        Bitmap backImage = new Bitmap(1080, 1080);
+                        ApplyTemplate(DesignConstants.PurpleRainbow, backImage, contentRootPath, bitmap, orijinalFileName, content);
+
+                        fullFs = System.IO.File.Open(Path.Combine(contentRootPath + @"/wwwroot/images", fileName + "_full" + sImageFormat), FileMode.Create);
+                        backImage.Save(fullFs, imageFormat);
+                        fullFs.Close();
+                        Log.Logger.Information($"Görsel orjinali başarıyla indirildi. - {fileName}");
+                    }
+                }
+                if (fs != null)
+                    imageSrc = fileName + "_full" + sImageFormat;
+                else
+                    imageSrc = fileName + sImageFormat;
+                return imageSrc;
+
+            }
+            catch (Exception exMessage)
+            {
+                Log.Logger.Error($"Hata! Görsel indirilemedi. - {fileName} - {exMessage}");
+                imageSrc = null;
+                return imageSrc;
+            }
+        }
+
+
         private static System.Drawing.Image ResizeImage(System.Drawing.Image imgToResize, Size size)
         {
             int sourceWidth = imgToResize.Width;

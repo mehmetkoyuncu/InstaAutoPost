@@ -8,5 +8,6 @@ namespace InstaAutoPost.UI.Core.Common.DTOS
     {
         public string CategoryName { get; set; }
         public string CategoryURL { get; set; }
+        public int CategoryTypeId { get; set; }
     }
 }

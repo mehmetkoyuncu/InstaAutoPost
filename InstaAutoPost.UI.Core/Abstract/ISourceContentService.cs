@@ -17,7 +17,7 @@ namespace InstaAutoPost.UI.Core.Abstract
         List<SelectboxSourceDTO> GetSourcesIdAndName();
         int RemoveSourceContent(int id);
         SourceContent GetSourceContentById(int id);
-        int EditSourceContent(int id, SourceContentAddOrUpdateDTO sourceContentDTO, string contentRootPath);
+        int EditSourceContent(int id, SourceContentAddOrUpdateDTO sourceContentDTO, string contentRootPath,int categoryId=0);
         List<SourceContentDTO> Filter(int categoryId, int orderId, string searchText);
         SourceContentAddOrUpdateDTO GetSourceContentDTOById(int id);
         int GetSourceContentCount();

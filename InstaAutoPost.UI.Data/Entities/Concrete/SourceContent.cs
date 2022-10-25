@@ -19,6 +19,7 @@ namespace InstaAutoPost.UI.Data.Entities.Concrete
         public string SourceContentId { get; set; }
         public string Tags { get; set; }
         public bool IsCreatedFolder { get; set; }
+        public DateTime? PostTime { get; set; }
         public virtual Category Category { get; set; }
 
 

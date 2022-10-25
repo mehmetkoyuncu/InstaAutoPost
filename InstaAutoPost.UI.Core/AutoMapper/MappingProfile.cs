@@ -38,6 +38,13 @@ namespace InstaAutoPost.UI.Core.AutoMapper
             CreateMap<SocialMediaAccounts, SocialMediaDTO>().ReverseMap();
             CreateMap<SocialMediaAccountsCategoryType, SocialMediaAccountsCategoryTypeDTO>().ReverseMap();
             CreateMap<Post, PostDTO>().ReverseMap();
+            CreateMap<SocialMediaAccountsCategoryType, PostCategoryTypeViewModelDTO>().ReverseMap();
+            CreateMap<CategoryType, PostCategoryTypeViewModelDTO>().ReverseMap();
+            CreateMap<Category, PostCategoryViewModelDTO>().ReverseMap();
+            CreateMap<SocialMediaAccounts, PostSocialMediaViewModelDTO>().ReverseMap();
+            CreateMap<SourceContent, PostSourceContentViewModelDTO>().ReverseMap();
+            CreateMap<Source, PostSourceViewModelDTO>().ReverseMap();
+            CreateMap<Post, PostViewModelDTO>().ReverseMap();
         }
     }
 }

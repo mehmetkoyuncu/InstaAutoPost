@@ -9,6 +9,7 @@ using System.Text;
 using AutoMapper;
 using InstaAutoPost.UI.Core.AutoMapper;
 using InstaAutoPost.SendPostBot.UI;
+using InstaAutoPost.UI.Core.Utilities;
 
 namespace InstaAutoPost.UI.Core.ScheduleJobs
 {
@@ -29,9 +30,8 @@ namespace InstaAutoPost.UI.Core.ScheduleJobs
             if (content!=null)
             {
                 bool result = contentService.CreateFolder(content.Id, environment);
-                content.IsCreatedFolder = true;
-                int updateResult = contentService.UpdateSourceContent(content);
                 mailService.SendMailAutoForSourceContent(sourceContentDTO, environment);
+                OrderPostUtility.Order();
             }
         }
     }

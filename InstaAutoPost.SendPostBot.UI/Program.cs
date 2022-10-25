@@ -3,29 +3,32 @@ using InstaAutoPost.UI.Data.Entities.Concrete;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace InstaAutoPost.SendPostBot.UI
 {
     public class SeleniumMain
     {
-        public bool Publish(SourceContent content, string environment)
+        public bool Publish(SourceContent content, string environment,List<SocialMediaAccounts> accounts)
         {
             bool control = false;
             try
             {
-                InstagramSelenium instagram = new InstagramSelenium();
-                instagram.GoToMainPage();
-                Console.WriteLine("Instagram anasayfası açıldı.");
-                Thread.Sleep(5000);
-                var userName = "haberdarmaymun";
-                var password = "4421751mk";
-                instagram.Login(userName, password);
-                Thread.Sleep(2000);
-                Console.WriteLine("İnstagrama başarı bir şekilde giriş yapıldı.");
-                instagram.SendPost(content, environment);
-                Console.WriteLine("Post başarılı bir şekilde gönderildi.");
-                Console.ReadKey();
+                foreach (var item in accounts)
+                {
+                    InstagramSelenium instagram = new InstagramSelenium();
+                    instagram.GoToMainPage();
+                    Console.WriteLine("Instagram anasayfası açıldı.");
+                    Thread.Sleep(5000);
+                    var userName = item.AccountNameOrMail;
+                    var password = item.Password;
+                    instagram.Login(userName, password);
+                    Thread.Sleep(2000);
+                    Console.WriteLine("İnstagrama başarı bir şekilde giriş yapıldı.");
+                    instagram.SendPost(content, environment);
+                    Console.WriteLine("Post başarılı bir şekilde gönderildi.");              
+                }
                 control = true;
             }
             catch (Exception ex)

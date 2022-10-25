@@ -40,6 +40,105 @@ namespace InstaAutoPost.UI.Data.Context
             modelBuilder.Entity<SocialMediaAccountsCategoryType>()
                 .HasKey(c => new { c.Id });
 
+
+            modelBuilder.Entity<AutoJob>().HasData(
+       new AutoJob
+       {
+           Id = 1,
+           InsertedAt = DateTime.Now,
+           UpdatedAt = DateTime.Now,
+           Cron = null,
+           IsWork = false,
+           CronDescription = null,
+           IsDeleted = false,
+           JobTitle = "Otomatik Klasör Oluştur",
+           JobName = "CreateFolder",
+           JobDescription = "Belirli periyotlarla dosya oluşturan iş süreci",
+           JobTimeType = "LongTime"
+       }
+   );
+            modelBuilder.Entity<AutoJob>().HasData(
+   new AutoJob
+   {
+       Id = 2,
+       InsertedAt = DateTime.Now,
+       UpdatedAt = DateTime.Now,
+       Cron = null,
+       IsWork = false,
+       CronDescription = null,
+       IsDeleted = false,
+       JobTitle = "Otomatik İçerik Paylaş",
+       JobName = "PublishContent",
+       JobDescription = "Belirli periyotlarla içerik paylaşan iş süreci",
+       JobTimeType = "ShortTime"
+   }
+);
+            modelBuilder.Entity<AutoJob>().HasData(
+new AutoJob
+{
+    Id = 3,
+    InsertedAt = DateTime.Now,
+    UpdatedAt = DateTime.Now,
+    Cron = null,
+    IsWork = false,
+    CronDescription = null,
+    IsDeleted = false,
+    JobTitle = "Otomatik Yeni İçerik Ekle",
+    JobName = "PullRSSContent",
+    JobDescription = "Belirli periyotlarla eklenen RSS linklerinden yeni içerikleri çeken içerik süreci",
+    JobTimeType = "ShortTime"
+}
+);
+            modelBuilder.Entity<AutoJob>().HasData(
+new AutoJob
+{
+    Id = 4,
+    InsertedAt = DateTime.Now,
+    UpdatedAt = DateTime.Now,
+    Cron = null,
+    IsWork = false,
+    CronDescription = null,
+    IsDeleted = false,
+    JobTitle = "Otomatik Paylaşılan İçerikleri Sil",
+    JobName = "RemoveContentPublished",
+    JobDescription = "Belirli periyotlarla daha önce paylaşılan içerikleri uygulamadan silen iş süreci",
+    JobTimeType = "LongTime"
+}
+);
+
+            modelBuilder.Entity<AutoJob>().HasData(
+new AutoJob
+{
+    Id=5,
+    InsertedAt = DateTime.Now,
+    UpdatedAt = DateTime.Now,
+    Cron = null,
+    IsWork = false,
+    CronDescription = null,
+    IsDeleted = false,
+    JobTitle = "Otomatik Klasörlenen İçerikleri Sil",
+    JobName = "RemoveContentCreatedFolder",
+    JobDescription = "Belirli periyotlarla daha önce klasörlenen içerikleri uygulamadan kaldıran iş süreci",
+    JobTimeType = "LongTime"
+}
+);
+            modelBuilder.Entity<AutoJob>().HasData(
+new AutoJob
+{
+    Id=6,
+    InsertedAt = DateTime.Now,
+    UpdatedAt = DateTime.Now,
+    Cron = null,
+    IsWork = false,
+    CronDescription = null,
+    IsDeleted = false,
+    JobTitle = "Otomatik Gönderilen Mailleri Sil",
+    JobName = "RemoveSentMails",
+    JobDescription = "Belirli periyotlarla daha önce gönderilen mailleri uygulamadan kaldıran iş süreci",
+    JobTimeType = "LongTime"
+}
+);
+
         }
 
     }

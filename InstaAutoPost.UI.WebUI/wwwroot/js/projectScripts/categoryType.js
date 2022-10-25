@@ -54,7 +54,9 @@ function EditCategoryTypeView(id) {
         $('#insert_update_button').attr('onclick', 'EditCategoryType(' + id + ')');
         var categoryType = GetCategoryTypeById(id);
         var name = categoryType.value.name.trim();
+        var template = categoryType.value.template;
         $('#upsert_categoryType_name').val(name);
+        $('#template_select').val(template);
         $('#insert_update_button').text('Düzenle');
         $('#insert_button').hide();
         $("html").animate({ "scrollTop": $("#add_view").scrollTop() + 100 });
@@ -67,7 +69,9 @@ function EditCategoryTypeView(id) {
 //Kaynak Ekle
 function AddCategoryType() {
     var name = $('#upsert_categoryType_name').val()
-    if (!name) {
+    var template = $('#template_select').val()
+
+    if (!name || !template || template == '-1') {
         toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
         return;
     }
@@ -76,7 +80,7 @@ function AddCategoryType() {
         type: "POST",
         url: "CategoryType/AddCategoryType",
         async: false,
-        data: { 'name': name },
+        data: { 'name': name, 'template': template },
         success: function (data) {
             if (data > 0) {
                 toastr.success('Kayıt başarıyla eklendi..');
@@ -93,7 +97,6 @@ function AddCategoryType() {
             SetRequestError();
             LoadCategoryTypes();
             CloseAddView();
-            ClearFilter();
         }
     });
 }
@@ -101,8 +104,9 @@ function AddCategoryType() {
 //Kaynak Düzenle
 function EditCategoryType(id) {
     var name = $('#upsert_categoryType_name').val()
-    var sourceId = parseInt($("#source_select_list").val());
-    if (!name) {
+    var template = $('#template_select').val()
+
+    if (!name || !template || template=='-1') {
         toastr.error('Lütfen zorunlu alanları (*) doldurunuz.');
         return;
     }
@@ -111,7 +115,7 @@ function EditCategoryType(id) {
         type: "PUT",
         url: "CategoryType/EditCategoryType",
         async: false,
-        data: { 'id': parseInt(id), 'name': name,},
+        data: { 'id': parseInt(id), 'name': name, 'template': template},
         success: function (data) {
             if (data > 0) {
                 toastr.success('Kayıt başarıyla güncellendi..');
@@ -162,7 +166,7 @@ function RemoveCategoryType(id) {
                 },
                 error: function () {
                     SetRequestError();
-                    LoadCategories();
+                    LoadCategoryTypes();
                 }
             });
         }

@@ -11,12 +11,14 @@ using SixLabors.ImageSharp.Processing;
 using System.Drawing.Drawing2D;
 using InstaAutoPost.UI.Core.Common.Constants;
 using Serilog;
+using InstaAutoPost.UI.Data.Entities.Concrete;
+using InstaAutoPost.UI.Core.Concrete;
 
 namespace InstaAutoPost.UI.Core.Utilities
 {
     public class ImageUtility
     {
-        public string Download(string imageURL, string fileName, ImageFormat imageFormat, string contentRootPath, bool isCreateFolder = false, string rooth = "", bool isContent = false,string content="")
+        public string Download(string imageURL, string fileName, ImageFormat imageFormat, string contentRootPath, bool isCreateFolder = false, string rooth = "", bool isContent = false, string content = "", int categoryId = 0)
         {
             string imageSrc;
             try
@@ -49,7 +51,13 @@ namespace InstaAutoPost.UI.Core.Utilities
                     if (fs != null && isContent == true)
                     {
                         Bitmap backImage = new Bitmap(1080, 1080);
-                            ApplyTemplate(DesignConstants.PurpleRainbow, backImage, contentRootPath,bitmap,orijinalFileName,content);
+                        Category category = new CategoryService().GetCategoryTypeById(categoryId);
+                        string template = "";
+                        if (category.CategoryType.Template == DesignConstants.Wanted)
+                            template = DesignConstants.Wanted;
+                        else if (category.CategoryType.Template == DesignConstants.PurpleRainbow)
+                            template = DesignConstants.PurpleRainbow;
+                        ApplyTemplate(template, backImage, contentRootPath, bitmap, orijinalFileName, content);
 
                         fullFs = System.IO.File.Open(Path.Combine(contentRootPath + @"/wwwroot/images", fileName + "_full" + sImageFormat), FileMode.Create);
                         backImage.Save(fullFs, imageFormat);
@@ -76,7 +84,7 @@ namespace InstaAutoPost.UI.Core.Utilities
             }
         }
 
-        public string EditImage(string imageContentRoot, string fileName, ImageFormat imageFormat, string contentRootPath, string content= "")
+        public string EditImage(string imageContentRoot, string fileName, ImageFormat imageFormat, string contentRootPath, string content = "",int categoryId=0)
         {
             string imageSrc;
             try
@@ -87,7 +95,10 @@ namespace InstaAutoPost.UI.Core.Utilities
                 fileName = CharacterConvertGenerator.RemovePunctuation(fileName);
                 fileName = fileName.Length > 5 ? fileName.Substring(0, 5).Trim() : fileName.Trim();
                 fileName = fileName + Guid.NewGuid().ToString();
-                Bitmap bitmap = new Bitmap(imageContentRoot);
+
+                WebClient client = new WebClient();
+                Stream stream = client.OpenRead(imageContentRoot);
+                Bitmap bitmap = new Bitmap(stream);
                 System.IO.FileStream fs = null;
                 System.IO.FileStream fullFs = null;
                 if (bitmap != null)
@@ -99,7 +110,13 @@ namespace InstaAutoPost.UI.Core.Utilities
                     if (fs != null)
                     {
                         Bitmap backImage = new Bitmap(1080, 1080);
-                        ApplyTemplate(DesignConstants.PurpleRainbow, backImage, contentRootPath, bitmap, orijinalFileName, content);
+                        Category category = new CategoryService().GetCategoryTypeById(categoryId);
+                        string template = "";
+                        if (category.CategoryType.Template == DesignConstants.Wanted)
+                            template = DesignConstants.Wanted;
+                        else if (category.CategoryType.Template == DesignConstants.PurpleRainbow)
+                            template = DesignConstants.PurpleRainbow;
+                        ApplyTemplate(template, backImage, contentRootPath, bitmap, orijinalFileName, content);
 
                         fullFs = System.IO.File.Open(Path.Combine(contentRootPath + @"/wwwroot/images", fileName + "_full" + sImageFormat), FileMode.Create);
                         backImage.Save(fullFs, imageFormat);
@@ -177,7 +194,7 @@ namespace InstaAutoPost.UI.Core.Utilities
 
         }
 
-        public static Image ApplyTemplate(string template, Image backImage,string contentRootPath,Bitmap bitmap,string title="",string content="")
+        public static Image ApplyTemplate(string template, Image backImage, string contentRootPath, Bitmap bitmap, string title = "", string content = "")
         {
             try
             {
@@ -206,17 +223,12 @@ namespace InstaAutoPost.UI.Core.Utilities
                             croppedImage = CropImage(image, new Size(1000, 750));
                             graphics.DrawImage(templateDesign, 0, 0);
                             graphics.DrawImage(croppedImage, 40, 40);
-                            graphics.DrawImage(logo, 880, 50, 150, 150);
+                            graphics.DrawImage(logo, 880, 700, 150, 150);
                             using (Font arialFont = new Font("Arial", 25))
                             {
                                 int maxWidth = 1000;
                                 int maxHeight = 250;
-                                graphics.FillRectangle(Brushes.SlateGray, 50, 720, 410, 60);
-                                graphics.DrawImage(instagramLogo, 57, 730, 40, 40);
-                                graphics.DrawImage(twitterLogo, 100, 730, 40, 40);
-                                graphics.DrawImage(facebookLogo, 143, 730, 40, 40);
-                                graphics.DrawString("@bertarafgundem", arialFont, Brushes.White, new PointF(185, 730));
-                                graphics.DrawString(title, new Font("Arial", 30), Brushes.White, new Rectangle(30, 800, maxWidth, maxHeight), centerFormat);
+                                graphics.DrawString(title, new Font("Arial", 30, FontStyle.Bold), Brushes.White, new Rectangle(30, 800, maxWidth, maxHeight), centerFormat);
                             }
                             break;
                         case DesignConstants.Wanted:
@@ -224,16 +236,11 @@ namespace InstaAutoPost.UI.Core.Utilities
                             croppedImage = CropImage(image, new Size(924, 762));
                             graphics.DrawImage(templateDesign, 0, 0);
                             graphics.DrawImage(croppedImage, 78, 100);
-                            graphics.DrawImage(logo, 840, 120, 150, 150);
+                            graphics.DrawImage(logo, 840, 790, 120, 120);
                             using (Font arialFont = new Font("Arial", 25))
                             {
                                 int maxWidth = 955;
                                 int maxHeight = 200;
-                                graphics.FillRectangle(Brushes.SlateGray, 100, 790, 410, 60);
-                                graphics.DrawImage(instagramLogo, 107, 800, 40, 40);
-                                graphics.DrawImage(twitterLogo, 150, 800, 40, 40);
-                                graphics.DrawImage(facebookLogo, 193, 800, 40, 40);
-                                graphics.DrawString("@bertarafgundem", arialFont, Brushes.White, new PointF(235, 800));
                                 graphics.DrawString(title, new Font("Arial", 25), Brushes.White, new Rectangle(60, 880, maxWidth, maxHeight), centerFormat);
                             }
                             break;
@@ -290,8 +297,8 @@ namespace InstaAutoPost.UI.Core.Utilities
                 Log.Logger.Error($"Hata! Görsel için template uygulanırken hata oluştu. - {template} - {contentRootPath} - {expMessage}");
                 return bitmap as Image;
             }
-            
-        
+
+
         }
 
     }

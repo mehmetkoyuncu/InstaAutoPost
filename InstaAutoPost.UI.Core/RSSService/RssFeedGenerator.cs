@@ -171,39 +171,62 @@ namespace InstaAutoPost.UI.Core.RSSService
                     else
                         image = SliceImage(image, content);
                     var controlTitle = sourceContentList.Where(x => x.Title.Trim() == element.Title.Text.Trim()).FirstOrDefault();
+                    var controlDesc = sourceContentList.Where(x => x.Description.Trim() == content.Trim()).FirstOrDefault();
                     var contentNameList = sourceContentService.GetNotDeletedContentsName();
+                    var descriptionList = sourceContentService.GetNotDeletedContentsDescription();
                     var databaseControl = contentNameList.Where(x => x.Trim() == element.Title.Text.Trim()).FirstOrDefault();
-
-                    if (controlTitle == null && databaseControl == null)
+                    string databaseControlDescription = null;
+                    if (content != null)
                     {
-                        var imageData = imageUtility.Download(image, (element.Title.Text), ImageFormat.Jpeg, _environment, isContent: true,content:content);
-                        sourceContent = new SourceContent()
+                        databaseControlDescription = descriptionList.Where(x => x.Trim() == content.Trim()).FirstOrDefault();
+                    }
+
+                    if (content != null && element.Title.Text != null && image != null)
+                    {
+                        if ((controlTitle == null && databaseControl == null)
+                        || (controlTitle != null && controlDesc.Description != content && databaseControlDescription == null))
                         {
-                            ContentInsertAt = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now,
-                            InsertedAt = DateTime.Now,
-                            UpdatedAt = DateTime.Now,
-                            CategoryId = _category.Id,
-                            Description = content,
-                            SourceContentId = element.Id,
-                            IsDeleted = false,
-                            SendOutForPost = false,
-                            imageURL = imageData,
-                            Title = element.Title.Text.Trim()
-                        };
-                        sourceContentList.Add(sourceContent);
-                        Log.Logger.Information($"İçerik başarıyla indirildi. - {sourceContent.Title}");
+
+
+
+                            var contentTitle = element.Title.Text.Replace("&#39;", "'").Replace("&nbsp;", "").Replace("&quot;", "");
+                            var contentText = content.Replace("&#39;", "'").Replace("&nbsp;", "").Replace("&quot;", "");
+                            var insertDate = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now;
+
+                            if (insertDate.Date.Day == DateTime.Now.Date.Day)
+                            {
+                                var imageData = imageUtility.Download(image, (contentTitle), ImageFormat.Jpeg, _environment, isContent: true, content: contentText, categoryId: _category.Id);
+                                sourceContent = new SourceContent()
+                                {
+                                    ContentInsertAt = element.PublishDate != null ? Convert.ToDateTime(new DateTime(element.PublishDate.Year, element.PublishDate.Month, element.PublishDate.Day, element.PublishDate.Hour, element.PublishDate.Minute, element.PublishDate.Second, element.PublishDate.Millisecond)) : DateTime.Now,
+                                    InsertedAt = DateTime.Now,
+                                    UpdatedAt = DateTime.Now,
+                                    CategoryId = _category.Id,
+                                    Description = contentText.Trim(),
+                                    SourceContentId = element.Id,
+                                    IsDeleted = false,
+                                    SendOutForPost = false,
+                                    imageURL = imageData,
+                                    Title = contentTitle.Trim()
+                                };
+                                sourceContentList.Add(sourceContent);
+                                Log.Logger.Information($"İçerik başarıyla indirildi. - {sourceContent.Title}");
+                            }
+                        }
+
                     }
 
 
                 }
                 sourceContentResult = sourceContentService.AddSourceContent(sourceContentList);
+                OrderPostUtility.Order();
 
             }
             catch (Exception exMessage)
             {
                 Log.Logger.Error($"Hata! içerik indirilemedi. - {sourceContentResult} - {exMessage}");
             }
-
+            OrderPostUtility.Order();
             return sourceContentResult;
         }
 
@@ -313,14 +336,18 @@ namespace InstaAutoPost.UI.Core.RSSService
         private Source SourceControl(SourceService sourceService, SyndicationFeed feed)
         {
             Source controlSource = null;
-            if (feed.Links.Count != 0)
+            if (feed != null)
             {
-                controlSource = sourceService.GetByURL(feed.Links[0].Uri.OriginalString, feed.Title.Text);
+                if (feed.Links.Count != 0)
+                {
+                    controlSource = sourceService.GetByURL(feed.Links[0].Uri.OriginalString, feed.Title.Text);
+                }
+                else if (!string.IsNullOrEmpty(feed.Id))
+                {
+                    controlSource = sourceService.GetByURL(feed.Id, feed.Title.Text);
+                }
             }
-            else if (!string.IsNullOrEmpty(feed.Id))
-            {
-                controlSource = sourceService.GetByURL(feed.Id, feed.Title.Text);
-            }
+
 
             return controlSource;
         }

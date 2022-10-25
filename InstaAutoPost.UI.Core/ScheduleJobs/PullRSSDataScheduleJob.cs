@@ -27,15 +27,21 @@ namespace InstaAutoPost.UI.Core.ScheduleJobs
             {
                 foreach (var item in rssList)
                 {
-
-                    RssResultDTO rssItem = new RssRunnerService().RunRssGenerator(item.CategoryURL,item.CategoryTypeId, environment);
+                    if (item.CategoryURL != null)
+                    {
+                        RssResultDTO rssItem = new RssRunnerService().RunRssGenerator(item.CategoryURL, item.CategoryTypeId, environment);
                         SourceService sourceService = new SourceService();
-                        Source source=sourceService.GetSourceByCategoryLink(item.CategoryURL);
+                     
+                        Source source = sourceService.GetSourceByCategoryLink(item.CategoryURL);
                         Category category = new CategoryService().GetById(rssItem.CategoryId);
 
-                        mailService.SendMailAutoJob(mailService.ReplaceConfigure(MailContentConstants.PullRSSContent,resultDTO:rssItem,source:source,category:category), mailService.ReplaceConfigure(MailSubjectConstants.PullRSSSubject, resultDTO:rssItem,category:category));
-                        Log.Logger.Information($"{JobNamesConstants.PullRSSContent} - Job Başarıyla çalıştırıldı - {DateTime.Now}");
+                        mailService.SendMailAutoJob(mailService.ReplaceConfigure(MailContentConstants.PullRSSContent, resultDTO: rssItem, source: source, category: category), mailService.ReplaceConfigure(MailSubjectConstants.PullRSSSubject, resultDTO: rssItem, category: category));
+                    }
+                    
                 }
+                new SourceContentService().RemoveSameContents();
+                Log.Logger.Information($"{JobNamesConstants.PullRSSContent} - Job Başarıyla çalıştırıldı - {DateTime.Now}");
+                
             }
         }
     }

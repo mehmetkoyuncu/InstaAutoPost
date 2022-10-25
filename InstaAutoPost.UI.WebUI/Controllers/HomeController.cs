@@ -2,6 +2,7 @@
 using Hangfire.Storage;
 using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.Common.DTOS;
+using InstaAutoPost.UI.Core.Concrete;
 using InstaAutoPost.UI.Core.ScheduleJobs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

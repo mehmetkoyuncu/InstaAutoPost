@@ -1,4 +1,6 @@
-﻿using InstaAutoPost.UI.Core.Abstract;
+﻿using Hangfire;
+using Hangfire.Storage;
+using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.AutoMapper;
 using InstaAutoPost.UI.Core.Common.DTOS;
 using InstaAutoPost.UI.Core.ScheduleJobs.Main;
@@ -9,6 +11,7 @@ using InstaAutoPost.UI.Data.UnitOfWork.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace InstaAutoPost.UI.Core.Concrete

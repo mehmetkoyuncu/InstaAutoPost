@@ -23,6 +23,7 @@
                                     <th>Yüklenme Tarihi</th>
                                     <th>Kategori Adı</th>
                                     <th>Kaynak Adı</th>
+                                    <th>Paylaşılma Tarihi</th>
                                     <th style="text-align:center;">Ayarlar</th>
                                     <th style="text-align:center">Durum</th>
                                 </tr>
@@ -57,6 +58,15 @@
                                         <td>@item.ContentInsertAt.ToShortDateString()</td>
                                         <td>@item.CategoryName</td>
                                         <td>@item.SourceName</td>
+                                        @{item.PostTime = item.PostTime != null ? item.PostTime.Value : (DateTime?)null; }
+                                        <td>
+                                            @if (item.PostTime != null)
+                                            {
+                                                @item.PostTime.Value.ToShortDateString()<span> - </span>
+                                                @item.PostTime.Value.ToShortTimeString()
+                                            }
+                                        </td>
+
                                         <td style="text-align:center;">
                                             <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsSourceContentView(@item.Id)" class="pd-setting-ed btn btn-warning" data-original-title="View"><i class="fas fa-eye"></i></button>
                                             <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSourceContentView(@item.Id)" class="pd-setting-ed btn btn-primary"><i class="fas fa-edit"></i></button>
@@ -79,7 +89,7 @@
                                             else
                                             {
 
-                                                <button data-toggle="tooltip" data-placement="left" title="Paylaşıldı Olarak İşaretle" onclick="ShareMarkPost(@item.Id,this)" class="pd-setting-ed btn btn-success" ><i class="fas fa-share-alt"></i></button>
+                                                <button data-toggle="tooltip" data-placement="left" title="Paylaşıldı Olarak İşaretle" onclick="ShareMarkPost(@item.Id,this)" class="pd-setting-ed btn btn-success"><i class="fas fa-share-alt"></i></button>
                                             }
 
                                         </td>

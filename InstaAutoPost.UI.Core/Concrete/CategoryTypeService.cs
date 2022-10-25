@@ -1,6 +1,7 @@
 ﻿using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.AutoMapper;
 using InstaAutoPost.UI.Core.Common.DTOS;
+using InstaAutoPost.UI.Core.Utilities;
 using InstaAutoPost.UI.Data.Context;
 using InstaAutoPost.UI.Data.Entities.Concrete;
 using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
@@ -20,10 +21,10 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             _uow = new EFUnitOfWork(new RSSContextEF());
         }
-        public int Add(string name)
+        public int Add(string name, string template)
         {
             int result = default;
-            var type=_uow.GetRepository<CategoryType>().Get(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
+            var type = _uow.GetRepository<CategoryType>().Get(x => x.Name.ToLower() == name.ToLower() && x.IsDeleted == false).FirstOrDefault();
             if (type == null)
             {
                 CategoryType categoryType = new CategoryType()
@@ -31,6 +32,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                     InsertedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     Name = name,
+                    Template = template,
                     IsDeleted = false
                 };
                 _uow.GetRepository<CategoryType>().Add(categoryType);
@@ -47,35 +49,26 @@ namespace InstaAutoPost.UI.Core.Concrete
                 Log.Logger.Error($"Hata! Aynı isme sahip Kategori tibi bulunmaktadır.  - {name}");
                 return result;
             }
-          
+
         }
 
-        public int EditSource(int id, string name)
+        public int EditSource(int id, string name, string template)
         {
             try
             {
                 int result = default;
-               
-                var type = _uow.GetRepository<CategoryType>().Get(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
-                if (type == null)
-                {
-                    CategoryType categoryType = GetById(id);
-                    categoryType.Name = name;
-                    categoryType.UpdatedAt = DateTime.Now;
-                    _uow.GetRepository<CategoryType>().Update(categoryType);
-                    result = _uow.SaveChanges();
-                    if (result > 0)
-                        Log.Logger.Information($"Kategori Tipi güncellendi.  - {categoryType.Name}");
-                    else
-                        Log.Logger.Error($"Hata! Kategori Tipi güncellenirken hata oluştu.  - {categoryType.Name}");
-                    return result;
-                }
+
+                CategoryType categoryType = GetById(id);
+                categoryType.Name = name;
+                categoryType.Template = template;
+                categoryType.UpdatedAt = DateTime.Now;
+                _uow.GetRepository<CategoryType>().Update(categoryType);
+                result = _uow.SaveChanges();
+                if (result > 0)
+                    Log.Logger.Information($"Kategori Tipi güncellendi.  - {categoryType.Name}");
                 else
-                {
-                    result = -1;
-                    Log.Logger.Error($"Hata! Aynı isme sahip Kategori tibi bulunmaktadır.  - {name}");
-                    return result;
-                }
+                    Log.Logger.Error($"Hata! Kategori Tipi güncellenirken hata oluştu.  - {categoryType.Name}");
+                return result;
 
             }
             catch (Exception exMessage)
@@ -117,7 +110,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                 {
                     if (result > 0)
                     {
-                        var mediaCatgory = _uow.GetRepository<SocialMediaAccountsCategoryType>().Get(x => x.CategoryTypeId == id).ToList();
+                        var mediaCatgory = _uow.GetRepository<SocialMediaAccountsCategoryType>().Get(x => x.CategoryTypeId == id && x.IsDeleted == false).ToList();
                         if (mediaCatgory.Count > 0)
                         {
                             foreach (var item in mediaCatgory)
@@ -126,16 +119,17 @@ namespace InstaAutoPost.UI.Core.Concrete
                                 _uow.SaveChanges();
                             }
                         }
-                        var category= _uow.GetRepository<Category>().Get(x => x.CategoryTypeId == id).ToList();
+                        var category = _uow.GetRepository<Category>().Get(x => x.CategoryTypeId == id && x.IsDeleted == false).ToList();
                         if (category.Count > 0)
                         {
+                            CategoryService categoryService = new CategoryService();
                             foreach (var item in category)
                             {
-                                _uow.GetRepository<Category>().Remove(item);
-                                _uow.SaveChanges();
+                                categoryService.RemoveCategory(item.Id);
                             }
                         }
                     }
+                    OrderPostUtility.Order();
                     Log.Logger.Information($"Kategori Tipi silindi.  - {categoryType.Name}");
                 }
                 else
@@ -151,8 +145,9 @@ namespace InstaAutoPost.UI.Core.Concrete
         }
         public CategoryTypeDTO GetCategoryTypeByName(string name)
         {
-            CategoryType categoryType = _uow.GetRepository<CategoryType>().Get(x => x.Name==name && x.IsDeleted == false).FirstOrDefault();
+            CategoryType categoryType = _uow.GetRepository<CategoryType>().Get(x => x.Name == name && x.IsDeleted == false).FirstOrDefault();
             return Mapping.Mapper.Map<CategoryType, CategoryTypeDTO>(categoryType);
         }
+
     }
 }

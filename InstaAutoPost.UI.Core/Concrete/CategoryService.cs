@@ -2,6 +2,7 @@
 using InstaAutoPost.UI.Core.AutoMapper;
 using InstaAutoPost.UI.Core.Common.DTOS;
 using InstaAutoPost.UI.Core.RSSService;
+using InstaAutoPost.UI.Core.Utilities;
 using InstaAutoPost.UI.Data.Context;
 using InstaAutoPost.UI.Data.Entities.Concrete;
 using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
@@ -34,6 +35,17 @@ namespace InstaAutoPost.UI.Core.Concrete
             return category;
 
         }
+        public Category GetCategoryTypeById(int id)
+        {
+
+            Category category = _uow.GetRepository<Category>()
+                   .Get(x => x.Id == id && x.IsDeleted == false)
+                   .Include(x => x.CategoryType).Where(x => x.IsDeleted == false)
+                   .FirstOrDefault();
+            return category;
+
+        }
+
 
         #endregion
         #region Kategoriyi güncelle
@@ -41,19 +53,30 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             try
             {
+                var result = 0;
+                var categoryType = _uow.GetRepository<CategoryType>().Get(x => x.Id == categoryImageView.CategoryTypeId && x.IsDeleted == false).FirstOrDefault();
+                var categorye = _uow.GetRepository<Category>().Get(x => x.CategoryTypeId == categoryImageView.CategoryTypeId && x.IsDeleted == false).FirstOrDefault();
                 Category category = GetById(id);
-                var categoryType = _uow.GetRepository<CategoryType>().Get(x => x.Id == categoryImageView.CategoryTypeId).FirstOrDefault();
-                category.UpdatedAt = DateTime.Now;
-                category.Name = categoryType.Name == null ? categoryType.Name : categoryType.Name.Trim();
-                category.CategoryTypeId = categoryImageView.CategoryTypeId;
-                category.SourceId = categoryImageView.SourceId;
-                category.Tags = categoryImageView.Tags == null ? categoryImageView.Tags : categoryImageView.Tags.Replace(" ", "");
-                _uow.GetRepository<Category>().Update(category);
-                int result = _uow.SaveChanges();
-                if (result > 0)
-                    Log.Logger.Information($"Kategori güncellendi.  - {category.Name}");
+                if (categorye == null||category.CategoryTypeId==categoryImageView.CategoryTypeId)
+                {
+                    category.UpdatedAt = DateTime.Now;
+                    category.Name = categoryType.Name == null ? categoryType.Name : categoryType.Name.Trim();
+                    category.CategoryTypeId = categoryImageView.CategoryTypeId;
+                    category.SourceId = categoryImageView.SourceId;
+                    category.Tags = categoryImageView.Tags == null ? categoryImageView.Tags : categoryImageView.Tags.Replace(" ", "");
+                    _uow.GetRepository<Category>().Update(category);
+                    result = _uow.SaveChanges();
+                    if (result > 0)
+                        Log.Logger.Information($"Kategori güncellendi.  - {category.Name}");
+                    else
+                        Log.Logger.Error($"Hata! Kategori güncellenirken hata oluştu.  - {category.Name}");
+
+                }
                 else
-                    Log.Logger.Error($"Hata! Kategori güncellenirken hata oluştu.  - {category.Name}");
+                {
+                    Log.Logger.Error($"Hata! Kategori eklenirken hata oluştu(Aynı kategori tipine ait kategori bulunmaktadır.).  - {categoryImageView.Name}");
+                    throw new Exception($"Hata! Kategori eklenirken hata oluştu(Aynı kategori tipine ait kategori bulunmaktadır.");
+                }
 
                 return result;
             }
@@ -89,7 +112,11 @@ namespace InstaAutoPost.UI.Core.Concrete
                     _uow.GetRepository<SourceContent>().Remove(item);
                 result = _uow.SaveChanges();
                 if (result > 0)
+                {
+                    OrderPostUtility.Order();
                     Log.Logger.Information($"Kategori silindi.  - {category.Name}");
+                }
+                   
                 else
                     Log.Logger.Error($"Hata! Kategori silinirken hata oluştu.  - {category.Name}");
                 return result;
@@ -157,23 +184,36 @@ namespace InstaAutoPost.UI.Core.Concrete
         {
             try
             {
-                var categoryType = _uow.GetRepository<CategoryType>().Get(x => x.Id == categoryImageView.CategoryTypeId).FirstOrDefault();
-                _uow.GetRepository<Category>().Add(new Category
+                var result = 0;
+                var categoryType = _uow.GetRepository<CategoryType>().Get(x => x.Id == categoryImageView.CategoryTypeId && x.IsDeleted == false).FirstOrDefault();
+                var category = _uow.GetRepository<Category>().Get(x => x.CategoryTypeId == categoryImageView.CategoryTypeId && x.IsDeleted == false).FirstOrDefault();
+                if (category == null)
                 {
-                    Name = categoryType.Name == null ? categoryType.Name : categoryType.Name.Trim(),
-                    CategoryTypeId = categoryImageView.CategoryTypeId,
-                    Link = null,
-                    InsertedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                    IsDeleted = false,
-                    SourceId = categoryImageView.SourceId,
-                    Tags = categoryImageView.Tags == null ? categoryImageView.Tags : categoryImageView.Tags.Replace(" ", "")
-                });
-                var result = _uow.SaveChanges();
-                if (result > 0)
-                    Log.Logger.Information($"Kategori eklendi(CategoryAddOrUpdateDTO).  - {categoryImageView.Name}");
+                    _uow.GetRepository<Category>().Add(new Category
+                    {
+                        Name = categoryType.Name == null ? categoryType.Name : categoryType.Name.Trim(),
+                        CategoryTypeId = categoryImageView.CategoryTypeId,
+                        Link = null,
+                        InsertedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                        IsDeleted = false,
+                        SourceId = categoryImageView.SourceId,
+                        Tags = categoryImageView.Tags == null ? categoryImageView.Tags : categoryImageView.Tags.Replace(" ", "")
+                    });
+                    result = _uow.SaveChanges();
+                    if (result > 0)
+                        Log.Logger.Information($"Kategori eklendi(CategoryAddOrUpdateDTO).  - {categoryImageView.Name}");
+                    else
+                    {
+                        Log.Logger.Error($"Hata! Kategori eklenirken  hata oluştu(CategoryAddOrUpdateDTO).  - {categoryImageView.Name}");
+                        throw new Exception("Hata! Kategori eklenirken  hata oluştu(CategoryAddOrUpdateDTO)");
+                    }
+                }
                 else
-                    Log.Logger.Error($"Hata! Kategori eklenirken hata oluştu(CategoryAddOrUpdateDTO).  - {categoryImageView.Name}");
+                {
+                    Log.Logger.Error($"Hata! Kategori eklenirken hata oluştu(Aynı kategori tipine ait kategori bulunmaktadır.).  - {categoryImageView.Name}");
+                    throw new Exception($"Hata! Kategori eklenirken hata oluştu(Aynı kategori tipine ait kategori bulunmaktadır.");
+                }
                 return result;
             }
             catch (Exception exMessage)

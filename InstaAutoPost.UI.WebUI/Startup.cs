@@ -44,6 +44,7 @@ namespace InstaAutoPost.UI.WebUI
             services.AddScoped<ICategoryTypeService, CategoryTypeService>();
             services.AddScoped<ISocialMediaService, SocialMediaService>();
             services.AddScoped<ISocialMediaAccountsCategoryTypeService, SocialMediaAccountsCategoryTypeService>();
+            services.AddScoped<IPostService, PostService>();
             services.AddLogging();
         }
 
@@ -76,7 +77,7 @@ namespace InstaAutoPost.UI.WebUI
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Post}/{action=Index}/{id?}");
             });
            
         }

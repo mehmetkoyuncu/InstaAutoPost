@@ -23,6 +23,7 @@ namespace InstaAutoPost.UI.Data.Repository.Concrete
 
             _context = context;
             _dbset = context.Set<TEntity>();
+            _dbset.AsNoTracking();
         }
 
         public void Add(TEntity entity)
@@ -31,13 +32,21 @@ namespace InstaAutoPost.UI.Data.Repository.Concrete
         }
         public void AddList(List<TEntity> entityList)
         {
-            _dbset.AddRange(entityList);
+            try
+            {
+                _dbset.AddRange(entityList);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
         public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> filter)
         {
             return _dbset.Where(filter);
         }
-
         public List<TEntity> GetAll()
         {
             return _dbset.ToList();
@@ -47,6 +56,9 @@ namespace InstaAutoPost.UI.Data.Repository.Concrete
         {
             if (entity.GetType().GetProperty("IsDeleted") != null)
             {
+                _dbset.AsNoTracking();
+                _context.Entry(entity).State=Microsoft.EntityFrameworkCore.EntityState.Detached;
+                _context.Entry(entity).State = EntityState.Modified;
                 entity.GetType().GetProperty("IsDeleted").SetValue(entity, true);
                 this.Update(entity);
             }
@@ -64,7 +76,8 @@ namespace InstaAutoPost.UI.Data.Repository.Concrete
 
         public void Update(TEntity entity)
         {
-            _dbset.Attach(entity);
+            _dbset.AsNoTracking();
+            _context.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
             _context.Entry(entity).State = EntityState.Modified;
         }
         public void RemoveRange(List<TEntity> entity)

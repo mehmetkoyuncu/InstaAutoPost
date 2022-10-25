@@ -20,7 +20,7 @@ namespace InstaAutoPost.UI.Core.Common.DTOS
         public int  SourceId { get; set; }
         public bool IsCreatedFolder { get; set; }
         public DateTime InsertedAt { get; set; }
-
+        public DateTime? PostTime { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
 }

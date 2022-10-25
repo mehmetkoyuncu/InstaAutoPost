@@ -26,6 +26,7 @@ namespace InstaAutoPost.UI.Core.ScheduleJobs
             if (result > 0)
             {
                 mailService.SendMailAutoJob(mailService.ReplaceConfigure(MailContentConstants.AutoJobContent, JobNamesConstants.RemoveContentCreatedFolder,removedContent:result.ToString()), mailService.ReplaceConfigure(MailSubjectConstants.AutoJobSubject, JobNamesConstants.RemoveContentCreatedFolder));
+                OrderPostUtility.Order();
                 Log.Logger.Information($"{JobNamesConstants.RemoveContentCreatedFolder} - Job Başarıyla çalıştırıldı - {DateTime.Now}");
             }
             else

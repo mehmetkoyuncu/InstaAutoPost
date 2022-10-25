@@ -30,15 +30,15 @@ namespace InstaAutoPost.UI.WebUI.Controllers
             return PartialView("~/Views/Shared/Partials/_CategoryTypeAddPartial.cshtml");
         }
         [HttpPost]
-        public JsonResult AddCategoryType(string name)
+        public JsonResult AddCategoryType(string name,string template)
         {
-            int result = _categoryTypeService.Add(name);
+            int result = _categoryTypeService.Add(name,template);
             return Json(result);
         }
         [HttpPut]
-        public IActionResult EditCategoryType(int id,string name)
+        public IActionResult EditCategoryType(int id,string name,string template)
         {
-            int result = _categoryTypeService.EditSource(id,name);
+            int result = _categoryTypeService.EditSource(id,name,template);
             return Json(result);
         }
         [HttpDelete]

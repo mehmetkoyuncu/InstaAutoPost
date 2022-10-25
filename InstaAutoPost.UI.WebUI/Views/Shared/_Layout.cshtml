@@ -98,6 +98,12 @@
                 <nav class="sidebar-nav left-sidebar-menu-pro">
                     <ul class="metismenu" id="menu1">
                         <li class="active">
+                            <a class="has-arrow" href="mailbox.html" aria-expanded="false"><i class="icon nalika-home icon-wrap"></i>  <span class="mini-click-non">Anasayfa</span></a>
+                            <ul class="submenu-angle" aria-expanded="false">
+                                <li><a asp-action="Index" asp-controller="Post"><i class="icon nalika-pie-chart icon-wrap"></i>İstatistikler</a></li>
+                            </ul>
+                        </li>
+                        <li>
                             <a class="has-arrow" href="index.html">
                                 <i class="icon nalika-forms icon-wrap"></i>
                                 <span class="mini-click-non">Manuel İşlemler</span>
@@ -110,15 +116,28 @@
                             </ul>
                         </li>
                         <li>
-                            <a class="has-arrow" href="mailbox.html" aria-expanded="false"><i class="icon nalika-mail icon-wrap"></i> <span class="mini-click-non">Mail İşlemleri</span></a>
-                            <ul class="submenu-angle" aria-expanded="false">
-                                <li><a title="Mail Kutusu" asp-action="Index" asp-controller="Mail"><span class="mini-sub-pro">Mail Kutusu</span></a></li>
-                            </ul>
-                        </li>
-                        <li>
                             <a class="has-arrow" href="mailbox.html" aria-expanded="false"><i class="icon nalika-diamond icon-wrap"></i> <span class="mini-click-non">RSS Generator</span></a>
                             <ul class="submenu-angle" aria-expanded="false">
                                 <li><a title="RSS Generator" asp-action="Index" asp-controller="RssRunner"><span class="mini-sub-pro">RSS Generator</span></a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="has-arrow" href="mailbox.html" aria-expanded="false"><i class="icon nalika-smartphone-call icon-wrap"></i> <span class="mini-click-non">Hesaplar</span></a>
+                            <ul class="submenu-angle" aria-expanded="false">
+                                <li><a asp-action="Index" asp-controller="SocialMediaAccountsCategoryType">Hesap-Kategori</a></li>
+                                <li><a asp-action="Index" asp-controller="SocialMedia">Hesaplar</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="has-arrow" href="mailbox.html" aria-expanded="false"><i class="icon nalika-table icon-wrap"></i> <span class="mini-click-non">Sabitler</span></a>
+                            <ul class="submenu-angle" aria-expanded="false">
+                                <li><a asp-action="Index" asp-controller="CategoryType">Kategori Tipleri</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="has-arrow" href="mailbox.html" aria-expanded="false"><i class="icon nalika-mail icon-wrap"></i> <span class="mini-click-non">Mail İşlemleri</span></a>
+                            <ul class="submenu-angle" aria-expanded="false">
+                                <li><a title="Mail Kutusu" asp-action="Index" asp-controller="Mail"><span class="mini-sub-pro">Mail Kutusu</span></a></li>
                             </ul>
                         </li>
                         <li>
@@ -128,19 +147,9 @@
                                 <li><a href="/hangfire">Hangfire Dashboard</a></li>
                             </ul>
                         </li>
-                        <li>
-                            <a class="has-arrow" href="mailbox.html" aria-expanded="false"><i class="icon nalika-bar-chart icon-wrap"></i> <span class="mini-click-non">Sabitler</span></a>
-                            <ul class="submenu-angle" aria-expanded="false">
-                                <li><a asp-action="Index" asp-controller="CategoryType">Kategori Tipleri</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a class="has-arrow" href="mailbox.html" aria-expanded="false"><i class="icon nalika-smartphone-call icon-wrap"></i> <span class="mini-click-non">Sosyal Medya</span></a>
-                            <ul class="submenu-angle" aria-expanded="false">
-                                <li><a asp-action="Index" asp-controller="SocialMediaAccountsCategoryType">Hesap-Kategori</a></li>
-                                <li><a asp-action="Index" asp-controller="SocialMedia">Hesaplar</a></li>
-                            </ul>
-                        </li>
+
+
+
                         <li id="removable">
                             <a class="has-arrow" href="#" aria-expanded="false"><i class="icon nalika-new-file icon-wrap"></i> <span class="mini-click-non">Pages</span></a>
                             <ul class="submenu-angle" aria-expanded="false">
@@ -771,7 +780,7 @@
                                             </ul>
                                         </li>
                                         <li>
-                                            <a data-toggle="collapse" data-target="#others" >Otomatik İşlemler <span class="admin-project-icon nalika-icon nalika-down-arrow"></span></a>
+                                            <a data-toggle="collapse" data-target="#others">Otomatik İşlemler <span class="admin-project-icon nalika-icon nalika-down-arrow"></span></a>
                                             <ul id="others" class="collapse dropdown-header-top">
                                                 <li><a asp-action="Index" asp-controller="Folder">İçerik İçin Otomatik Klasör Oluştur</a></li>
                                                 <li><a href="contacts.html">Instagram Otomatik Post</a></li>

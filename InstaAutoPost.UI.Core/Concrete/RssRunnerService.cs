@@ -18,7 +18,7 @@ namespace InstaAutoPost.UI.Core.Concrete
             {
                 string typeName = new CategoryTypeService().GetById(categoryTypeId).Name;
                 RssFeedGenerator generator = new RssFeedGenerator(url, typeName, environment);
-                Log.Logger.Information($"RssGenerator otomatik olarak çalıştırıldı - {categoryTypeId}");
+                 Log.Logger.Information($"RssGenerator otomatik olarak çalıştırıldı - {categoryTypeId}");
                 return generator.RSSCreator();
 
             }

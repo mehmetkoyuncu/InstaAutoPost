@@ -21,7 +21,6 @@ namespace InstaAutoPost.UI.Core.ScheduleJobs.Main
                 var jobList = new AutoJobService().GetAutoJobs();
                 foreach (var item in jobList)
                 {
-                    // var instagramBot = new SeleniumMain().Publish(content,environment);
                     if (item.IsWork)
                     {
                         switch (item.JobName)

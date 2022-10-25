@@ -168,7 +168,10 @@ namespace InstaAutoPost.UI.Core.Concrete
                 }
                 result = _uow.SaveChanges();
                 if (result > 0)
+                {
+                    OrderPostUtility.Order();
                     Log.Logger.Information($"Kaynak silindi.  - {source.Name}");
+                }
                 else
                     Log.Logger.Error($"Hata! Kaynak silinirken hata oluştu.  - {source.Name}");
                 return result;

@@ -26,6 +26,7 @@ namespace InstaAutoPost.UI.Core.ScheduleJobs
             if (result > 0)
             {
                 mailService.SendMailAutoJob(mailService.ReplaceConfigure(MailContentConstants.AutoJobContent, JobNamesConstants.RemoveContentPublished, removedContent: result.ToString()), mailService.ReplaceConfigure(MailSubjectConstants.AutoJobSubject, JobNamesConstants.RemoveContentPublished));
+              
                 Log.Logger.Information($"{JobNamesConstants.RemoveContentPublished} - Job Başarıyla çalıştırıldı - {DateTime.Now}");
             }
             else

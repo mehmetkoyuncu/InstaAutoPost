@@ -14,11 +14,13 @@ namespace InstaAutoPost.UI.WebUI.Controllers
 {
     public class SourceContentController : Controller
     {
+        IPostService _postService;
         ISourceContentService _sourceContentService;
         private readonly IHostEnvironment _environment;
-        public SourceContentController(ISourceContentService service, IHostEnvironment environment)
+        public SourceContentController(ISourceContentService service, IHostEnvironment environment, IPostService postService)
         {
             _sourceContentService = service;
+            _postService = postService;
             _environment = environment;
         }
         public IActionResult Index()
@@ -71,6 +73,7 @@ namespace InstaAutoPost.UI.WebUI.Controllers
         [HttpDelete]
         public IActionResult RemoveSourceContent(int id)
         {
+            _postService.RemoveByContentId(id);
             int result = _sourceContentService.RemoveSourceContent(id);
             return Json(result);
         }

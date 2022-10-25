@@ -14,6 +14,7 @@ namespace InstaAutoPost.UI.Data.Entities.Concrete
         }
         public string Name { get; set; }
         public ICollection<Category> Category { get; set; }
+        public string Template { get; set; }
         public ICollection<SocialMediaAccountsCategoryType> SocialMediaAccountsCategoryTypes { get; set; }
     }
 }

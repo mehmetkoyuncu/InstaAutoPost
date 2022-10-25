@@ -15,5 +15,9 @@ namespace InstaAutoPost.UI.Core.Abstract
         List<PostDTO> GetAll();
         List<PostDTO> GetListQuantity(int quantity);
         PostDTO GetDTO(int id);
+        List<PostViewModelDTO> GetPostList(int quantity = 10);
+        int ChangeOrder(int postId, int order);
+        int RemoveByContentId(int id);
+        PostStatistics GetPostStatistics();
     }
 }

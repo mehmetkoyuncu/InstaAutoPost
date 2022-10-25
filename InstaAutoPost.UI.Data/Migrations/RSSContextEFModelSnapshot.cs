@@ -59,6 +59,80 @@ namespace InstaAutoPost.UI.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AutoJob");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            InsertedAt = new DateTime(2022, 6, 26, 2, 25, 42, 926, DateTimeKind.Local).AddTicks(1588),
+                            IsDeleted = false,
+                            IsWork = false,
+                            JobDescription = "Belirli periyotlarla dosya oluşturan iş süreci",
+                            JobName = "CreateFolder",
+                            JobTimeType = "LongTime",
+                            JobTitle = "Otomatik Klasör Oluştur",
+                            UpdatedAt = new DateTime(2022, 6, 26, 2, 25, 42, 933, DateTimeKind.Local).AddTicks(861)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            InsertedAt = new DateTime(2022, 6, 26, 2, 25, 42, 936, DateTimeKind.Local).AddTicks(51),
+                            IsDeleted = false,
+                            IsWork = false,
+                            JobDescription = "Belirli periyotlarla içerik paylaşan iş süreci",
+                            JobName = "PublishContent",
+                            JobTimeType = "ShortTime",
+                            JobTitle = "Otomatik İçerik Paylaş",
+                            UpdatedAt = new DateTime(2022, 6, 26, 2, 25, 42, 936, DateTimeKind.Local).AddTicks(138)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            InsertedAt = new DateTime(2022, 6, 26, 2, 25, 42, 936, DateTimeKind.Local).AddTicks(524),
+                            IsDeleted = false,
+                            IsWork = false,
+                            JobDescription = "Belirli periyotlarla eklenen RSS linklerinden yeni içerikleri çeken içerik süreci",
+                            JobName = "PullRSSContent",
+                            JobTimeType = "ShortTime",
+                            JobTitle = "Otomatik Yeni İçerik Ekle",
+                            UpdatedAt = new DateTime(2022, 6, 26, 2, 25, 42, 936, DateTimeKind.Local).AddTicks(528)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            InsertedAt = new DateTime(2022, 6, 26, 2, 25, 42, 936, DateTimeKind.Local).AddTicks(567),
+                            IsDeleted = false,
+                            IsWork = false,
+                            JobDescription = "Belirli periyotlarla daha önce paylaşılan içerikleri uygulamadan silen iş süreci",
+                            JobName = "RemoveContentPublished",
+                            JobTimeType = "LongTime",
+                            JobTitle = "Otomatik Paylaşılan İçerikleri Sil",
+                            UpdatedAt = new DateTime(2022, 6, 26, 2, 25, 42, 936, DateTimeKind.Local).AddTicks(569)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            InsertedAt = new DateTime(2022, 6, 26, 2, 25, 42, 936, DateTimeKind.Local).AddTicks(602),
+                            IsDeleted = false,
+                            IsWork = false,
+                            JobDescription = "Belirli periyotlarla daha önce klasörlenen içerikleri uygulamadan kaldıran iş süreci",
+                            JobName = "RemoveContentCreatedFolder",
+                            JobTimeType = "LongTime",
+                            JobTitle = "Otomatik Klasörlenen İçerikleri Sil",
+                            UpdatedAt = new DateTime(2022, 6, 26, 2, 25, 42, 936, DateTimeKind.Local).AddTicks(604)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            InsertedAt = new DateTime(2022, 6, 26, 2, 25, 42, 936, DateTimeKind.Local).AddTicks(743),
+                            IsDeleted = false,
+                            IsWork = false,
+                            JobDescription = "Belirli periyotlarla daha önce gönderilen mailleri uygulamadan kaldıran iş süreci",
+                            JobName = "RemoveSentMails",
+                            JobTimeType = "LongTime",
+                            JobTitle = "Otomatik Gönderilen Mailleri Sil",
+                            UpdatedAt = new DateTime(2022, 6, 26, 2, 25, 42, 936, DateTimeKind.Local).AddTicks(745)
+                        });
                 });
 
             modelBuilder.Entity("InstaAutoPost.UI.Data.Entities.Concrete.Category", b =>
@@ -116,6 +190,9 @@ namespace InstaAutoPost.UI.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Template")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -385,6 +462,9 @@ namespace InstaAutoPost.UI.Data.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PostTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("SendOutForPost")
                         .HasColumnType("bit");

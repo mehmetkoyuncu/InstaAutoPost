@@ -1,0 +1,306 @@
+﻿@model Tuple<List<PostViewModelDTO>, PostStatistics>
+
+@{var firstPost = Model.Item1.FirstOrDefault();
+    List<string> tags = new List<string>();
+    if (firstPost != null)
+    {
+        if (firstPost.SourceContent.Tags != null)
+        {
+            tags.AddRange(firstPost.SourceContent.Tags.Split(',').ToList());
+        }
+        if (firstPost.SourceContent.Category.Tags != null)
+        {
+            tags.AddRange(firstPost.SourceContent.Category.Tags.Split(',').ToList());
+        }
+    }
+
+}
+
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="analytics-rounded">
+                    <div class="analytics-rounded-content">
+                        <h5>Bugün Paylaşılan İçerik Sayısı</h5>
+                        <hr />
+                        <h2><span class="counter">@Model.Item2.TotalSourceContent</span>/<span class="counter">@Model.Item2.SendedPostCountToday</span></h2>
+                        <div class="text-center">
+                            <div id="todaySparkline"><canvas width="116" height="116" style="display: inline-block; width: 116px; height: 116px; vertical-align: top;"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="analytics-rounded">
+                    <div class="analytics-rounded-content">
+                        <h5>Paylaşılan Toplam İçerik Sayısı</h5>
+                        <hr />
+                        <h2><span class="counter">@Model.Item2.TotalSourceContent</span>/<span class="counter">@Model.Item2.SendedPostCount</span></h2>
+                        <div class="text-center">
+                            <div id="sendedSparkline"><canvas width="116" height="116" style="display: inline-block; width: 116px; height: 116px; vertical-align: top;"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="analytics-rounded">
+                    <div class="analytics-rounded-content">
+                        <h5>Paylaşılacak Toplam İçerik Sayısı</h5>
+                        <hr />
+                        <h2><span class="counter">@Model.Item2.TotalSourceContent</span>/<span class="counter">@Model.Item2.NotSendedPostCount</span></h2>
+                        <div class="text-center">
+                            <div id="notsendedSparkline"><canvas width="116" height="116" style="display: inline-block; width: 116px; height: 116px; vertical-align: top;"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="product-status-wrap">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 style="color:white;">Son Paylaşılan İçerikler</h5>
+                            <hr />
+                        </div>
+                        <ol style="list-style-type: decimal;color:white;">
+
+                            @{ foreach (var item in Model.Item2.LastPublishedContents)
+                                {
+                                     var title = "";
+                                        if (item.Length >= 60)
+                                        {
+                                            title = item.Substring(0, 60) + "...";
+
+                                        }
+                                        else
+                                        {
+                                            title = item;
+                                        }
+                                                        <li>
+                                                            <span style="color:white; font-size:15px;margin-bottom:15px;">@title</span>
+                                                        </li>
+
+                                };
+                            }
+
+                        </ol>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@if (firstPost != null)
+{
+    <div class="product-status mg-b-30" id="firstPost">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                    <div class="product-status-wrap">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="~/images/@firstPost.SourceContent.imageURL" alt="@firstPost.SourceContent.Title" style="width:100%;float:left;">
+                            </div>
+                            <div class="col-md-8">
+                                <p style="color : lightskyblue;font-size:20px;">
+                                    Sıradaki İçerik :
+                                </p>
+                                <h1 style="color:white !important;">
+                                    <b>@firstPost.SourceContent.Title</b>
+                                </h1>
+                                <hr />
+                                <div class="col-md-12">
+                                    <p style="color:white;font-size:17px;">   @firstPost.SourceContent.Description</p>
+                                </div>
+                                @if (tags.Count != 0)
+                                {
+                                    <div class="col-md-12" style="padding-left:15px;color:white !important; font-size:15px !important;margin-bottom:15px !important">
+                                        @foreach (var item in tags)
+                                        {
+                                            <span class="label label-danger">@item</span>
+                                        }
+                                    </div>
+                                }
+
+                                <div class="col-md-12" style="padding-left:15px;color:white !important; font-size:15px !important">
+                                    Kategori Adı:
+                                    <b>@firstPost.SourceContent.Category.Name.ToUpper()</b>
+                                </div>
+                                <div class="col-md-12" style="padding-left:15px;color:white !important; font-size:15px !important">
+                                    Kaynak Adı:
+                                    <b>@firstPost.SourceContent.Category.Source.Name.ToUpper()</b>
+                                </div>
+                                <div class="col-md-12" style="padding-left:15px;color:white !important; font-size:15px !important">
+                                    Yüklenme Tarihi:
+                                    <b>@firstPost.SourceContent.ContentInsertAt.ToShortDateString()</b>
+                                </div>
+                                <div class="col-md-12" style="padding-left:15px;color:white !important; font-size:15px !important">
+                                    Sosyal Medya Kullanıcı Adı/Email:
+                                    <b>@firstPost.SocialMediaAccountsCategoryType.SocialMediaAccounts.AccountNameOrMail.ToUpper()</b>
+                                </div>
+
+
+                                <div class="col-md-12" style="margin-top:15px;">
+                                    <img style="width:50px" src="~/img/socialMedia/@firstPost.SocialMediaAccountsCategoryType.SocialMediaAccounts.Icon" alt="@firstPost.SocialMediaAccountsCategoryType.SocialMediaAccounts.Name" />
+                                    <span style="margin-left:5px;color:white;">@firstPost.SocialMediaAccountsCategoryType.SocialMediaAccounts.Name</span>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                    <div class="product-status-wrap">
+                        <div class="row" style="color:white !important;display:inline-block;">
+                            <div style="margin-bottom: 25px; padding-right: 10px; padding-left: 10px; ">
+                                <h5>Bugün Paylaşım Yapılan Hesaplar : </h5>
+                                <hr />
+                                @foreach (var item in Model.Item2.SocialMediaCountToday.OrderByDescending(x => x.Value))
+                                {
+                                    <div class="badge badge-info" style="background-color: #ffc107; margin-bottom: 5px; color: black !important; ">
+                                        @item.Key
+                                        <span class="badge badge-danger" style="background-color: #343a40;color:white;"> @item.Value</span>
+                                    </div>
+                                }
+                            </div>
+                            <div style="padding-left: 10px; padding-right: 10px;">
+                                <h5>Paylaşım Yapılan Hesaplar (Tümü) : </h5>
+                                <hr />
+                                @foreach (var item in Model.Item2.SocialMediaCount.OrderByDescending(x => x.Value))
+                                {
+                                    <div class="badge badge-info" style="background-color: #dc3545; margin-bottom: 5px; ">
+                                        @item.Key
+                                        <span class="badge badge-danger" style="background-color: #343a40;color:white;"> @item.Value</span>
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+
+
+<div class="product-status mg-b-30" id="psot_list_container">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <h4 id="source_content_header">Post Listesi</h4>
+                            <div class="alert alert-info alert-dismissible" style="display:none" id="source_content_result">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+
+                            </div>
+                        </div>
+
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th style="padding-left:20px;">Görsel</th>
+                                    <th>Başlık</th>
+                                    <th>Yüklenme Tarihi</th>
+                                    <th>Kategori Adı</th>
+                                    <th>Kaynak Adı</th>
+                                    <th style="text-align:center;">Sosyal Medya İkon</th>
+                                    <th>Sosyal Medya Adı</th>
+                                    <th>Sosyal Medya Kullanıcı Adı/Mail</th>
+                                    <th style="text-align:center;">Sıra Numarası</th>
+                                    <th style="text-align:center;">Ayarlar</th>
+                                </tr>
+                                @foreach (var item in Model.Item1)
+                                {
+                                    if (item.SourceContent.Title.Length >= 20)
+                                    {
+                                        item.SourceContent.Title = item.SourceContent.Title.Substring(0, 20) + "...";
+
+                                    }
+                                    <tr>
+                                        <td><img width="20px" src="~/images/@item.SourceContent.imageURL" alt="item.SourceContent.Title" style="padding-left:20px;"></td>
+                                        <td>@item.SourceContent.Title </td>
+                                        <td>@item.SourceContent.ContentInsertAt.ToShortDateString()</td>
+                                        <td>@item.SourceContent.Category.Name</td>
+                                        <td>@item.SourceContent.Category.Source.Name</td>
+                                        <td style="text-align:center;"><img style="width:35px" src="~/img/socialMedia/@item.SocialMediaAccountsCategoryType.SocialMediaAccounts.Icon" alt="@item.SocialMediaAccountsCategoryType.SocialMediaAccounts.Name" /></td>
+
+                                        <td>@item.SocialMediaAccountsCategoryType.SocialMediaAccounts.Name</td>
+                                        <td>@item.SocialMediaAccountsCategoryType.SocialMediaAccounts.AccountNameOrMail</td>
+                                        <td style="text-align:center;">
+                                            <input type="number" class="form-control" style="text-align:center;" id="orderNumber_@item.Id" value="@item.OrderNumber">
+
+                                            <button onclick="ChangePostOrder(@item.Id)" data-placement="left" title="Sırayı Değiştir" style="margin-top:10px" class="btn btn-default btn-sm"><i class="fa fa-recycle"></i> </button>
+                                        </td>
+                                        <td style="text-align:center;">
+                                            <button data-toggle="tooltip" data-placement="left" title="İncele" onclick="DetailsSourceContentView(@item.SourceContent.Id)" class="pd-setting-ed btn btn-warning" data-original-title="View"><i class="fas fa-eye"></i></button>
+                                            <button data-toggle="tooltip" data-placement="left" title="Düzenle" onclick="EditSourceContentView(@item.SourceContent.Id)" class="pd-setting-ed btn btn-primary"><i class="fas fa-edit"></i></button>
+
+                                            <button data-toggle="tooltip" data-placement="left" title="Sil" onclick="RemoveSourceContent(@item.SourceContent.Id)" class="pd-setting-ed btn btn-danger" data-original-title="Sil"><i class="fas fa-trash-alt"></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (Model.Item1.Count > 9)
+                        {
+                            <div class="row">
+                                <div class="col-md-12" style="color:white; text-align:center;margin-bottom:10px;">
+                                    <a onclick="ViewContinue()"> Devamını Gör..</a>
+                                </div>
+                            </div>
+                        }
+
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-12" style="color:white; text-align:center">
+                                @Model.Item1.Count adet kayıt gösteriliyor.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+    @{
+        var notTodayCount = Model.Item2.TotalSourceContent - Model.Item2.SendedPostCountToday;
+            }
+    $("#todaySparkline").sparkline([@Model.Item2.SendedPostCountToday,@notTodayCount ], {
+        type: 'pie',
+        height: '116',
+        sliceColors: ['#1ab394', '#ebebeb']
+    });
+    $("#sendedSparkline").sparkline([@Model.Item2.SendedPostCount,@Model.Item2.NotSendedPostCount], {
+        type: 'pie',
+        height: '116',
+        sliceColors: ['#1ab394', '#ebebeb']
+    });
+    $("#notsendedSparkline").sparkline([@Model.Item2.NotSendedPostCount,@Model.Item2.SendedPostCount], {
+        type: 'pie',
+        height: '116',
+        sliceColors: ['#1ab394', '#ebebeb']
+        });
+
+</script>

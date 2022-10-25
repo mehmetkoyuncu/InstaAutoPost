@@ -3,8 +3,10 @@ using InstaAutoPost.UI.Data.Entities.Concrete;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.Opera;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -19,10 +21,12 @@ namespace InstaAutoPost.SendPostBot.Core.Selenium
         {
 
 
-            EdgeOptions options = new EdgeOptions();
+            ChromeOptions options = new ChromeOptions();
+            var a = options.BrowserVersion;
             options.AddAdditionalCapability("useAutomationExtension", false);
             options.AddExcludedArgument("enable-automation");
-            _driver = new EdgeDriver(options);
+            var directory= Path.Combine( Directory.GetCurrentDirectory(),"drivers");
+            _driver = new ChromeDriver(directory,options);
         }
         public void GoToMainPage()
         {
@@ -34,7 +38,9 @@ namespace InstaAutoPost.SendPostBot.Core.Selenium
             IWebElement usernameWeb = _driver.FindElement(By.Name("username"));
             IWebElement passwordWeb = _driver.FindElement(By.Name("password"));
             usernameWeb.SendKeys(username);
+            Thread.Sleep(1000);
             passwordWeb.SendKeys(password);
+            Thread.Sleep(1000);
             usernameWeb.SendKeys(Keys.Enter);
         }
         public void SendPost(SourceContent content,string environment)
@@ -45,8 +51,30 @@ namespace InstaAutoPost.SendPostBot.Core.Selenium
             buttons.Last().Click();
             Thread.Sleep(2000);
             _driver.FindElement(By.XPath("//form[@role='presentation']//input")).SendKeys(contentRooth);
+            Thread.Sleep(5000);
+            _driver.FindElement(By.XPath("//button[contains(text(), 'Next')]")).Click();
+            Thread.Sleep(1000);
+            _driver.FindElement(By.XPath("//button[contains(text(), 'Next')]")).Click();
+            Thread.Sleep(1000);
+            if (content.Description.Length >= 2000)
+            {
+                content.Description = content.Description.Substring(0, 2000);
+                int lastDot=content.Description.LastIndexOf('.');
+                content.Description = content.Description.Substring(0, lastDot);
+            }
 
-           
+          
+
+            var tags = "#" + content.Tags + " #" + content.Category.Tags;
+            var newTags = tags.Replace(",", " #");
+            var fullContent = $"{content.Description} \n\n Kaynak: {content.Category.Source.Name} \n\n {newTags}";
+            _driver.FindElement(By.TagName("textarea")).SendKeys(fullContent);
+            Thread.Sleep(5000);
+            _driver.FindElement(By.XPath("//button[contains(text(), 'Share')]")).Click();
+            Thread.Sleep(10000);
+            _driver.Close();
+
+
         }
     }
 }

@@ -8,5 +8,6 @@ namespace InstaAutoPost.UI.Core.Common.DTOS
     public class CategoryTypeDTO:DTOAbstractBase
     {
         public string Name { get; set; }
+        public string Template { get; set; }
     }
 }

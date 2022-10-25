@@ -9,7 +9,8 @@ const typeEnum = {
     AutoJob: "AutoJob",
     CategoryType: "CategoryType",
     SocialMedia: "SocialMedia",
-    SocialMediaAccountCategory:"SocialMediaAccountCategory"
+    SocialMediaAccountCategory: "SocialMediaAccountCategory",
+    Post: "Post"
 };
 const alertType = {
     Success: "success",

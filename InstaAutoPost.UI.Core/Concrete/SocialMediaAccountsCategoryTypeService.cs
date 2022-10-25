@@ -1,6 +1,7 @@
 ﻿using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.AutoMapper;
 using InstaAutoPost.UI.Core.Common.DTOS;
+using InstaAutoPost.UI.Core.Utilities;
 using InstaAutoPost.UI.Data.Context;
 using InstaAutoPost.UI.Data.Entities.Concrete;
 using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
@@ -42,7 +43,11 @@ namespace InstaAutoPost.UI.Core.Concrete
                     _uow.GetRepository<SocialMediaAccountsCategoryType>().Add(model);
                     result = _uow.SaveChanges();
                     if (result > 0)
+                    {
+                        OrderPostUtility.Order();
                         Log.Logger.Information($"Sosyal medya - kategori ilişkisi eklendi.  - { dto.CategoryTypeId} - {dto.SocialMediaAccountId}");
+
+                    }
                     else
                     {
                         Log.Logger.Error($"Hata! Sosyal medya - kategori ilişkisi eklenirken hata oluştu. - { dto.CategoryTypeId} - {dto.SocialMediaAccountId}");
@@ -129,7 +134,11 @@ namespace InstaAutoPost.UI.Core.Concrete
                 _uow.GetRepository<SocialMediaAccountsCategoryType>().Remove(media);
                 result = _uow.SaveChanges();
                 if (result > 0)
+                {
+                    OrderPostUtility.Order();
                     Log.Logger.Information($"Sosyal medya - kategori ilişkisi silindi.  - { media.CategoryTypeId} - {media.SocialMediaAccountId}");
+                }
+                    
                 else
                 {
                     Log.Logger.Error($"Hata! Sosyal medya - kategori ilişkisi silinirken hata oluştu.  - { media.CategoryTypeId} - {media.SocialMediaAccountId}");

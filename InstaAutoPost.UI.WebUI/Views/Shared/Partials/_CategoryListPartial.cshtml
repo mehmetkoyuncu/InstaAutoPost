@@ -14,9 +14,9 @@
                                 <div class="analysis-progrebar-content">
                                     <h5>
                                         @{ string name = "";}
-                                        @if (item.Name.Length >= 10)
+                                        @if (item.Name.Length >= 25)
                                         {
-                                            name = @item.Name.Substring(0, 10) + "...";
+                                            name = @item.Name.Substring(0, 25) + "...";
                                         }
                                         else
                                         {

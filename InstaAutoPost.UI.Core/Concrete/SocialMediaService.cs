@@ -1,6 +1,7 @@
 ﻿using InstaAutoPost.UI.Core.Abstract;
 using InstaAutoPost.UI.Core.AutoMapper;
 using InstaAutoPost.UI.Core.Common.DTOS;
+using InstaAutoPost.UI.Core.Utilities;
 using InstaAutoPost.UI.Data.Context;
 using InstaAutoPost.UI.Data.Entities.Concrete;
 using InstaAutoPost.UI.Data.UnitOfWork.Abstract;
@@ -138,7 +139,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                 result = _uow.SaveChanges();
                 if (result > 0)
                 {
-                    var mediaCatgory = _uow.GetRepository<SocialMediaAccountsCategoryType>().Get(x => x.SocialMediaAccountId == id).ToList();
+                    var mediaCatgory = _uow.GetRepository<SocialMediaAccountsCategoryType>().Get(x => x.SocialMediaAccountId == id&&x.IsDeleted==false).ToList();
                     if (mediaCatgory.Count > 0)
                     {
                         foreach (var item in mediaCatgory)
@@ -147,6 +148,7 @@ namespace InstaAutoPost.UI.Core.Concrete
                             _uow.SaveChanges();
                         }
                     }
+                    OrderPostUtility.Order();
                     Log.Logger.Information($"Sosyal Medya silindi.  - {media.Name}");
                 }
                 else
@@ -170,5 +172,6 @@ namespace InstaAutoPost.UI.Core.Concrete
                 check = true;
             return check;
         }
+
     }
 }
